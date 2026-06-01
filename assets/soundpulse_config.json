@@ -1,0 +1,158 @@
+{
+  "version": "2.0",
+  "title": "Mördargetingen som riskerar slå ut svenska bin",
+  "subtitle": "Dagens Eko — Sammetsjättingen i Sverige",
+  "subject": "Biologi · Invasiva arter · Ekologi",
+  "audioFile": "assets/soundpulse_sammetsjattingen.mp3",
+  "transcriptionFile": "assets/soundpulse_transcription.json",
+  "duration": 1187.6,
+  "appKey": "SoundPulse_sammetsjattingen_v2",
+  "visualSegments": [
+    {
+      "start": 0,
+      "end": 200,
+      "image": "assets/soundpulse/seg1_hero.png",
+      "title": "Sammetsjättingen — Världens Största Geting"
+    },
+    {
+      "start": 200,
+      "end": 400,
+      "image": "assets/soundpulse/seg2_hive_attack.png",
+      "title": "Hotet mot Bisamhällen"
+    },
+    {
+      "start": 400,
+      "end": 600,
+      "image": "assets/soundpulse/seg3_invasive_map.png",
+      "title": "Invasiva Arter i Sverige"
+    },
+    {
+      "start": 600,
+      "end": 800,
+      "image": "assets/soundpulse/seg4_bee_defense.png",
+      "title": "Binas Försvar"
+    },
+    {
+      "start": 800,
+      "end": 1000,
+      "image": "assets/soundpulse/seg5_ecosystem.png",
+      "title": "Konsekvenser för Ekosystemet"
+    },
+    {
+      "start": 1000,
+      "end": 1188,
+      "image": "assets/soundpulse/seg6_conservation.png",
+      "title": "Vad kan vi göra?"
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple-choice",
+      "triggerTime": 120,
+      "text": "Sammetsjättingen (Vespa velutina) är en stor invasiv geting. Var kommer den ursprungligen ifrån?",
+      "options": [
+        { "letter": "A", "text": "Sydamerika — tropiska regnskogar" },
+        { "letter": "B", "text": "Sydostasien — tropiskt och subtropiskt klimat" },
+        { "letter": "C", "text": "Nordafrika — ökenområden" },
+        { "letter": "D", "text": "Australien — eukalyptusskogar" }
+      ],
+      "correct": "B",
+      "feedbackOk": "Rätt! Vespa velutina kommer ursprungligen från Sydostasien och har spridit sig till Europa via internationell handel.",
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsjättingen (Vespa velutina) har sitt ursprung i Sydostasien. Den kom till Europa (Frankrike) år 2004 via importerade keramikkrukor från Kina.",
+      "translations": {
+        "sv": "Sammetsjättingen (Vespa velutina) är en stor invasiv geting. Var kommer den ursprungligen ifrån?",
+        "en": "The Asian hornet (Vespa velutina) is a large invasive wasp. Where does it originally come from?",
+        "ar": "الدبور الآسيوي (Vespa velutina) هو دبور غازي كبير. من أين يأتي في الأصل؟"
+      }
+    },
+    {
+      "id": "q2",
+      "type": "categorize",
+      "triggerTime": 300,
+      "text": "Sortera faktorerna: vilka är biotiska (levande) och vilka är abiotiska (icke-levande)?",
+      "categories": ["Biotiska faktorer", "Abiotiska faktorer"],
+      "items": [
+        { "word": "Pollinering av bin", "cat": 0 },
+        { "word": "Temperatur", "cat": 1 },
+        { "word": "Predation av fåglar", "cat": 0 },
+        { "word": "Nederbörd", "cat": 1 },
+        { "word": "Konkurrens om föda", "cat": 0 },
+        { "word": "Vindstyrka", "cat": 1 }
+      ],
+      "feedbackOk": "Helt rätt! Du kan skilja på biotiska (levande) och abiotiska (icke-levande) faktorer i ett ekosystem.",
+      "feedbackNok": "Inte helt rätt. Biotiska faktorer handlar om levande organismer (pollinering, predation, konkurrens), medan abiotiska faktorer är icke-levande (temperatur, nederbörd, vind).",
+      "translations": {
+        "sv": "Sortera faktorerna: vilka är biotiska (levande) och vilka är abiotiska (icke-levande)?",
+        "en": "Sort the factors: which are biotic (living) and which are abiotic (non-living)?",
+        "ar": "صنّف العوامل: أيها حيوية (حية) وأيها لاحيوية (غير حية)؟"
+      }
+    },
+    {
+      "id": "q3",
+      "type": "match",
+      "triggerTime": 450,
+      "text": "Para ihop varje ekologiskt begrepp med rätt definition.",
+      "pairs": [
+        { "left": "Invasiv art", "right": "En art som sprider sig utanför sitt naturliga område och skadar ekosystemet" },
+        { "left": "Biodiversitet", "right": "Mångfalden av arter och ekosystem i ett område" },
+        { "left": "Pollinering", "right": "Överföring av pollen mellan blommor, ofta via insekter" },
+        { "left": "Ekologisk nisch", "right": "En arts roll och plats i ett ekosystem" }
+      ],
+      "feedbackOk": "Perfekt! Du har koll på de ekologiska begreppen.",
+      "feedbackNok": "Inte alla rätt. Läs igenom begreppen — de är viktiga för att förstå hur invasiva arter påverkar naturen.",
+      "translations": {
+        "sv": "Para ihop varje ekologiskt begrepp med rätt definition.",
+        "en": "Match each ecological concept with its correct definition.",
+        "ar": "طابق كل مفهوم بيئي مع تعريفه الصحيح."
+      }
+    },
+    {
+      "id": "q4",
+      "type": "lucktext",
+      "triggerTime": 600,
+      "text": "En ___ art är en organism som har spridit sig till ett nytt ___ med hjälp av människan och som hotar den lokala ___.",
+      "correctAnswers": ["invasiv", "område", "biodiversiteten"],
+      "feedbackOk": "Helt rätt! En invasiv art sprids till nya områden och hotar biodiversiteten.",
+      "feedbackNok": "Rätt svar: 'invasiv', 'område', 'biodiversiteten'. En invasiv art har spridit sig utanför sitt naturliga utbredningsområde och påverkar den lokala mångfalden negativt.",
+      "translations": {
+        "sv": "En ___ art är en organism som har spridit sig till ett nytt ___ med hjälp av människan och som hotar den lokala ___.",
+        "en": "An ___ species is an organism that has spread to a new ___ with human help and threatens the local ___.",
+        "ar": "النوع ___ هو كائن حي انتشر إلى ___ جديدة بمساعدة الإنسان ويهدد ___ المحلي."
+      }
+    },
+    {
+      "id": "q5",
+      "type": "multiple-choice",
+      "triggerTime": 800,
+      "text": "Japanska honungsbin har utvecklat ett unikt försvar mot jättegetingar. Vad gör de?",
+      "options": [
+        { "letter": "A", "text": "De sticker getingen med extra starkt gift" },
+        { "letter": "B", "text": "De bildar en vibrerande klunga som övervärmer getingen till döds" },
+        { "letter": "C", "text": "De blockerar kupans ingång med propolis (bivax)" },
+        { "letter": "D", "text": "De flyger i en virvlande formation som förvirrar getingen" }
+      ],
+      "correct": "B",
+      "feedbackOk": "Rätt! Det kallas 'hot defensive bee ball' — hundratals bin omringar getingen och vibrerar sina flygmuskler tills temperaturen når ~47°C.",
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska bin bildar en 'värmeboll' runt inkräktaren. De vibrerar sina muskler och höjer temperaturen till ca 47°C — dödligt för getingen men inte för bina.",
+      "translations": {
+        "sv": "Japanska honungsbin har utvecklat ett unikt försvar mot jättegetingar. Vad gör de?",
+        "en": "Japanese honeybees have developed a unique defense against giant hornets. What do they do?",
+        "ar": "طوّر نحل العسل الياباني دفاعاً فريداً ضد الدبابير العملاقة. ماذا يفعل؟"
+      }
+    },
+    {
+      "id": "q6",
+      "type": "freetext",
+      "triggerTime": 1000,
+      "text": "Vad tycker du att vi — som individer och samhälle — kan göra för att minska spridningen av invasiva arter? Ge minst ett konkret förslag.",
+      "placeholder": "Skriv ditt svar här...",
+      "feedbackMsg": "Tack för ditt svar! Det finns många sätt att bekämpa invasiva arter — från rapportering och forskning till politiska beslut och ändrade konsumtionsvanor.",
+      "translations": {
+        "sv": "Vad tycker du att vi — som individer och samhälle — kan göra för att minska spridningen av invasiva arter?",
+        "en": "What do you think we — as individuals and society — can do to reduce the spread of invasive species?",
+        "ar": "ما الذي تعتقد أنه يمكننا — كأفراد ومجتمع — فعله للحد من انتشار الأنواع الغازية؟"
+      }
+    }
+  ]
+}

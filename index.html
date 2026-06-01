@@ -1,0 +1,3132 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoundPulse — Interaktiv Ljudupplevelse</title>
+    <meta name="description" content="SoundPulse — en interaktiv ljud-slideshow med synkad transkription, bilder och frågor för klassrummet.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===================================================================
+           SOUNDPULSE v2.0 — Design System
+           Glassmorphism dark theme, Inter + Oswald typography
+           Red Team VEP revision — all K1-K4, V1-V8, F1-F6 addressed
+           =================================================================== */
+
+        :root {
+            --sp-bg-deep: #050508;
+            --sp-bg-primary: #0a0e14;
+            --sp-bg-surface: rgba(15, 20, 30, 0.7);
+            --sp-bg-surface-light: rgba(25, 35, 50, 0.5);
+            --sp-bg-glass: rgba(255, 255, 255, 0.04);
+            --sp-border: rgba(255, 255, 255, 0.06);
+            --sp-border-hover: rgba(255, 255, 255, 0.12);
+            --sp-accent: #14b8a6;
+            --sp-accent-glow: rgba(20, 184, 166, 0.35);
+            --sp-accent-soft: rgba(20, 184, 166, 0.12);
+            --sp-accent-warm: #f59e0b;
+            --sp-accent-warm-glow: rgba(245, 158, 11, 0.3);
+            --sp-correct: #10b981;
+            --sp-correct-bg: rgba(16, 185, 129, 0.12);
+            --sp-incorrect: #ef4444;
+            --sp-incorrect-bg: rgba(239, 68, 68, 0.1);
+            --sp-warning: #f59e0b;
+            --sp-text: #f0f4f8;
+            --sp-text-secondary: #94a3b8;
+            --sp-text-muted: #64748b;
+            --sp-font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --sp-font-display: 'Oswald', sans-serif;
+            --sp-radius: 16px;
+            --sp-radius-sm: 10px;
+            --sp-radius-lg: 24px;
+            --z-base: 1;
+            --z-content: 10;
+            --z-player: 50;
+            --z-overlay: 100;
+            --z-message: 500;
+            --z-toast: 1000;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { font-size: 16px; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+        body {
+            font-family: var(--sp-font-body);
+            background: var(--sp-bg-deep);
+            color: var(--sp-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* === BACKGROUND === */
+        .sp-bg {
+            position: fixed; inset: 0; z-index: 0;
+            background:
+                radial-gradient(ellipse at 20% 0%, rgba(20, 184, 166, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(245, 158, 11, 0.06) 0%, transparent 50%),
+                var(--sp-bg-deep);
+        }
+        .sp-bg::after {
+            content: '';
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+        }
+
+        /* === OFFLINE BANNER (K2) === */
+        #spOfflineBanner {
+            position: fixed; top: 0; left: 0; right: 0;
+            background: #ef4444; color: #fff;
+            text-align: center; padding: 0.5rem;
+            font-weight: bold; z-index: 9999;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            animation: spSlideDown 0.3s ease-out;
+        }
+
+        /* === PROGRESS BAR === */
+        .sp-progress-wrap {
+            position: fixed; top: 0; left: 0; right: 0; height: 3px;
+            background: rgba(255,255,255,0.05); z-index: var(--z-toast);
+        }
+        .sp-progress-fill {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, var(--sp-accent), var(--sp-accent-warm));
+            transition: width 0.3s ease;
+        }
+
+        /* === FULLSCREEN MSG === */
+        .sp-fullscreen-msg {
+            position: fixed; inset: 0; z-index: var(--z-message);
+            display: flex; align-items: center; justify-content: center;
+            background: #1f2937;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sp-fullscreen-msg.show { opacity: 1; pointer-events: all; }
+        .sp-fullscreen-msg h1 {
+            font-family: var(--sp-font-display);
+            font-size: clamp(2rem, 6vw, 4rem);
+            text-align: center; padding: 2rem;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+
+        /* === APP CONTAINER === */
+        .sp-main {
+            position: relative; z-index: var(--z-content);
+            max-width: 900px; margin: 0 auto;
+            padding: 2rem 1.5rem; min-height: 100vh;
+        }
+
+        /* === HEADER === */
+        .sp-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.8rem 1.2rem;
+            background: var(--sp-bg-surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius);
+            margin-bottom: 1.5rem;
+        }
+        .sp-header-title {
+            font-family: var(--sp-font-display);
+            font-size: 1.1rem; font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+        .sp-header-badge {
+            font-size: 0.7rem; font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            border-radius: 99px;
+            background: var(--sp-accent-soft);
+            color: var(--sp-accent);
+            text-transform: uppercase; letter-spacing: 0.08em;
+        }
+
+        /* === LOGIN === */
+        .sp-login {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 2rem;
+        }
+        .sp-login-card {
+            background: var(--sp-bg-surface);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius-lg);
+            padding: 3rem 2.5rem;
+            max-width: 420px; width: 100%;
+            text-align: center;
+            animation: spCardEnter 0.6s ease-out;
+        }
+        .sp-login-logo { font-size: 3.5rem; margin-bottom: 1rem; }
+        .sp-login-card h1 {
+            font-family: var(--sp-font-display);
+            font-size: 2rem; font-weight: 700;
+            letter-spacing: 0.03em; margin-bottom: 0.5rem;
+        }
+        .sp-subtitle {
+            color: var(--sp-text-secondary);
+            font-size: 0.95rem; margin-bottom: 0.3rem;
+        }
+        .sp-login-input {
+            width: 100%; padding: 0.9rem 1.2rem;
+            background: var(--sp-bg-glass);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius-sm);
+            color: var(--sp-text); font-size: 1rem;
+            font-family: var(--sp-font-body);
+            outline: none; transition: border-color 0.2s;
+            margin-bottom: 1rem;
+        }
+        .sp-login-input:focus { border-color: var(--sp-accent); }
+        .sp-login-input::placeholder { color: var(--sp-text-muted); }
+
+        /* === BUTTONS === */
+        .sp-btn-primary {
+            width: 100%; padding: 0.9rem 1.5rem;
+            background: linear-gradient(135deg, var(--sp-accent), #0d9488);
+            color: #fff; border: none; border-radius: var(--sp-radius-sm);
+            font-size: 1rem; font-weight: 600;
+            font-family: var(--sp-font-body);
+            cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 4px 15px var(--sp-accent-glow);
+        }
+        .sp-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px var(--sp-accent-glow); }
+        .sp-btn-primary:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
+
+        .sp-btn-ghost {
+            width: 100%; padding: 0.8rem 1.5rem;
+            background: transparent;
+            color: var(--sp-text-secondary);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius-sm);
+            font-size: 0.9rem; font-weight: 500;
+            font-family: var(--sp-font-body);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .sp-btn-ghost:hover { border-color: var(--sp-border-hover); color: var(--sp-text); }
+        .sp-btn-ghost:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
+
+        .sp-btn-sm {
+            padding: 0.5rem 1rem;
+            background: var(--sp-bg-glass);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius-sm);
+            color: var(--sp-text-secondary);
+            font-size: 0.8rem; font-weight: 500;
+            font-family: var(--sp-font-body);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .sp-btn-sm:hover { border-color: var(--sp-accent); color: var(--sp-accent); }
+        .sp-btn-sm:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
+
+        .sp-divider {
+            display: flex; align-items: center; gap: 1rem;
+            color: var(--sp-text-muted); font-size: 0.8rem;
+            margin: 1.2rem 0;
+        }
+        .sp-divider::before, .sp-divider::after {
+            content: ''; flex: 1; height: 1px;
+            background: var(--sp-border);
+        }
+
+        /* === MODE SELECTOR === */
+        .sp-mode-selector {
+            display: flex; gap: 1rem; margin-top: 1.5rem;
+        }
+        .sp-mode-card {
+            flex: 1; padding: 1.2rem;
+            background: var(--sp-bg-glass);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius);
+            text-align: center; cursor: pointer;
+            transition: all 0.25s;
+        }
+        .sp-mode-card:hover { border-color: var(--sp-accent); transform: translateY(-2px); }
+        .sp-mode-card:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
+        .sp-mode-card .sp-mode-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .sp-mode-card .sp-mode-label {
+            font-weight: 600; font-size: 0.9rem;
+            color: var(--sp-text);
+        }
+        .sp-mode-card .sp-mode-desc {
+            font-size: 0.75rem; color: var(--sp-text-muted);
+            margin-top: 0.3rem;
+        }
+
+        /* === PLAYER === */
+        .sp-player {
+            background: var(--sp-bg-surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius);
+            padding: 1rem 1.2rem;
+            margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 0.8rem;
+        }
+        .sp-player-btn {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, var(--sp-accent), #0d9488);
+            border: none; border-radius: 50%;
+            color: #fff; font-size: 1.1rem;
+            cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            transition: transform 0.15s;
+            flex-shrink: 0;
+        }
+        .sp-player-btn:hover { transform: scale(1.08); }
+        .sp-player-btn:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
+
+        .sp-timeline-wrap { flex: 1; display: flex; flex-direction: column; gap: 0.3rem; }
+        .sp-timeline {
+            width: 100%; height: 6px;
+            -webkit-appearance: none; appearance: none;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px; outline: none;
+            cursor: pointer;
+        }
+        .sp-timeline::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 14px; height: 14px;
+            border-radius: 50%;
+            background: var(--sp-accent);
+            box-shadow: 0 0 6px var(--sp-accent-glow);
+            cursor: pointer;
+        }
+        .sp-timeline::-moz-range-thumb {
+            width: 14px; height: 14px;
+            border-radius: 50%; border: none;
+            background: var(--sp-accent);
+            box-shadow: 0 0 6px var(--sp-accent-glow);
+            cursor: pointer;
+        }
+        .sp-timeline::-moz-range-track {
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px; height: 4px;
+        }
+        .sp-time-row {
+            display: flex; justify-content: space-between;
+            font-size: 0.7rem; color: var(--sp-text-muted);
+            font-variant-numeric: tabular-nums;
+        }
+        .sp-speed-btn {
+            padding: 0.3rem 0.6rem;
+            background: var(--sp-bg-glass);
+            border: 1px solid var(--sp-border);
+            border-radius: 6px;
+            color: var(--sp-text-secondary);
+            font-size: 0.75rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+            font-family: var(--sp-font-body);
+        }
+        .sp-speed-btn:hover { border-color: var(--sp-accent); color: var(--sp-accent); }
+        .sp-speed-btn:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
+
+        /* === VISUAL CONTENT === */
+        .sp-visual {
+            background: var(--sp-bg-surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius);
+            overflow: hidden; margin-bottom: 1.5rem;
+            aspect-ratio: 16/9; position: relative;
+        }
+        .sp-visual img { width: 100%; height: 100%; object-fit: cover; }
+        .sp-segment-title {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 1rem 1.2rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            font-family: var(--sp-font-display);
+            font-size: 1.1rem; font-weight: 600;
+        }
+
+        /* === TRANSCRIPT === */
+        .sp-transcript {
+            background: var(--sp-bg-surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius);
+            padding: 1.2rem;
+            max-height: 200px; overflow-y: auto;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem; line-height: 1.8;
+            color: var(--sp-text-muted);
+        }
+        .sp-word { transition: color 0.15s, background 0.15s; border-radius: 2px; padding: 0 1px; cursor: default; }
+        .sp-word.spoken { color: var(--sp-text-secondary); }
+        .sp-word.active { color: var(--sp-accent); background: var(--sp-accent-soft); font-weight: 600; }
+        .sp-segment-break { display: block; height: 0.5rem; }
+
+        /* === QUESTION OVERLAY === */
+        .sp-question-wrap {
+            position: fixed; inset: 0; z-index: var(--z-overlay);
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(5, 5, 8, 0.85);
+            backdrop-filter: blur(8px);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 1rem;
+        }
+        .sp-question-wrap.show { opacity: 1; pointer-events: all; }
+        .sp-question-card {
+            background: var(--sp-bg-surface);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius-lg);
+            padding: 2rem;
+            max-width: 600px; width: 100%;
+            max-height: 90vh; overflow-y: auto;
+            animation: spCardEnter 0.4s ease-out;
+        }
+        .sp-q-badge {
+            font-size: 0.7rem; font-weight: 600;
+            padding: 0.25rem 0.7rem;
+            border-radius: 99px;
+            background: var(--sp-accent-soft);
+            color: var(--sp-accent);
+            display: inline-block; margin-bottom: 1rem;
+            text-transform: uppercase; letter-spacing: 0.06em;
+        }
+        .sp-q-text {
+            font-size: 1.1rem; font-weight: 500;
+            line-height: 1.5; margin-bottom: 1.5rem;
+        }
+
+        /* MC options */
+        .sp-options { display: flex; flex-direction: column; gap: 0.6rem; }
+        .sp-opt {
+            display: flex; align-items: center; gap: 0.8rem;
+            padding: 0.9rem 1rem;
+            background: var(--sp-bg-glass);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius-sm);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .sp-opt:hover { border-color: var(--sp-accent); background: var(--sp-accent-soft); }
+        .sp-opt:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
+        .sp-opt.correct-opt { border-color: var(--sp-correct); background: var(--sp-correct-bg); }
+        .sp-opt.wrong-opt { border-color: var(--sp-incorrect); background: var(--sp-incorrect-bg); }
+        .sp-opt.dimmed { opacity: 0.4; }
+        .sp-letter {
+            width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 6px; font-weight: 700; font-size: 0.8rem;
+            background: var(--sp-bg-surface-light);
+            color: var(--sp-text-secondary);
+            flex-shrink: 0;
+        }
+
+        /* Categorize */
+        .sp-cat-area { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem; }
+        .sp-cat-bucket {
+            background: var(--sp-bg-glass);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius-sm);
+            padding: 0.8rem; min-height: 60px;
+        }
+        .sp-cat-bucket-title {
+            font-size: 0.8rem; font-weight: 600;
+            color: var(--sp-accent); margin-bottom: 0.5rem;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .sp-chip-pool { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+        .sp-chip {
+            padding: 0.5rem 0.9rem;
+            background: var(--sp-bg-surface-light);
+            border: 1px solid var(--sp-border);
+            border-radius: 99px;
+            font-size: 0.85rem; cursor: pointer;
+            transition: all 0.2s; user-select: none;
+        }
+        .sp-chip:hover { border-color: var(--sp-accent); }
+        .sp-chip:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
+        .sp-chip.assigned-0 { border-color: var(--sp-accent); color: var(--sp-accent); background: var(--sp-accent-soft); }
+        .sp-chip.assigned-1 { border-color: var(--sp-accent-warm); color: var(--sp-accent-warm); background: rgba(245,158,11,0.12); }
+        .sp-chip.correct-chip { border-color: var(--sp-correct); background: var(--sp-correct-bg); }
+        .sp-chip.wrong-chip { border-color: var(--sp-incorrect); background: var(--sp-incorrect-bg); }
+
+        /* Match */
+        .sp-match-area { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem; }
+        .sp-match-item {
+            padding: 0.7rem 0.9rem;
+            background: var(--sp-bg-glass);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius-sm);
+            font-size: 0.85rem; cursor: pointer;
+            transition: all 0.2s; text-align: center;
+        }
+        .sp-match-item:hover { border-color: var(--sp-accent); }
+        .sp-match-item:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
+        .sp-match-item.selected { border-color: var(--sp-accent); background: var(--sp-accent-soft); box-shadow: 0 0 10px var(--sp-accent-glow); }
+        .sp-match-item.paired { opacity: 0.5; pointer-events: none; border-color: var(--sp-correct); }
+        .sp-match-item.wrong-match { border-color: var(--sp-incorrect); background: var(--sp-incorrect-bg); }
+
+        /* Lucktext */
+        .sp-lucktext-area { font-size: 1rem; line-height: 2; margin-bottom: 1rem; }
+        .sp-luck-input {
+            display: inline-block; width: 120px;
+            padding: 0.3rem 0.6rem;
+            background: var(--sp-bg-glass);
+            border: none; border-bottom: 2px solid var(--sp-accent);
+            color: var(--sp-text); font-size: 0.95rem;
+            font-family: var(--sp-font-body);
+            outline: none; transition: border-color 0.2s;
+            border-radius: 4px 4px 0 0;
+        }
+        .sp-luck-input:focus { border-bottom-color: var(--sp-accent-warm); }
+        .sp-luck-input.correct-input { border-bottom-color: var(--sp-correct); background: var(--sp-correct-bg); }
+        .sp-luck-input.wrong-input { border-bottom-color: var(--sp-incorrect); background: var(--sp-incorrect-bg); }
+
+        /* Freetext */
+        .sp-freetext-area { margin-bottom: 1rem; }
+        .sp-freetext-textarea {
+            width: 100%; min-height: 100px;
+            padding: 0.9rem 1rem;
+            background: var(--sp-bg-glass);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius-sm);
+            color: var(--sp-text); font-size: 0.95rem;
+            font-family: var(--sp-font-body);
+            outline: none; resize: vertical;
+            transition: border-color 0.2s;
+        }
+        .sp-freetext-textarea:focus { border-color: var(--sp-accent); }
+        .sp-freetext-textarea::placeholder { color: var(--sp-text-muted); }
+
+        /* Feedback */
+        .sp-feedback {
+            margin-top: 1rem; padding: 1rem;
+            border-radius: var(--sp-radius-sm);
+            font-size: 0.9rem; line-height: 1.5;
+            display: none;
+        }
+        .sp-feedback.show { display: block; animation: spFadeSlideUp 0.3s ease-out; }
+        .sp-feedback.ok { background: var(--sp-correct-bg); border: 1px solid rgba(16,185,129,0.3); color: #a7f3d0; }
+        .sp-feedback.nok { background: var(--sp-incorrect-bg); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+
+        .sp-continue-btn {
+            display: none; width: 100%;
+            margin-top: 1rem; padding: 0.8rem;
+            background: var(--sp-bg-glass);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius-sm);
+            color: var(--sp-text); font-size: 0.9rem;
+            font-weight: 600; cursor: pointer;
+            font-family: var(--sp-font-body);
+            transition: all 0.2s;
+        }
+        .sp-continue-btn.show { display: block; animation: spFadeSlideUp 0.3s ease-out; }
+        .sp-continue-btn:hover { border-color: var(--sp-accent); }
+        .sp-continue-btn:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
+
+        .sp-submit-btn {
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, var(--sp-accent), #0d9488);
+            color: #fff; border: none;
+            border-radius: var(--sp-radius-sm);
+            font-size: 0.9rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+            font-family: var(--sp-font-body);
+        }
+        .sp-submit-btn:hover { transform: translateY(-1px); }
+        .sp-submit-btn:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
+        .sp-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* === RESULTS === */
+        .sp-results { text-align: center; }
+        .sp-results-emoji { font-size: 4rem; margin-bottom: 0.5rem; }
+        .sp-results h2 { font-family: var(--sp-font-display); font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .sp-score-line { color: var(--sp-text-secondary); margin-bottom: 1.5rem; }
+        .sp-result-row {
+            display: flex; align-items: center; gap: 0.8rem;
+            padding: 0.6rem 0.8rem; border-radius: 8px;
+            margin-bottom: 0.4rem; font-size: 0.85rem;
+        }
+        .sp-result-row.ok { background: var(--sp-correct-bg); }
+        .sp-result-row.nok { background: var(--sp-incorrect-bg); }
+        .sp-result-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+        /* === TEACHER PANEL === */
+        .sp-teacher {
+            position: relative; z-index: var(--z-content);
+            max-width: 1100px; margin: 0 auto;
+            padding: 1.5rem; min-height: 100vh;
+        }
+        .sp-teacher-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .sp-panel {
+            background: var(--sp-bg-surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius);
+            padding: 1.2rem;
+        }
+        .sp-panel-title {
+            font-family: var(--sp-font-display);
+            font-size: 0.9rem; font-weight: 600;
+            color: var(--sp-accent); margin-bottom: 1rem;
+            text-transform: uppercase; letter-spacing: 0.06em;
+        }
+        .sp-q-list { display: flex; flex-direction: column; gap: 0.4rem; }
+        .sp-q-list-item {
+            display: flex; align-items: center; gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            background: var(--sp-bg-glass);
+            border: 1px solid var(--sp-border);
+            border-radius: 8px;
+            font-size: 0.8rem; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sp-q-list-item:hover { border-color: var(--sp-accent); }
+        .sp-q-list-item:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
+        .sp-q-list-item.active { border-color: var(--sp-accent); background: var(--sp-accent-soft); }
+        .sp-q-list-item.pushed { border-left: 3px solid var(--sp-correct); }
+
+        /* Teacher dashboard */
+        .sp-dash-header {
+            font-size: 1rem; font-weight: 700;
+            margin-bottom: 0.8rem; color: var(--sp-text);
+        }
+        .sp-dash-q {
+            padding: 0.5rem 0.7rem;
+            background: var(--sp-bg-glass);
+            border-radius: 6px; margin-bottom: 0.3rem;
+            font-size: 0.8rem; color: var(--sp-text-secondary);
+            display: flex; justify-content: space-between;
+        }
+
+        /* Teacher message */
+        .sp-msg-input {
+            width: 100%; padding: 0.6rem 0.8rem;
+            background: var(--sp-bg-glass);
+            border: 1px solid var(--sp-border);
+            border-radius: 8px;
+            color: var(--sp-text); font-size: 0.85rem;
+            font-family: var(--sp-font-body);
+            outline: none; margin-bottom: 0.5rem;
+        }
+        .sp-msg-input:focus { border-color: var(--sp-accent); }
+        .sp-msg-btns { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+        /* Copy link */
+        .sp-copy-btn {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.5rem 1rem;
+            background: var(--sp-bg-glass);
+            border: 1px solid var(--sp-border);
+            border-radius: 8px;
+            color: var(--sp-text-secondary);
+            font-size: 0.8rem; cursor: pointer;
+            font-family: var(--sp-font-body);
+            transition: all 0.2s;
+        }
+        .sp-copy-btn:hover { border-color: var(--sp-accent); color: var(--sp-accent); }
+        .sp-copy-btn:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
+        .sp-copy-btn.copied { border-color: var(--sp-correct); color: var(--sp-correct); }
+
+        /* GDPR text */
+        .sp-gdpr {
+            font-size: 0.7rem; color: var(--sp-text-muted);
+            margin-top: 1.5rem; line-height: 1.4;
+        }
+
+        /* Live status */
+        .sp-live-dot {
+            display: inline-block; width: 8px; height: 8px;
+            border-radius: 50%; background: var(--sp-correct);
+            animation: spPulse 2s infinite; margin-right: 0.4rem;
+            vertical-align: middle;
+        }
+
+        /* === ANIMATIONS === */
+        @keyframes spCardEnter {
+            from { opacity: 0; transform: translateY(30px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes spFadeSlideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes spPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @keyframes spSlideIn {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes spSlideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        /* === FOCUS VISIBLE (K3) === */
+        :focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
+        [role="button"] { cursor: pointer; }
+
+        /* === REDUCED MOTION === */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* === CUSTOM SCROLLBAR === */
+        .sp-transcript::-webkit-scrollbar { width: 6px; }
+        .sp-transcript::-webkit-scrollbar-track { background: transparent; }
+        .sp-transcript::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.15); border-radius: 3px;
+        }
+        .sp-transcript::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+        .sp-transcript { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent; }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .sp-teacher-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 640px) {
+            .sp-main { padding: 1rem; }
+            .sp-header { padding: 0.8rem 1rem; }
+            .sp-mode-selector { flex-direction: column; }
+            .sp-login-card { padding: 2rem 1.5rem; }
+            .sp-match-area { grid-template-columns: 1fr; }
+        }
+
+        /* === BEE DEFENSE GAME === */
+        .sp-game-wrap {
+            position: fixed; inset: 0; z-index: var(--z-overlay);
+            background: #050508;
+            display: none;
+        }
+        .sp-game-wrap.show { display: block; }
+        .sp-game-canvas {
+            width: 100%; height: 100%;
+            display: block;
+            touch-action: none;
+        }
+        .sp-game-hud {
+            position: fixed; top: 1rem; left: 50%;
+            transform: translateX(-50%);
+            z-index: calc(var(--z-overlay) + 1);
+            display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+            pointer-events: none;
+        }
+        .sp-game-title {
+            font-family: var(--sp-font-display);
+            font-size: 1.3rem; font-weight: 700;
+            color: var(--sp-text);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            letter-spacing: 0.04em;
+        }
+        .sp-game-temp-wrap {
+            width: 240px; height: 24px;
+            background: rgba(15, 20, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--sp-border);
+            border-radius: 12px;
+            overflow: hidden; position: relative;
+        }
+        .sp-game-temp-fill {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, #3b82f6, #f59e0b, #ef4444, #dc2626);
+            transition: width 0.3s ease;
+            border-radius: 12px;
+        }
+        .sp-game-temp-text {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 700;
+            color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            font-variant-numeric: tabular-nums;
+        }
+        .sp-game-status {
+            font-size: 0.8rem; color: var(--sp-text-secondary);
+            text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+        }
+        .sp-game-instructions {
+            position: fixed; bottom: 1.5rem; left: 50%;
+            transform: translateX(-50%);
+            z-index: calc(var(--z-overlay) + 1);
+            max-width: 400px; width: 90%;
+            padding: 1rem 1.2rem;
+            background: rgba(15, 20, 30, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius);
+            text-align: center;
+            pointer-events: auto;
+            animation: spFadeSlideUp 0.5s ease-out;
+        }
+        .sp-game-instructions p {
+            font-size: 0.85rem; color: var(--sp-text-secondary);
+            line-height: 1.5; margin-bottom: 0.5rem;
+        }
+        .sp-game-victory {
+            position: fixed; inset: 0;
+            z-index: calc(var(--z-overlay) + 5);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: rgba(5, 5, 8, 0.9);
+            backdrop-filter: blur(8px);
+            animation: spFadeSlideUp 0.5s ease-out;
+        }
+        .sp-game-victory h1 {
+            font-family: var(--sp-font-display);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 0.5rem;
+        }
+        .sp-game-victory p {
+            color: var(--sp-text-secondary);
+            font-size: 1.1rem; margin-bottom: 2rem;
+        }
+        .sp-game-exit-btn {
+            position: fixed; top: 1rem; right: 1rem;
+            z-index: calc(var(--z-overlay) + 2);
+            padding: 0.5rem 1rem;
+            background: rgba(15, 20, 30, 0.7);
+            border: 1px solid var(--sp-border);
+            border-radius: 8px;
+            color: var(--sp-text-secondary);
+            font-size: 0.8rem; cursor: pointer;
+            font-family: var(--sp-font-body);
+            backdrop-filter: blur(10px);
+        }
+        .sp-game-exit-btn:hover { color: var(--sp-text); border-color: var(--sp-accent); }
+
+    </style>
+</head>
+<body>
+    <div class="sp-bg"></div>
+    <div id="spOfflineBanner" role="alert" aria-live="assertive">Anslutningen bruten — försöker återansluta…</div>
+    <div class="sp-progress-wrap"><div class="sp-progress-fill" id="spProgressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div></div>
+    <div class="sp-fullscreen-msg" id="spFullscreenMsg" role="alert" aria-live="assertive"><h1 id="spFullscreenMsgText"></h1></div>
+    <div id="spRoot"></div>
+    <audio id="spAudio" preload="auto"></audio>
+
+    <script>
+    /* ===================================================================
+       SOUNDPULSE v2.0 — Application Logic
+       Zero-build, single-file, KeyValue-synced classroom tool
+       Red Team VEP revision: K1-K4, V1-V8, F1-F6
+       =================================================================== */
+
+    // ─── i18n STRINGS (F1) ───
+    const STRINGS = {
+        sv: {
+            appName: 'SoundPulse',
+            joinBtn: 'Gå med →',
+            guestBtn: 'Gå med som gäst',
+            namePlaceholder: 'Ditt namn (valfritt)',
+            liveMode: 'Live-synk',
+            liveModeDesc: 'Synkad med läraren',
+            practiceMode: 'Öva själv',
+            practiceModeDesc: 'I din egen takt',
+            waitingMsg: 'Väntar på att läraren ska pusha en fråga...',
+            questionOf: 'Fråga {n} av {total}',
+            continueBtn: 'Fortsätt lyssna →',
+            answerRegistered: 'Svar registrerat. Väntar på nästa fråga…',
+            submitBtn: 'Lämna in',
+            checkBtn: 'Kontrollera',
+            resultsTitle: 'Resultat',
+            retryBtn: 'Försök igen',
+            gdprText: 'Inga personuppgifter lagras permanent. Data raderas efter sessionen.',
+            offlineMsg: 'Anslutningen bruten — försöker återansluta…',
+            copyLink: 'Kopiera elevlänk',
+            copied: 'Kopierad!',
+            resetConfirm: 'Är du säker? Alla elevsvar nollställs.',
+            resetBtn: 'Nollställ session',
+            sendMsg: 'Skicka',
+            clearMsg: 'Rensa',
+            pushQ: 'Pusha',
+            showResults: 'Visa resultat',
+            studentsConnected: '{n} elev{pl} anslutna',
+            noStudents: 'Inga elever anslutna ännu',
+            correct: 'Rätt',
+            incorrect: 'Fel',
+            pending: 'Väntar',
+            notAnswered: 'Ej besvarad',
+            fullScore: 'Full pott! Strålande!',
+            goodScore: 'Bra jobbat!',
+            okScore: 'En bra start!',
+            lowScore: 'Dags att repetera!',
+            dragHint: 'Klicka för att tilldela kategori',
+            matchHint: 'Klicka vänster, sedan höger för att para ihop',
+            lucktextHint: 'Fyll i luckorna',
+            freetextHint: 'Skriv ditt svar'
+        },
+        en: {
+            appName: 'SoundPulse',
+            joinBtn: 'Join →',
+            guestBtn: 'Join as guest',
+            namePlaceholder: 'Your name (optional)',
+            liveMode: 'Live sync',
+            liveModeDesc: 'Synced with teacher',
+            practiceMode: 'Practice',
+            practiceModeDesc: 'At your own pace',
+            waitingMsg: 'Waiting for the teacher to push a question...',
+            questionOf: 'Question {n} of {total}',
+            continueBtn: 'Continue listening →',
+            answerRegistered: 'Answer registered. Waiting for next question...',
+            submitBtn: 'Submit',
+            checkBtn: 'Check',
+            resultsTitle: 'Results',
+            retryBtn: 'Try again',
+            gdprText: 'No personal data is stored permanently. Data is deleted after the session.',
+            offlineMsg: 'Connection lost — trying to reconnect...',
+            copyLink: 'Copy student link',
+            copied: 'Copied!',
+            resetConfirm: 'Are you sure? All student answers will be reset.',
+            resetBtn: 'Reset session',
+            sendMsg: 'Send',
+            clearMsg: 'Clear',
+            pushQ: 'Push',
+            showResults: 'Show results',
+            studentsConnected: '{n} student{pl} connected',
+            noStudents: 'No students connected yet',
+            correct: 'Correct',
+            incorrect: 'Wrong',
+            pending: 'Waiting',
+            notAnswered: 'Not answered',
+            fullScore: 'Perfect score! Brilliant!',
+            goodScore: 'Well done!',
+            okScore: 'A good start!',
+            lowScore: 'Time to review!',
+            dragHint: 'Click to assign category',
+            matchHint: 'Click left, then right to pair',
+            lucktextHint: 'Fill in the blanks',
+            freetextHint: 'Write your answer'
+        },
+        ar: {
+            appName: 'SoundPulse',
+            joinBtn: '← انضم',
+            guestBtn: 'انضم كضيف',
+            namePlaceholder: 'اسمك (اختياري)',
+            liveMode: 'بث مباشر',
+            liveModeDesc: 'متزامن مع المعلم',
+            practiceMode: 'تدريب',
+            practiceModeDesc: 'بسرعتك الخاصة',
+            waitingMsg: 'في انتظار المعلم لإرسال سؤال...',
+            questionOf: 'سؤال {n} من {total}',
+            continueBtn: '← تابع الاستماع',
+            answerRegistered: 'تم تسجيل الإجابة. في انتظار السؤال التالي...',
+            submitBtn: 'إرسال',
+            checkBtn: 'تحقق',
+            resultsTitle: 'النتائج',
+            retryBtn: 'حاول مرة أخرى',
+            gdprText: 'لا يتم تخزين أي بيانات شخصية بشكل دائم. يتم حذف البيانات بعد الجلسة.',
+            offlineMsg: 'انقطع الاتصال — جاري إعادة الاتصال...',
+            correct: 'صحيح',
+            incorrect: 'خطأ',
+            pending: 'في الانتظار',
+            notAnswered: 'لم يتم الإجابة',
+            fullScore: 'درجة كاملة! رائع!',
+            goodScore: 'أحسنت!',
+            okScore: 'بداية جيدة!',
+            lowScore: 'حان وقت المراجعة!',
+            dragHint: 'انقر لتعيين الفئة',
+            matchHint: 'انقر على اليسار ثم اليمين للمطابقة',
+            lucktextHint: 'املأ الفراغات',
+            freetextHint: 'اكتب إجابتك',
+            copyLink: 'انسخ رابط الطالب',
+            copied: 'تم النسخ!',
+            resetConfirm: 'هل أنت متأكد؟ سيتم إعادة تعيين جميع إجابات الطلاب.',
+            resetBtn: 'إعادة تعيين الجلسة',
+            sendMsg: 'إرسال',
+            clearMsg: 'مسح',
+            pushQ: 'إرسال',
+            showResults: 'عرض النتائج',
+            studentsConnected: '{n} طالب{pl} متصلين',
+            noStudents: 'لا يوجد طلاب متصلين بعد'
+        }
+    };
+    let currentLang = 'sv';
+    function t(key) { return (STRINGS[currentLang] && STRINGS[currentLang][key]) || STRINGS.sv[key] || key; }
+
+    // ─── CONFIG ───
+    const SP_CONFIG = {
+        APP_KEY: 'SoundPulse_sammetsjattingen_v2',
+        BASE_URL: 'https://keyvalue.immanuel.co/api/KeyVal',
+        SYNC_INTERVAL: 2500,
+        POLL_INTERVAL: 3000,
+        AUDIO_FILE: 'assets/soundpulse_sammetsjattingen.mp3'
+    };
+
+    // ─── STATE ───
+    const SP = {
+        mode: null,
+        studentName: null,
+        studentId: null,
+        currentQ: -1,
+        answers: {},
+        activatedQuestions: new Set(),
+        isPlaying: false,
+        syncInterval: null,
+        pollInterval: null,
+        audioTime: 0,
+        teacherPushedQ: -1,
+        currentSegmentIdx: -1,
+        knownStudents: new Map(),
+        studentAnswers: new Map(),
+        offlineCount: 0
+    };
+
+    let CONFIG_DATA = null;
+    let TRANSCRIPTION = { segments: [] };
+
+    // ─── DOM REFS ───
+    const root = document.getElementById('spRoot');
+    const audioEl = document.getElementById('spAudio');
+    const progressBar = document.getElementById('spProgressBar');
+    const fullscreenMsg = document.getElementById('spFullscreenMsg');
+    const fullscreenMsgText = document.getElementById('spFullscreenMsgText');
+    const offlineBanner = document.getElementById('spOfflineBanner');
+
+    // ─── SPEEDS ───
+    const speeds = [0.75, 1, 1.25, 1.5, 2];
+    let speedIdx = 1;
+
+    // ─── MATCH STATE ───
+    let matchSelectedLeft = null;
+    let matchPairs = [];
+    let matchShuffledRight = [];
+
+    // ─── CATEGORIZE STATE ───
+    let catAssignments = {};
+
+    // ═══════════════════════════════════════════
+    // UTILITY FUNCTIONS
+    // ═══════════════════════════════════════════
+
+    function strToHex(str) {
+        return Array.from(new TextEncoder().encode(str)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function hexToStr(hex) {
+        try {
+            const bytes = new Uint8Array(Math.ceil(hex.length / 2));
+            for (let i = 0; i < bytes.length; i++) bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+            return new TextDecoder().decode(bytes);
+        } catch(e) { return ''; }
+    }
+
+    function formatTime(seconds) {
+        const m = Math.floor(seconds / 60);
+        const s = Math.floor(seconds % 60);
+        return `${m}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function generateStudentId() {
+        return 'sp_' + Math.random().toString(36).substring(2, 8);
+    }
+
+    function shuffleArray(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+
+    function keyHandler(fn) {
+        return `onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();${fn}}"`;
+    }
+
+    // Focus-trap for modals (a11y)
+    function trapFocus(container) {
+        if (!container) return;
+        const focusable = container.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        container._focusTrapHandler = function(e) {
+            if (e.key !== 'Tab') return;
+            if (e.shiftKey) {
+                if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+            } else {
+                if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+            }
+        };
+        container.addEventListener('keydown', container._focusTrapHandler);
+        first.focus();
+    }
+    function releaseFocusTrap(container) {
+        if (container && container._focusTrapHandler) {
+            container.removeEventListener('keydown', container._focusTrapHandler);
+            delete container._focusTrapHandler;
+        }
+    }
+
+    // ═══════════════════════════════════════════
+    // NETWORK (F4: AbortController + K2: Offline)
+    // ═══════════════════════════════════════════
+
+    async function fetchWithTimeout(url, opts = {}, timeout = 5000) {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout);
+        try {
+            const res = await fetch(url, { ...opts, signal: controller.signal });
+            clearTimeout(id);
+            return res;
+        } catch(e) {
+            clearTimeout(id);
+            throw e;
+        }
+    }
+
+    function handleOffline() {
+        SP.offlineCount++;
+        if (SP.offlineCount >= 2) {
+            offlineBanner.style.display = 'block';
+        }
+    }
+
+    function handleOnline() {
+        SP.offlineCount = 0;
+        offlineBanner.style.display = 'none';
+    }
+
+    // ═══════════════════════════════════════════
+    // API HELPERS
+    // ═══════════════════════════════════════════
+
+    async function apiSet(key, value) {
+        try {
+            await fetchWithTimeout(
+                `${SP_CONFIG.BASE_URL}/UpdateValue/${SP_CONFIG.APP_KEY}/${key}/${value}`,
+                { method: 'POST', mode: 'cors' }
+            );
+            handleOnline();
+        } catch(e) {
+            console.warn('API set failed:', e);
+            handleOffline();
+        }
+    }
+
+    async function apiGet(key) {
+        try {
+            const res = await fetchWithTimeout(
+                `${SP_CONFIG.BASE_URL}/GetValue/${SP_CONFIG.APP_KEY}/${key}?t=${Date.now()}`,
+                { cache: 'no-store' }
+            );
+            const text = await res.text();
+            handleOnline();
+            if (!text || text.includes('not found')) return null;
+            return text.replace(/"/g, '').trim();
+        } catch(e) {
+            handleOffline();
+            return null;
+        }
+    }
+
+    // ═══════════════════════════════════════════
+    // TEACHER STATE SYNC
+    // ═══════════════════════════════════════════
+
+    let teacherMsgColor = 'none';
+    let teacherMsgText = '';
+
+    async function setTeacherState(audioTime, questionIdx, isPlaying, msgColor = 'none', msgText = '') {
+        const msgHex = msgColor === 'none' ? 'none' : strToHex(msgText);
+        const state = `${Math.floor(audioTime)}_${questionIdx}_${isPlaying ? '1' : '0'}_${msgColor}_${msgHex}`;
+        await apiSet('state', state);
+    }
+
+    async function getTeacherState() {
+        const raw = await apiGet('state');
+        if (!raw) return { audioTime: 0, questionIdx: -1, isPlaying: false, msgColor: 'none', msgText: '' };
+        const parts = raw.split('_');
+        return {
+            audioTime: parseInt(parts[0]) || 0,
+            questionIdx: parseInt(parts[1]) || -1,
+            isPlaying: parts[2] === '1',
+            msgColor: parts[3] || 'none',
+            msgText: parts[4] && parts[4] !== 'none' ? hexToStr(parts[4]) : ''
+        };
+    }
+
+    async function submitAnswer(questionId, answer) {
+        const key = `ans_${SP.studentId}`;
+        const existing = await apiGet(key) || '';
+        const decoded = existing ? hexToStr(existing) : '';
+        const updated = decoded ? `${decoded},${questionId}:${answer}` : `${questionId}:${answer}`;
+        await apiSet(key, strToHex(updated));
+    }
+
+    async function registerStudent() {
+        const nameHex = strToHex(SP.studentName || 'Gäst');
+        await apiSet(`stu_${SP.studentId}`, nameHex);
+        // Register in student list with retry to mitigate race conditions
+        for (let attempt = 0; attempt < 2; attempt++) {
+            const list = await apiGet('student_list') || '';
+            const decoded = list ? hexToStr(list) : '';
+            if (decoded.includes(SP.studentId)) break; // already registered
+            const updated = decoded ? `${decoded},${SP.studentId}` : SP.studentId;
+            await apiSet('student_list', strToHex(updated));
+            // Verify write succeeded
+            const verify = await apiGet('student_list') || '';
+            const verifyDecoded = verify ? hexToStr(verify) : '';
+            if (verifyDecoded.includes(SP.studentId)) break;
+            // If failed, retry after short delay
+            await new Promise(r => setTimeout(r, 200 + Math.random() * 300));
+        }
+    }
+
+    // ═══════════════════════════════════════════
+    // RENDER: LOGIN (V6: no duplicate sp-bg)
+    // ═══════════════════════════════════════════
+
+    function renderLogin() {
+        root.innerHTML = `
+        <div class="sp-login">
+            <div class="sp-login-card">
+                <div class="sp-login-logo"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5z"/></svg></div>
+                <h1>${t('appName')}</h1>
+                <p class="sp-subtitle">${CONFIG_DATA ? CONFIG_DATA.title : 'Interaktiv Ljudupplevelse'}</p>
+                <p class="sp-subtitle" style="font-size:0.8rem;color:var(--sp-text-muted)">${CONFIG_DATA ? CONFIG_DATA.subject : ''}</p>
+                <div style="height:1.5rem"></div>
+                <input type="text" id="spNameInput" class="sp-login-input"
+                    placeholder="${t('namePlaceholder')}"
+                    aria-label="${t('namePlaceholder')}"
+                    autocomplete="name"
+                    onkeydown="if(event.key==='Enter'){event.preventDefault();joinSession('live');}"
+                >
+                <button class="sp-btn-primary" id="spJoinBtn"
+                    onclick="joinSession('live')"
+                    ${keyHandler("joinSession('live')")}
+                    role="button" tabindex="0"
+                    aria-label="${t('joinBtn')}">
+                    ${t('joinBtn')}
+                </button>
+                <div class="sp-divider">eller</div>
+                <div class="sp-mode-selector">
+                    <div class="sp-mode-card" role="button" tabindex="0"
+                        onclick="joinSession('live')"
+                        ${keyHandler("joinSession('live')")}>
+                        <div class="sp-mode-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20v-8m0 0l3 3m-3-3l-3 3"/><circle cx="12" cy="6" r="2"/><path d="M8.5 3.5a5 5 0 0 1 7 0"/><path d="M6 1a8.5 8.5 0 0 1 12 0"/></svg></div>
+                        <div class="sp-mode-label">${t('liveMode')}</div>
+                        <div class="sp-mode-desc">${t('liveModeDesc')}</div>
+                    </div>
+                    <div class="sp-mode-card" role="button" tabindex="0"
+                        onclick="joinSession('practice')"
+                        ${keyHandler("joinSession('practice')")}>
+                        <div class="sp-mode-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+                        <div class="sp-mode-label">${t('practiceMode')}</div>
+                        <div class="sp-mode-desc">${t('practiceModeDesc')}</div>
+                    </div>
+                    <div class="sp-mode-card" role="button" tabindex="0"
+                        onclick="joinAndStartGame()"
+                        ${keyHandler("joinAndStartGame()")}
+                        style="border-color:rgba(245,166,35,0.3);background:rgba(245,166,35,0.05);">
+                        <div class="sp-mode-icon" style="color:#f5a623"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l8 4.5v7L12 22l-8-8.5v-7L12 2z"/><circle cx="12" cy="11" r="3"/><path d="M12 8v-2m3 2.5l1.5-1.5m-9 1.5L6 7"/></svg></div>
+                        <div class="sp-mode-label" style="color:#f5a623">Värmebollsförsvaret</div>
+                        <div class="sp-mode-desc">Multiplayer bi-spel</div>
+                    </div>
+                </div>
+                <p class="sp-gdpr">${t('gdprText')}</p>
+            </div>
+        </div>`;
+    }
+
+    function joinSession(mode) {
+        const nameInput = document.getElementById('spNameInput');
+        SP.studentName = nameInput ? nameInput.value.trim() : '';
+        if (!SP.studentName) SP.studentName = 'Gäst';
+        SP.studentId = generateStudentId();
+        SP.mode = mode === 'practice' ? 'practice' : 'live';
+        renderStudentView();
+        if (SP.mode === 'live') {
+            registerStudent();
+            startLiveSync();
+        }
+    }
+
+    function joinAndStartGame() {
+        const nameInput = document.getElementById('spNameInput');
+        SP.studentName = nameInput ? nameInput.value.trim() : '';
+        if (!SP.studentName) SP.studentName = 'Gäst';
+        SP.studentId = generateStudentId();
+        SP.mode = 'live';
+        registerStudent();
+        startLiveSync();
+        // Jump straight to the game
+        startBeeGame(false);
+    }
+
+    // ═══════════════════════════════════════════
+    // RENDER: STUDENT VIEW
+    // ═══════════════════════════════════════════
+
+    function renderStudentView() {
+        audioEl.src = SP_CONFIG.AUDIO_FILE;
+        const totalQ = CONFIG_DATA ? CONFIG_DATA.questions.length : 0;
+
+        root.innerHTML = `
+        <div class="sp-main">
+            <div class="sp-header">
+                <div>
+                    <div class="sp-header-title">${CONFIG_DATA ? CONFIG_DATA.title : t('appName')}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                    ${SP.mode === 'live' ? '<span class="sp-live-dot"></span><span style="font-size:0.75rem;color:var(--sp-text-secondary)">LIVE</span>' : '<span class="sp-header-badge">' + t('practiceMode') + '</span>'}
+                </div>
+            </div>
+
+            <!-- Audio Player -->
+            <div class="sp-player" role="region" aria-label="Ljudspelare">
+                <button class="sp-player-btn" id="spPlayBtn"
+                    onclick="toggleAudio()" role="button" tabindex="0"
+                    aria-label="Spela/Pausa"
+                    ${keyHandler('toggleAudio()')}>
+                    ▶
+                </button>
+                <div class="sp-timeline-wrap">
+                    <input type="range" class="sp-timeline" id="spTimeline" min="0" max="100" value="0"
+                        oninput="seekAudio(this.value)" aria-label="Tidslinje">
+                    <div class="sp-time-row">
+                        <span id="spTimeNow">0:00</span>
+                        <span id="spProgressText" style="color:var(--sp-accent);font-weight:500;font-size:0.65rem">${t('questionOf').replace('{n}','0').replace('{total}',totalQ)}</span>
+                        <span id="spTimeDur">0:00</span>
+                    </div>
+                </div>
+                <button class="sp-speed-btn" id="spSpeedBtn"
+                    onclick="cycleSpeed(event)" role="button" tabindex="0"
+                    aria-label="Hastighet"
+                    ${keyHandler('cycleSpeed(event)')}>
+                    1x
+                </button>
+            </div>
+
+            <!-- Visual -->
+            <div class="sp-visual" id="spVisual" aria-label="Visuell illustration">
+                <img id="spVisualImg" src="" alt="Segment illustration" onerror="this.style.display='none'">
+                <div class="sp-segment-title" id="spSegTitle"></div>
+            </div>
+
+            <!-- Transcript -->
+            <div class="sp-transcript" id="spTranscript" role="region" aria-label="Transkription" aria-live="polite">
+            </div>
+        </div>
+
+        <!-- Question Overlay -->
+        <div class="sp-question-wrap" id="spQuestionWrap" role="dialog" aria-modal="true" aria-label="Fråga">
+            <div class="sp-question-card" id="spQuestionCard"></div>
+        </div>`;
+
+        audioEl.addEventListener('loadedmetadata', () => {
+            document.getElementById('spTimeDur').textContent = formatTime(audioEl.duration);
+            document.getElementById('spTimeline').max = Math.floor(audioEl.duration);
+        });
+        audioEl.addEventListener('timeupdate', onAudioTimeUpdate);
+        audioEl.addEventListener('ended', () => {
+            SP.isPlaying = false;
+            updatePlayBtn();
+            // Show results after a short delay, then offer bee game
+            setTimeout(() => {
+                if (SP.mode === 'practice') {
+                    showResults();
+                }
+            }, 1500);
+        });
+
+        loadTranscript();
+        updateVisualSegment();
+    }
+
+    // ═══════════════════════════════════════════
+    // AUDIO CONTROLS
+    // ═══════════════════════════════════════════
+
+    function toggleAudio() {
+        if (audioEl.paused) {
+            const playPromise = audioEl.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    SP.isPlaying = true;
+                    updatePlayBtn();
+                    if (SP.mode === 'teacher') broadcastTeacherState();
+                }).catch(err => {
+                    console.warn('Play failed:', err.message);
+                    SP.isPlaying = false;
+                    updatePlayBtn();
+                    // If not loaded yet, retry when ready
+                    if (audioEl.readyState < 3) {
+                        audioEl.addEventListener('canplaythrough', function retry() {
+                            audioEl.removeEventListener('canplaythrough', retry);
+                            audioEl.play().then(() => {
+                                SP.isPlaying = true;
+                                updatePlayBtn();
+                            }).catch(() => {});
+                        }, { once: true });
+                    }
+                });
+            } else {
+                SP.isPlaying = true;
+                updatePlayBtn();
+            }
+        } else {
+            audioEl.pause();
+            SP.isPlaying = false;
+            updatePlayBtn();
+            if (SP.mode === 'teacher') broadcastTeacherState();
+        }
+    }
+
+    function seekAudio(val) {
+        audioEl.currentTime = parseFloat(val);
+        if (SP.mode === 'teacher') broadcastTeacherState();
+    }
+
+    function cycleSpeed(event) {
+        if (event) event.stopPropagation();
+        speedIdx = (speedIdx + 1) % speeds.length;
+        audioEl.playbackRate = speeds[speedIdx];
+        const btn = document.getElementById('spSpeedBtn') || document.getElementById('spTeacherSpeedBtn');
+        if (btn) btn.textContent = speeds[speedIdx] + 'x';
+    }
+
+    function updatePlayBtn() {
+        const btn = document.getElementById('spPlayBtn') || document.getElementById('spTeacherPlayBtn');
+        if (btn) btn.textContent = SP.isPlaying ? '⏸' : '▶';
+    }
+
+    function onAudioTimeUpdate() {
+        const t = audioEl.currentTime;
+        SP.audioTime = t;
+        const dur = audioEl.duration || 1;
+
+        // Progress bar
+        const pct = (t / dur) * 100;
+        progressBar.style.width = pct + '%';
+        progressBar.setAttribute('aria-valuenow', Math.round(pct));
+
+        // Time display
+        const timeNow = document.getElementById('spTimeNow');
+        if (timeNow) timeNow.textContent = formatTime(t);
+
+        // Timeline slider
+        const timeline = document.getElementById('spTimeline') || document.getElementById('spTeacherTimeline');
+        if (timeline && !timeline.matches(':active')) timeline.value = Math.floor(t);
+
+        updateTranscriptHighlight(t);
+        updateVisualSegment();
+
+        // Check auto-trigger questions (practice mode only)
+        if (SP.mode === 'practice') checkAutoQuestions(t);
+    }
+
+    // ═══════════════════════════════════════════
+    // TRANSCRIPT
+    // ═══════════════════════════════════════════
+
+    async function loadTranscript() {
+        try {
+            const resp = await fetch(CONFIG_DATA ? CONFIG_DATA.transcriptionFile : 'assets/soundpulse_transcription.json');
+            TRANSCRIPTION = await resp.json();
+            renderTranscriptWords();
+        } catch(e) { console.warn('Transcript not loaded:', e); }
+    }
+
+    function renderTranscriptWords() {
+        const container = document.getElementById('spTranscript');
+        if (!container || !TRANSCRIPTION.segments) return;
+        let html = '';
+        TRANSCRIPTION.segments.forEach((seg, sIdx) => {
+            if (sIdx > 0) html += '<span class="sp-segment-break"></span>';
+            (seg.words || []).forEach((w, wIdx) => {
+                html += `<span class="sp-word" data-start="${w.start}" data-end="${w.end}" id="w_${sIdx}_${wIdx}">${w.word} </span>`;
+            });
+        });
+        container.innerHTML = html;
+    }
+
+    function updateTranscriptHighlight(time) {
+        const words = document.querySelectorAll('.sp-word');
+        let activeEl = null;
+        words.forEach(w => {
+            const start = parseFloat(w.dataset.start);
+            const end = parseFloat(w.dataset.end);
+            w.classList.remove('active', 'spoken');
+            if (time >= start && time < end) {
+                w.classList.add('active');
+                activeEl = w;
+            } else if (time >= end) {
+                w.classList.add('spoken');
+            }
+        });
+        if (activeEl) {
+            const container = document.getElementById('spTranscript');
+            if (container) {
+                const cRect = container.getBoundingClientRect();
+                const wRect = activeEl.getBoundingClientRect();
+                if (wRect.bottom > cRect.bottom - 20 || wRect.top < cRect.top + 20) {
+                    activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }
+    }
+
+    // ═══════════════════════════════════════════
+    // VISUAL SEGMENTS
+    // ═══════════════════════════════════════════
+
+    function updateVisualSegment() {
+        if (!CONFIG_DATA || !CONFIG_DATA.visualSegments) return;
+        const t = SP.audioTime;
+        let segIdx = 0;
+        for (let i = 0; i < CONFIG_DATA.visualSegments.length; i++) {
+            if (t >= CONFIG_DATA.visualSegments[i].start) segIdx = i;
+        }
+        if (segIdx !== SP.currentSegmentIdx) {
+            SP.currentSegmentIdx = segIdx;
+            const seg = CONFIG_DATA.visualSegments[segIdx];
+            const img = document.getElementById('spVisualImg');
+            const title = document.getElementById('spSegTitle');
+            if (img) { img.src = seg.image; img.style.display = 'block'; }
+            if (title) title.textContent = seg.title;
+        }
+    }
+
+    // ═══════════════════════════════════════════
+    // QUESTION ENGINE (V7: all 5 types)
+    // ═══════════════════════════════════════════
+
+    function checkAutoQuestions(time) {
+        if (!CONFIG_DATA || !CONFIG_DATA.questions) return;
+        CONFIG_DATA.questions.forEach((q, idx) => {
+            if (q.triggerTime && q.triggerTime > 0 && time >= q.triggerTime && !SP.activatedQuestions.has(idx)) {
+                SP.activatedQuestions.add(idx);
+                audioEl.pause();
+                SP.isPlaying = false;
+                updatePlayBtn();
+                showQuestion(idx);
+            }
+        });
+    }
+
+    function showQuestion(idx) {
+        const q = CONFIG_DATA.questions[idx];
+        if (!q) return;
+        SP.currentQ = idx;
+        const wrap = document.getElementById('spQuestionWrap');
+        const card = document.getElementById('spQuestionCard');
+        if (!wrap || !card) return;
+
+        const totalQ = CONFIG_DATA.questions.length;
+        const qNum = idx + 1;
+        const qText = (q.translations && q.translations[currentLang]) || q.text;
+
+        let html = `
+            <div class="sp-q-badge">${t('questionOf').replace('{n}', qNum).replace('{total}', totalQ)}</div>
+            <p class="sp-q-text">${qText}</p>`;
+
+        switch (q.type) {
+            case 'multiple-choice':
+                html += renderMCQuestion(q, idx);
+                break;
+            case 'categorize':
+                html += renderCategorizeQuestion(q, idx);
+                break;
+            case 'match':
+                html += renderMatchQuestion(q, idx);
+                break;
+            case 'lucktext':
+                html += renderLucktextQuestion(q, idx);
+                break;
+            case 'freetext':
+                html += renderFreetextQuestion(q, idx);
+                break;
+            default:
+                html += `<p style="color:var(--sp-text-muted)">Okänd frågetyp: ${q.type}</p>`;
+        }
+
+        html += `
+            <div class="sp-feedback" id="spFeedback" aria-live="assertive" role="status"></div>
+            <button class="sp-continue-btn" id="spContinueBtn"
+                onclick="closeQuestion()" role="button" tabindex="0"
+                ${keyHandler('closeQuestion()')}
+                aria-label="${t('continueBtn')}">
+                ${t('continueBtn')}
+            </button>`;
+
+        card.innerHTML = html;
+        wrap.classList.add('show');
+        // Activate focus trap for accessibility
+        requestAnimationFrame(() => trapFocus(card));
+
+        // Update progress text
+        const pt = document.getElementById('spProgressText');
+        if (pt) pt.textContent = t('questionOf').replace('{n}', qNum).replace('{total}', totalQ);
+    }
+
+    function closeQuestion() {
+        const wrap = document.getElementById('spQuestionWrap');
+        const card = document.getElementById('spQuestionCard');
+        if (card) releaseFocusTrap(card);
+        if (wrap) wrap.classList.remove('show');
+        SP.currentQ = -1;
+        // Rewind 5 seconds for context, then resume
+        audioEl.currentTime = Math.max(0, audioEl.currentTime - 5);
+        if (SP.mode === 'practice' || SP.mode === 'live') {
+            audioEl.play().catch(() => {});
+            SP.isPlaying = true;
+            updatePlayBtn();
+        }
+        if (SP.mode === 'teacher') {
+            broadcastTeacherState();
+        }
+    }
+
+    // ─── MC ───
+    function renderMCQuestion(q, idx) {
+        let html = '<div class="sp-options">';
+        q.options.forEach(opt => {
+            html += `
+                <div class="sp-opt" role="button" tabindex="0" id="opt_${idx}_${opt.letter}"
+                    onclick="selectMCAnswer(this, ${idx}, '${opt.letter}')"
+                    ${keyHandler(`selectMCAnswer(document.getElementById('opt_${idx}_${opt.letter}'), ${idx}, '${opt.letter}')`)}>
+                    <span class="sp-letter">${opt.letter}</span>
+                    <span>${opt.text}</span>
+                </div>`;
+        });
+        html += '</div>';
+        return html;
+    }
+
+    function selectMCAnswer(el, idx, letter) {
+        if (SP.answers[CONFIG_DATA.questions[idx].id]) return; // already answered
+        const q = CONFIG_DATA.questions[idx];
+        const correct = letter === q.correct;
+        SP.answers[q.id] = letter;
+
+        // Visual feedback
+        el.classList.add(correct ? 'correct-opt' : 'wrong-opt');
+        if (!correct) {
+            const correctEl = document.getElementById(`opt_${idx}_${q.correct}`);
+            if (correctEl) correctEl.classList.add('correct-opt');
+        }
+
+        // Dim other options
+        document.querySelectorAll(`[id^="opt_${idx}_"]`).forEach(o => {
+            if (o !== el && !o.classList.contains('correct-opt')) o.classList.add('dimmed');
+        });
+
+        showFeedback(correct, correct ? q.feedbackOk : q.feedbackNok);
+        if (correct && navigator.vibrate) navigator.vibrate(50); // F3
+        if (SP.mode === 'live') submitAnswer(q.id, letter);
+    }
+
+    // ─── CATEGORIZE ───
+    function renderCategorizeQuestion(q, idx) {
+        catAssignments = {};
+        q.items.forEach((item, i) => { catAssignments[i] = -1; });
+
+        let html = `<p style="font-size:0.8rem;color:var(--sp-text-muted);margin-bottom:0.8rem">Tips: ${t('dragHint')}</p>`;
+        html += '<div class="sp-chip-pool" id="spChipPool">';
+        q.items.forEach((item, i) => {
+            html += `<span class="sp-chip" role="button" tabindex="0" id="chip_${idx}_${i}"
+                onclick="cycleCatChip(${idx}, ${i})"
+                ${keyHandler(`cycleCatChip(${idx}, ${i})`)}>
+                ${item.word}
+            </span>`;
+        });
+        html += '</div>';
+
+        html += '<div class="sp-cat-area">';
+        q.categories.forEach((cat, ci) => {
+            html += `
+                <div class="sp-cat-bucket" id="bucket_${idx}_${ci}">
+                    <div class="sp-cat-bucket-title">${cat}</div>
+                    <div class="sp-chip-pool" id="bucketItems_${idx}_${ci}"></div>
+                </div>`;
+        });
+        html += '</div>';
+
+        html += `<button class="sp-submit-btn" id="spCatSubmit" onclick="checkCategorize(${idx})"
+            ${keyHandler(`checkCategorize(${idx})`)} role="button" tabindex="0">
+            ${t('checkBtn')}</button>`;
+        return html;
+    }
+
+    function cycleCatChip(qIdx, chipIdx) {
+        const q = CONFIG_DATA.questions[qIdx];
+        const numCats = q.categories.length;
+        catAssignments[chipIdx] = (catAssignments[chipIdx] + 1) % (numCats + 1);
+        if (catAssignments[chipIdx] === numCats) catAssignments[chipIdx] = -1;
+
+        const chip = document.getElementById(`chip_${qIdx}_${chipIdx}`);
+        if (!chip) return;
+
+        // Remove all assigned classes
+        chip.className = 'sp-chip';
+        if (catAssignments[chipIdx] >= 0) {
+            chip.classList.add(`assigned-${catAssignments[chipIdx]}`);
+        }
+    }
+
+    function checkCategorize(qIdx) {
+        const q = CONFIG_DATA.questions[qIdx];
+        let allCorrect = true;
+        let allAssigned = true;
+
+        q.items.forEach((item, i) => {
+            if (catAssignments[i] === -1) allAssigned = false;
+        });
+
+        if (!allAssigned) {
+            // Shake unassigned
+            q.items.forEach((item, i) => {
+                if (catAssignments[i] === -1) {
+                    const chip = document.getElementById(`chip_${qIdx}_${i}`);
+                    if (chip) { chip.style.animation = 'none'; chip.offsetHeight; chip.style.animation = 'spCardEnter 0.3s'; }
+                }
+            });
+            return;
+        }
+
+        // Disable further interaction
+        document.getElementById('spCatSubmit').disabled = true;
+
+        q.items.forEach((item, i) => {
+            const chip = document.getElementById(`chip_${qIdx}_${i}`);
+            if (!chip) return;
+            const isCorrect = catAssignments[i] === item.cat;
+            chip.className = 'sp-chip';
+            chip.classList.add(isCorrect ? 'correct-chip' : 'wrong-chip');
+            chip.style.pointerEvents = 'none';
+            if (!isCorrect) allCorrect = false;
+        });
+
+        SP.answers[q.id] = allCorrect ? 'correct' : 'incorrect';
+        showFeedback(allCorrect, allCorrect ? q.feedbackOk : q.feedbackNok);
+        if (allCorrect && navigator.vibrate) navigator.vibrate(50);
+        if (SP.mode === 'live') submitAnswer(q.id, SP.answers[q.id]);
+    }
+
+    // ─── MATCH ───
+    function renderMatchQuestion(q, idx) {
+        matchSelectedLeft = null;
+        matchPairs = [];
+        matchShuffledRight = shuffleArray(q.pairs.map((p, i) => ({ text: p.right, origIdx: i })));
+
+        let html = `<p style="font-size:0.8rem;color:var(--sp-text-muted);margin-bottom:0.8rem">Tips: ${t('matchHint')}</p>`;
+        html += '<div class="sp-match-area">';
+
+        // Left column
+        html += '<div>';
+        q.pairs.forEach((p, i) => {
+            html += `<div class="sp-match-item" role="button" tabindex="0" id="ml_${idx}_${i}"
+                onclick="selectMatchLeft(${idx}, ${i})"
+                ${keyHandler(`selectMatchLeft(${idx}, ${i})`)}>
+                ${p.left}
+            </div>`;
+        });
+        html += '</div>';
+
+        // Right column (shuffled)
+        html += '<div>';
+        matchShuffledRight.forEach((item, i) => {
+            html += `<div class="sp-match-item" role="button" tabindex="0" id="mr_${idx}_${i}"
+                onclick="selectMatchRight(${idx}, ${i})"
+                ${keyHandler(`selectMatchRight(${idx}, ${i})`)}>
+                ${item.text}
+            </div>`;
+        });
+        html += '</div>';
+        html += '</div>';
+
+        html += `<button class="sp-submit-btn" id="spMatchSubmit" onclick="checkMatch(${idx})"
+            ${keyHandler(`checkMatch(${idx})`)} role="button" tabindex="0">
+            ${t('checkBtn')}</button>`;
+        return html;
+    }
+
+    function selectMatchLeft(qIdx, leftIdx) {
+        // Clear previous selection
+        document.querySelectorAll(`[id^="ml_${qIdx}_"]`).forEach(el => el.classList.remove('selected'));
+        const el = document.getElementById(`ml_${qIdx}_${leftIdx}`);
+        if (el && !el.classList.contains('paired')) {
+            el.classList.add('selected');
+            matchSelectedLeft = leftIdx;
+        }
+    }
+
+    function selectMatchRight(qIdx, rightIdx) {
+        if (matchSelectedLeft === null) return;
+        const rightEl = document.getElementById(`mr_${qIdx}_${rightIdx}`);
+        const leftEl = document.getElementById(`ml_${qIdx}_${matchSelectedLeft}`);
+        if (!rightEl || rightEl.classList.contains('paired')) return;
+        if (!leftEl) return;
+
+        // Pair them
+        matchPairs.push({ left: matchSelectedLeft, right: rightIdx });
+        leftEl.classList.remove('selected');
+        leftEl.classList.add('paired');
+        rightEl.classList.add('paired');
+
+        // Add pair number indicator
+        const pairNum = matchPairs.length;
+        leftEl.textContent = `${pairNum}. ${leftEl.textContent}`;
+        rightEl.textContent = `${pairNum}. ${rightEl.textContent}`;
+
+        matchSelectedLeft = null;
+    }
+
+    function checkMatch(qIdx) {
+        const q = CONFIG_DATA.questions[qIdx];
+        if (matchPairs.length < q.pairs.length) return; // not all paired yet
+
+        document.getElementById('spMatchSubmit').disabled = true;
+        let allCorrect = true;
+
+        matchPairs.forEach(pair => {
+            const leftEl = document.getElementById(`ml_${qIdx}_${pair.left}`);
+            const rightEl = document.getElementById(`mr_${qIdx}_${pair.right}`);
+            const correctRightIdx = matchShuffledRight[pair.right].origIdx;
+            const isCorrect = pair.left === correctRightIdx;
+
+            if (leftEl) leftEl.classList.add(isCorrect ? 'correct-opt' : 'wrong-match');
+            if (rightEl) rightEl.classList.add(isCorrect ? 'correct-opt' : 'wrong-match');
+            if (!isCorrect) allCorrect = false;
+        });
+
+        SP.answers[q.id] = allCorrect ? 'correct' : 'incorrect';
+        showFeedback(allCorrect, allCorrect ? q.feedbackOk : q.feedbackNok);
+        if (allCorrect && navigator.vibrate) navigator.vibrate(50);
+        if (SP.mode === 'live') submitAnswer(q.id, SP.answers[q.id]);
+    }
+
+    // ─── LUCKTEXT ───
+    function renderLucktextQuestion(q, idx) {
+        const parts = q.text.split('___');
+        let html = `<p style="font-size:0.8rem;color:var(--sp-text-muted);margin-bottom:0.8rem">Tips: ${t('lucktextHint')}</p>`;
+        html += '<div class="sp-lucktext-area">';
+        parts.forEach((part, i) => {
+            html += `<span>${part}</span>`;
+            if (i < parts.length - 1) {
+                html += `<input type="text" class="sp-luck-input" id="luck_${idx}_${i}"
+                    placeholder="..." aria-label="Lucka ${i + 1}" autocomplete="off">`;
+            }
+        });
+        html += '</div>';
+        html += `<button class="sp-submit-btn" onclick="checkLucktext(${idx})"
+            ${keyHandler(`checkLucktext(${idx})`)} role="button" tabindex="0">
+            ${t('checkBtn')}</button>`;
+        return html;
+    }
+
+    function checkLucktext(qIdx) {
+        const q = CONFIG_DATA.questions[qIdx];
+        let allCorrect = true;
+
+        q.correctAnswers.forEach((correct, i) => {
+            const input = document.getElementById(`luck_${qIdx}_${i}`);
+            if (!input) return;
+            const val = input.value.trim().toLowerCase();
+            const expected = correct.toLowerCase();
+            const isCorrect = val === expected;
+            input.classList.add(isCorrect ? 'correct-input' : 'wrong-input');
+            input.readOnly = true;
+            if (!isCorrect) {
+                allCorrect = false;
+                input.value = `${input.value} → ${correct}`;
+            }
+        });
+
+        SP.answers[q.id] = allCorrect ? 'correct' : 'incorrect';
+        showFeedback(allCorrect, allCorrect ? q.feedbackOk : q.feedbackNok);
+        if (allCorrect && navigator.vibrate) navigator.vibrate(50);
+        if (SP.mode === 'live') submitAnswer(q.id, SP.answers[q.id]);
+    }
+
+    // ─── FREETEXT ───
+    function renderFreetextQuestion(q, idx) {
+        let html = `<p style="font-size:0.8rem;color:var(--sp-text-muted);margin-bottom:0.8rem">Tips: ${t('freetextHint')}</p>`;
+        html += `<div class="sp-freetext-area">
+            <textarea class="sp-freetext-textarea" id="freetext_${idx}"
+                placeholder="${q.placeholder || t('freetextHint')}"
+                aria-label="${q.text}" rows="4"></textarea>
+        </div>`;
+        html += `<button class="sp-submit-btn" onclick="checkFreetext(${idx})"
+            ${keyHandler(`checkFreetext(${idx})`)} role="button" tabindex="0">
+            ${t('submitBtn')}</button>`;
+        return html;
+    }
+
+    function checkFreetext(qIdx) {
+        const q = CONFIG_DATA.questions[qIdx];
+        const textarea = document.getElementById(`freetext_${qIdx}`);
+        if (!textarea || !textarea.value.trim()) return;
+
+        textarea.readOnly = true;
+        SP.answers[q.id] = textarea.value.trim();
+        showFeedback(true, q.feedbackMsg || 'Tack för ditt svar!');
+        if (SP.mode === 'live') submitAnswer(q.id, strToHex(textarea.value.trim().substring(0, 100)));
+    }
+
+    // ─── FEEDBACK ───
+    function showFeedback(correct, message) {
+        const fb = document.getElementById('spFeedback');
+        const cont = document.getElementById('spContinueBtn');
+        if (fb) {
+            fb.className = `sp-feedback show ${correct ? 'ok' : 'nok'}`;
+            fb.innerHTML = `<span class="sp-result-icon">${correct ? '✓' : '✗'}</span> ${message}`;
+        }
+        if (cont) cont.classList.add('show');
+    }
+
+    // ═══════════════════════════════════════════
+    // TEACHER PANEL (K1, K4, V3, V5)
+    // ═══════════════════════════════════════════
+
+    function renderTeacherPanel() {
+        audioEl.src = SP_CONFIG.AUDIO_FILE;
+        const totalQ = CONFIG_DATA ? CONFIG_DATA.questions.length : 0;
+
+        root.innerHTML = `
+        <div class="sp-teacher">
+            <div class="sp-header" style="max-width:1100px;margin:0 auto 1.5rem auto;">
+                <div>
+                    <div class="sp-header-title">${t('appName')} — Lärarpanel</div>
+                </div>
+                <div class="sp-header-badge" style="background:rgba(245,158,11,0.15);color:var(--sp-accent-warm);">TEACHER</div>
+            </div>
+
+            <div class="sp-teacher-grid">
+                <!-- Audio Panel -->
+                <div class="sp-panel">
+                    <div class="sp-panel-title">Ljudspelare</div>
+                    <div class="sp-player" style="margin-bottom:0;">
+                        <button class="sp-player-btn" id="spTeacherPlayBtn"
+                            onclick="toggleAudio()" role="button" tabindex="0"
+                            aria-label="Spela/Pausa"
+                            ${keyHandler('toggleAudio()')}>
+                            ▶
+                        </button>
+                        <div class="sp-timeline-wrap">
+                            <input type="range" class="sp-timeline" id="spTeacherTimeline" min="0" max="${CONFIG_DATA ? CONFIG_DATA.duration : 1200}" value="0"
+                                oninput="seekAudio(this.value)" aria-label="Tidslinje">
+                            <div class="sp-time-row">
+                                <span id="spTimeNow">0:00</span>
+                                <span id="spTimeDur">${CONFIG_DATA ? formatTime(CONFIG_DATA.duration) : '0:00'}</span>
+                            </div>
+                        </div>
+                        <button class="sp-speed-btn" id="spTeacherSpeedBtn"
+                            onclick="cycleSpeed(event)" role="button" tabindex="0"
+                            aria-label="Hastighet"
+                            ${keyHandler('cycleSpeed(event)')}>
+                            1x
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Student Dashboard (K1) -->
+                <div class="sp-panel">
+                    <div class="sp-panel-title">Elevöversikt</div>
+                    <div id="spTeacherDashboard" aria-live="polite">
+                        <div class="sp-dash-header">${t('noStudents')}</div>
+                    </div>
+                    <div style="margin-top:0.8rem;display:flex;gap:0.5rem;">
+                        <button class="sp-btn-sm" onclick="pollStudentResponses()" role="button" tabindex="0"
+                            ${keyHandler('pollStudentResponses()')} aria-label="Uppdatera">
+                            Uppdatera
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question Controls -->
+                <div class="sp-panel">
+                    <div class="sp-panel-title">Frågor (${totalQ})</div>
+                    <div class="sp-q-list" id="spTeacherQList">
+                        ${CONFIG_DATA ? CONFIG_DATA.questions.map((q, i) => `
+                            <div class="sp-q-list-item" role="button" tabindex="0" id="tq_${i}"
+                                onclick="teacherPushQuestion(${i})"
+                                ${keyHandler(`teacherPushQuestion(${i})`)}>
+                                <span style="font-weight:600;color:var(--sp-accent);width:2rem;">${i + 1}.</span>
+                                <span style="flex:1;font-size:0.78rem;">${q.text.substring(0, 60)}${q.text.length > 60 ? '...' : ''}</span>
+                                <span style="font-size:0.65rem;color:var(--sp-text-muted)">${formatTime(q.triggerTime)}</span>
+                                <span style="font-size:0.65rem;background:var(--sp-bg-surface-light);padding:0.15rem 0.4rem;border-radius:4px;color:var(--sp-accent)">${q.type}</span>
+                            </div>
+                        `).join('') : ''}
+                    </div>
+                </div>
+
+                <!-- Message Panel -->
+                <div class="sp-panel">
+                    <div class="sp-panel-title">Meddelande till elever</div>
+                    <input type="text" class="sp-msg-input" id="spTeacherMsgInput"
+                        placeholder="Skriv ett meddelande..."
+                        aria-label="Meddelande till elever"
+                        onkeydown="if(event.key==='Enter'){event.preventDefault();sendTeacherMsg();}">
+                    <div class="sp-msg-btns">
+                        <button class="sp-btn-sm" onclick="sendTeacherMsg()" role="button" tabindex="0"
+                            ${keyHandler('sendTeacherMsg()')} aria-label="Skicka meddelande"
+                            style="background:var(--sp-accent-soft);color:var(--sp-accent);">
+                            ${t('sendMsg')}
+                        </button>
+                        <button class="sp-btn-sm" onclick="clearTeacherMsg()" role="button" tabindex="0"
+                            ${keyHandler('clearTeacherMsg()')} aria-label="Rensa meddelande">
+                            ${t('clearMsg')}
+                        </button>
+                    </div>
+
+                    <div style="margin-top:1.5rem;border-top:1px solid var(--sp-border);padding-top:1rem;">
+                        <div class="sp-panel-title" style="font-size:0.75rem;">Sessionsverktyg</div>
+                        <button class="sp-copy-btn" id="spCopyBtn" onclick="copyStudentLink()" role="button" tabindex="0"
+                            ${keyHandler('copyStudentLink()')} aria-label="${t('copyLink')}">
+                            ${t('copyLink')}
+                        </button>
+                        <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+                            <button class="sp-btn-sm" onclick="resetSession()" role="button" tabindex="0"
+                                ${keyHandler('resetSession()')} aria-label="${t('resetBtn')}"
+                                style="color:var(--sp-incorrect);">
+                                ${t('resetBtn')}
+                            </button>
+                            <button class="sp-btn-sm" onclick="startBeeGame(true)" role="button" tabindex="0"
+                                ${keyHandler('startBeeGame(true)')} aria-label="Starta bi-spelet"
+                                style="background:rgba(245,166,35,0.15);color:#f5a623;border:1px solid rgba(245,166,35,0.3);">
+                                Starta Värmebollsförsvaret
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
+        audioEl.addEventListener('loadedmetadata', () => {
+            const dur = document.getElementById('spTimeDur');
+            if (dur) dur.textContent = formatTime(audioEl.duration);
+            const tl = document.getElementById('spTeacherTimeline');
+            if (tl) tl.max = Math.floor(audioEl.duration);
+        });
+        audioEl.addEventListener('timeupdate', onAudioTimeUpdate);
+
+        // Start polling (K1)
+        startTeacherPolling();
+        // Start state broadcast
+        startTeacherBroadcast();
+    }
+
+    function teacherPushQuestion(idx) {
+        SP.teacherPushedQ = idx;
+        // Pause audio when pushing question
+        audioEl.pause();
+        SP.isPlaying = false;
+        updatePlayBtn();
+        // Highlight in list
+        document.querySelectorAll('[id^="tq_"]').forEach(el => el.classList.remove('active', 'pushed'));
+        const el = document.getElementById(`tq_${idx}`);
+        if (el) { el.classList.add('active', 'pushed'); }
+        broadcastTeacherState();
+    }
+
+    function sendTeacherMsg() {
+        const input = document.getElementById('spTeacherMsgInput');
+        if (!input || !input.value.trim()) return;
+        teacherMsgColor = '#1f2937';
+        teacherMsgText = input.value.trim();
+        broadcastTeacherState();
+    }
+
+    function clearTeacherMsg() {
+        teacherMsgColor = 'none';
+        teacherMsgText = '';
+        document.getElementById('spTeacherMsgInput').value = '';
+        broadcastTeacherState();
+    }
+
+    // V5: Copy student link
+    function copyStudentLink() {
+        const url = window.location.href.replace(/[?#].*$/, '');
+        navigator.clipboard.writeText(url).then(() => {
+            const btn = document.getElementById('spCopyBtn');
+            if (btn) {
+                btn.classList.add('copied');
+                btn.textContent = t('copied');
+                setTimeout(() => { btn.classList.remove('copied'); btn.textContent = t('copyLink'); }, 2000);
+            }
+        }).catch(() => {
+            // Fallback
+            prompt('Kopiera länken:', url);
+        });
+    }
+
+    // V3: Reset with confirm
+    function resetSession() {
+        if (!confirm(t('resetConfirm'))) return;
+        SP.knownStudents.clear();
+        SP.studentAnswers.clear();
+        SP.teacherPushedQ = -1;
+        teacherMsgColor = 'none';
+        teacherMsgText = '';
+        // Clear remote state
+        apiSet('state', '0_-1_0_none_none');
+        apiSet('student_list', strToHex(''));
+        // Update dashboard
+        const dash = document.getElementById('spTeacherDashboard');
+        if (dash) dash.innerHTML = `<div class="sp-dash-header">${t('noStudents')}</div>`;
+        // Clear question highlights
+        document.querySelectorAll('[id^="tq_"]').forEach(el => el.classList.remove('active', 'pushed'));
+    }
+
+    // ═══════════════════════════════════════════
+    // TEACHER BROADCAST & POLLING (K1)
+    // ═══════════════════════════════════════════
+
+    function broadcastTeacherState() {
+        setTeacherState(SP.audioTime, SP.teacherPushedQ, SP.isPlaying, teacherMsgColor, teacherMsgText);
+    }
+
+    function startTeacherBroadcast() {
+        setInterval(() => {
+            if (SP.isPlaying) broadcastTeacherState();
+        }, SP_CONFIG.SYNC_INTERVAL);
+    }
+
+    function startTeacherPolling() {
+        // Immediately poll
+        discoverStudents();
+        // Then every POLL_INTERVAL
+        SP.pollInterval = setInterval(() => {
+            discoverStudents();
+        }, SP_CONFIG.POLL_INTERVAL);
+    }
+
+    async function discoverStudents() {
+        try {
+            const listRaw = await apiGet('student_list');
+            if (!listRaw) return;
+            const decoded = hexToStr(listRaw);
+            if (!decoded) return;
+            const ids = decoded.split(',').filter(id => id.trim());
+            // Parallel fetch for all unknown students
+            const unknownIds = ids.filter(sid => !SP.knownStudents.has(sid));
+            if (unknownIds.length > 0) {
+                const names = await Promise.all(
+                    unknownIds.map(sid => apiGet(`stu_${sid}`).catch(() => null))
+                );
+                unknownIds.forEach((sid, i) => {
+                    const name = names[i] ? hexToStr(names[i]) : 'Gäst';
+                    SP.knownStudents.set(sid, name);
+                });
+            }
+            await pollStudentResponses();
+        } catch(e) {
+            console.warn('Student discovery failed:', e);
+        }
+    }
+
+    async function pollStudentResponses() {
+        const dashboard = document.getElementById('spTeacherDashboard');
+        if (!dashboard || !CONFIG_DATA) return;
+
+        const totalStudents = SP.knownStudents.size;
+        if (totalStudents === 0) {
+            dashboard.innerHTML = `<div class="sp-dash-header">${t('noStudents')}</div>`;
+            return;
+        }
+
+        // Parallel fetch all student answers (Promise.all for scalability)
+        const sids = [...SP.knownStudents.keys()];
+        const results = await Promise.all(
+            sids.map(sid => apiGet(`ans_${sid}`).catch(() => null))
+        );
+        results.forEach((raw, i) => {
+            if (!raw) return;
+            try {
+                const decoded = hexToStr(raw);
+                const ansMap = {};
+                decoded.split(',').forEach(pair => {
+                    const [qid, answer] = pair.split(':');
+                    if (qid && answer) ansMap[qid] = answer;
+                });
+                SP.studentAnswers.set(sids[i], ansMap);
+            } catch(e) { /* skip */ }
+        });
+
+        // Build dashboard
+        const pl = totalStudents !== 1 ? 'er' : '';
+        let html = `<div class="sp-dash-header"><span class="sp-live-dot"></span> ${t('studentsConnected').replace('{n}', totalStudents).replace('{pl}', pl)}</div>`;
+
+        CONFIG_DATA.questions.forEach((q, idx) => {
+            let correct = 0, incorrect = 0, pending = 0;
+            SP.knownStudents.forEach((name, sid) => {
+                const ansMap = SP.studentAnswers.get(sid) || {};
+                if (!ansMap[q.id]) {
+                    pending++;
+                } else if (q.type === 'multiple-choice') {
+                    if (ansMap[q.id] === q.correct) correct++;
+                    else incorrect++;
+                } else if (q.type === 'freetext') {
+                    correct++; // freetext always counted as answered
+                } else {
+                    if (ansMap[q.id] === 'correct') correct++;
+                    else incorrect++;
+                }
+            });
+            html += `
+                <div class="sp-dash-q">
+                    <span>F${idx + 1}: ${q.type}</span>
+                    <span>
+                        <span style="color:var(--sp-correct)">✓${correct}</span>
+                        <span style="color:var(--sp-incorrect);margin-left:0.5rem">✗${incorrect}</span>
+                        <span style="color:var(--sp-text-muted);margin-left:0.5rem">…${pending}</span>
+                    </span>
+                </div>`;
+        });
+
+        // Student list
+        html += '<div style="margin-top:0.8rem;border-top:1px solid var(--sp-border);padding-top:0.5rem;">';
+        SP.knownStudents.forEach((name, sid) => {
+            const ansCount = (SP.studentAnswers.get(sid) ? Object.keys(SP.studentAnswers.get(sid)).length : 0);
+            html += `<div style="font-size:0.75rem;color:var(--sp-text-secondary);padding:0.2rem 0;">
+                ${name} <span style="color:var(--sp-text-muted)">(${ansCount}/${CONFIG_DATA.questions.length} svar)</span>
+            </div>`;
+        });
+        html += '</div>';
+
+        dashboard.innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════════
+    // LIVE SYNC — STUDENT (V1: jitter)
+    // ═══════════════════════════════════════════
+
+    function startLiveSync() {
+        SP.syncInterval = setInterval(async () => {
+            // V1: Jitter
+            await new Promise(r => setTimeout(r, Math.random() * 800));
+            try {
+                const state = await getTeacherState();
+                if (!state) return;
+                handleOnline();
+
+                // Handle fullscreen message
+                if (state.msgColor && state.msgColor !== 'none' && state.msgText) {
+                    fullscreenMsg.style.backgroundColor = state.msgColor;
+                    fullscreenMsgText.textContent = state.msgText;
+                    fullscreenMsg.classList.add('show');
+                } else {
+                    fullscreenMsg.classList.remove('show');
+                }
+
+                // Handle question push
+                if (state.questionIdx >= 0 && state.questionIdx !== SP.teacherPushedQ) {
+                    SP.teacherPushedQ = state.questionIdx;
+                    if (!SP.answers[CONFIG_DATA.questions[state.questionIdx]?.id]) {
+                        audioEl.pause();
+                        SP.isPlaying = false;
+                        updatePlayBtn();
+                        showQuestion(state.questionIdx);
+                    }
+                }
+
+                // Sync audio (only if not answering a question)
+                if (SP.currentQ === -1) {
+                    const diff = Math.abs(audioEl.currentTime - state.audioTime);
+                    if (diff > 3) {
+                        audioEl.currentTime = state.audioTime;
+                    }
+                    if (state.isPlaying && audioEl.paused) {
+                        audioEl.play().catch(() => {});
+                        SP.isPlaying = true;
+                        updatePlayBtn();
+                    } else if (!state.isPlaying && !audioEl.paused) {
+                        audioEl.pause();
+                        SP.isPlaying = false;
+                        updatePlayBtn();
+                    }
+                }
+            } catch(e) {
+                handleOffline();
+            }
+        }, SP_CONFIG.SYNC_INTERVAL);
+    }
+
+    // ═══════════════════════════════════════════
+    // RESULTS SCREEN
+    // ═══════════════════════════════════════════
+
+    function showResults() {
+        if (!CONFIG_DATA) return;
+        const questions = CONFIG_DATA.questions;
+        let correctCount = 0;
+        const rows = [];
+
+        questions.forEach((q, idx) => {
+            const ans = SP.answers[q.id];
+            let isCorrect = false;
+            if (q.type === 'freetext') {
+                isCorrect = !!ans;
+            } else if (q.type === 'multiple-choice') {
+                isCorrect = ans === q.correct;
+            } else {
+                isCorrect = ans === 'correct';
+            }
+            if (isCorrect) correctCount++;
+            rows.push({ q, idx, ans, isCorrect });
+        });
+
+        const pct = Math.round((correctCount / questions.length) * 100);
+        let resultIcon, message;
+        if (pct === 100) { resultIcon = '★'; message = t('fullScore'); }
+        else if (pct >= 70) { resultIcon = '★'; message = t('goodScore'); }
+        else if (pct >= 40) { resultIcon = '○'; message = t('okScore'); }
+        else { resultIcon = '○'; message = t('lowScore'); }
+
+        const wrap = document.getElementById('spQuestionWrap');
+        const card = document.getElementById('spQuestionCard');
+        if (!wrap || !card) return;
+
+        let html = `
+            <div class="sp-results">
+                <div class="sp-results-emoji">${resultIcon}</div>
+                <h2>${message}</h2>
+                <p class="sp-score-line">${correctCount} av ${questions.length} rätt (${pct}%)</p>
+            </div>`;
+
+        rows.forEach(r => {
+            html += `<div class="sp-result-row ${r.isCorrect ? 'ok' : 'nok'}">
+                <span class="sp-result-icon">${r.isCorrect ? '✓' : '✗'}</span>
+                <span style="flex:1">F${r.idx + 1}: ${r.q.text.substring(0, 50)}...</span>
+            </div>`;
+        });
+
+        html += `<div style="display:flex;gap:0.8rem;margin-top:1.5rem;flex-wrap:wrap;justify-content:center;">
+            <button class="sp-btn-primary" style="width:auto;padding:0.7rem 1.5rem" onclick="closeQuestion()" role="button" tabindex="0"
+                ${keyHandler('closeQuestion()')}>${t('continueBtn')}</button>
+            <button class="sp-btn-primary" style="width:auto;padding:0.7rem 1.5rem;background:linear-gradient(135deg,#f5a623,#e6870a);" onclick="closeQuestion();startBeeGame(false)" role="button" tabindex="0"
+                ${keyHandler("closeQuestion();startBeeGame(false)")}>Spela Värmebollsförsvaret!</button>
+        </div>`;
+
+        card.innerHTML = html;
+        wrap.classList.add('show');
+    }
+
+
+    // ═══════════════════════════════════════════
+    // 🐝 BEE DEFENSE GAME — "Hot Defensive Bee Ball"
+    // Multiplayer: students = bees, AI = hornet (Vespa mandarinia / sammetsjätting)
+    // Real science: bees surround hornet, raise temp to ~47°C
+    // ═══════════════════════════════════════════
+
+    const GAME = {
+        active: false,
+        canvas: null,
+        ctx: null,
+        animFrame: null,
+        syncInterval: null,
+        lastTime: 0,
+
+        // World (normalized 0-1 coordinates, mapped to canvas)
+        hornet: { x: 0.5, y: 0.5, vx: 0, vy: 0, speed: 0.12, targetBee: null, chaseTimer: 0, heading: 0 },
+        myBee: { x: 0.3, y: 0.7, heading: 0 },
+        allBees: new Map(),       // sid -> {x, y, name, heading}
+        temperature: 25,         // C -- starts at ambient
+        lethalTemp: 47,          // C -- lethal for Vespa mandarinia
+        beeLethalTemp: 50,       // C -- bees can survive up to ~50C
+        ambientTemp: 25,
+        heatRadius: 0.08,        // How close a bee must be to heat the hornet
+        heatRate: 2.5,           // C/sec per bee in range
+        coolRate: 1.2,           // C/sec cooling when no bees near
+        chaseStickTime: 3,       // seconds before retargeting
+        // Pre-generated fuzzy texture dots (avoids flicker from Math.random per frame)
+        beeFuzzyDots: Array.from({length: 8}, () => ({dx: (Math.random() - 0.5) * 0.5, dy: (Math.random() - 0.5) * 0.5})),
+        hornetFuzzyDots: Array.from({length: 12}, () => ({dx: (Math.random() - 0.5) * 1.2, dy: (Math.random() - 0.5) * 0.8})),
+
+        // Input
+        pointerDown: false,
+        pointerTarget: { x: 0.5, y: 0.5 },
+        keysDown: new Set(),  // Active keyboard keys (WASD/arrows)
+        beeSpeed: 0.18,
+
+        // Victory
+        victory: false,
+        victoryTime: 0,
+
+        // Visuals
+        beeEmoji: '',
+        hornetEmoji: '',
+        bgStars: []
+    };
+
+    function startBeeGame(isTeacher) {
+        GAME.active = true;
+        GAME.victory = false;
+        GAME.temperature = GAME.ambientTemp;
+        GAME.hornet = { x: 0.5, y: 0.5, vx: 0, vy: 0, speed: 0.12, targetBee: null, chaseTimer: 0 };
+        GAME.myBee = { x: 0.2 + Math.random() * 0.6, y: 0.2 + Math.random() * 0.6 };
+        GAME.allBees.clear();
+        GAME.bgStars = Array.from({ length: 60 }, () => ({
+            x: Math.random(), y: Math.random(),
+            r: 0.5 + Math.random() * 1.5,
+            a: 0.2 + Math.random() * 0.4
+        }));
+
+        // Create game DOM
+        let wrap = document.getElementById('spGameWrap');
+        if (!wrap) {
+            wrap = document.createElement('div');
+            wrap.id = 'spGameWrap';
+            wrap.className = 'sp-game-wrap';
+            wrap.innerHTML = `
+                <canvas class="sp-game-canvas" id="spGameCanvas"></canvas>
+                <div class="sp-game-hud" id="spGameHud">
+                    <div class="sp-game-title">VÄRMEBOLLSFÖRSVARET</div>
+                    <div class="sp-game-temp-wrap">
+                        <div class="sp-game-temp-fill" id="spGameTempFill"></div>
+                        <div class="sp-game-temp-text" id="spGameTempText">25.0°C</div>
+                    </div>
+                    <div class="sp-game-status" id="spGameStatus">Samla bina runt getingen!</div>
+                </div>
+                <div class="sp-game-instructions" id="spGameInstructions">
+                    <p><strong>Värmebollsförsvaret</strong></p>
+                    <p>Styr ditt bi med fingret/musen. Samarbeta med klassen — omringa getingen för att höja dess temperatur till 47°C!</p>
+                    <p style="font-size:0.75rem;color:var(--sp-text-muted)">Japanska honungsbin bildar en vibrerande klunga som övervärmer angriparen — exakt som i verkligheten!</p>
+                    <button class="sp-btn-primary" style="width:auto;margin-top:0.5rem;padding:0.6rem 2rem;" onclick="dismissGameInstructions()">Starta!</button>
+                </div>
+                <button class="sp-game-exit-btn" role="button" tabindex="0" onclick="exitBeeGame()"
+                    ${keyHandler('exitBeeGame()')}
+                    aria-label="Avsluta spelet">✗ Avsluta</button>
+            `;
+            document.body.appendChild(wrap);
+        }
+        wrap.classList.add('show');
+
+        GAME.canvas = document.getElementById('spGameCanvas');
+        GAME.ctx = GAME.canvas.getContext('2d');
+        resizeGameCanvas();
+        window.addEventListener('resize', resizeGameCanvas);
+
+        // Input handlers
+        GAME.canvas.addEventListener('pointerdown', onGamePointerDown);
+        GAME.canvas.addEventListener('pointermove', onGamePointerMove);
+        GAME.canvas.addEventListener('pointerup', onGamePointerUp);
+        GAME.canvas.addEventListener('pointercancel', onGamePointerUp);
+        // Keyboard handlers (WASD/arrows + Escape)
+        window.addEventListener('keydown', onGameKeyDown);
+        window.addEventListener('keyup', onGameKeyUp);
+
+        // Start sync — SCALABLE for 25+ students
+        if (!isTeacher) {
+            // STUDENT: 2 API calls per tick (1 write, 1 read)
+            GAME.syncInterval = setInterval(async () => {
+                if (!GAME.active) return;
+                // 1. Send MY position
+                const posStr = `${GAME.myBee.x.toFixed(3)}_${GAME.myBee.y.toFixed(3)}_${(GAME.myBee.heading || 0).toFixed(2)}`;
+                apiSet(`bee_${SP.studentId}`, posStr); // fire & forget
+
+                // 2. Read game_state (contains hornet + ALL bees)
+                const gs = await apiGet('game_state');
+                if (!gs) return;
+                try {
+                    const decoded = hexToStr(gs);
+                    const sections = decoded.split('|');
+                    // Section 0: hornetX,hornetY,temp,victory
+                    const header = sections[0].split(',');
+                    if (header.length >= 4) {
+                        GAME.hornet.x = parseFloat(header[0]) || 0.5;
+                        GAME.hornet.y = parseFloat(header[1]) || 0.5;
+                        GAME.temperature = parseFloat(header[2]) || 25;
+                        if (header[3] === '1' && !GAME.victory) showVictory();
+                    }
+                    // Sections 1+: sid,x,y,name per bee
+                    GAME.allBees.clear();
+                    for (let i = 1; i < sections.length; i++) {
+                        const bParts = sections[i].split(',');
+                        if (bParts.length >= 4 && bParts[0] !== SP.studentId) {
+                            GAME.allBees.set(bParts[0], {
+                                x: parseFloat(bParts[1]) || 0.5,
+                                y: parseFloat(bParts[2]) || 0.5,
+                                name: bParts[3],
+                                heading: parseFloat(bParts[4]) || 0
+                            });
+                        }
+                    }
+                } catch(e) { console.warn('Game state parse error:', e); }
+            }, 500);
+        } else {
+            // TEACHER: parallel reads with Promise.all, single broadcast
+            GAME.syncInterval = setInterval(async () => {
+                if (!GAME.active) return;
+                // 1. Parallel fetch ALL student bee positions
+                const studentIds = [...SP.knownStudents.keys()];
+                const results = await Promise.all(
+                    studentIds.map(sid => apiGet(`bee_${sid}`).catch(() => null))
+                );
+                results.forEach((raw, i) => {
+                    if (!raw) return;
+                    const bParts = raw.split('_').map(parseFloat);
+                    if (!isNaN(bParts[0]) && !isNaN(bParts[1])) {
+                        const name = SP.knownStudents.get(studentIds[i]) || 'Gäst';
+                        GAME.allBees.set(studentIds[i], { x: bParts[0], y: bParts[1], heading: bParts[2] || 0, name });
+                    }
+                });
+
+                // 2. Build game_state: header|bee1|bee2|...
+                let stateStr = `${GAME.hornet.x.toFixed(3)},${GAME.hornet.y.toFixed(3)},${GAME.temperature.toFixed(1)},${GAME.victory ? '1' : '0'}`;
+                // Include teacher's own bee
+                stateStr += `|teacher,${GAME.myBee.x.toFixed(3)},${GAME.myBee.y.toFixed(3)},Lärare,${(GAME.myBee.heading || 0).toFixed(2)}`;
+                // Include all student bees
+                GAME.allBees.forEach((bee, sid) => {
+                    stateStr += `|${sid},${bee.x.toFixed(3)},${bee.y.toFixed(3)},${bee.name},${(bee.heading || 0).toFixed(2)}`;
+                });
+                await apiSet('game_state', strToHex(stateStr));
+            }, 600);
+        }
+
+        // Start game loop
+        GAME.lastTime = performance.now();
+        gameLoop();
+    }
+
+    function resizeGameCanvas() {
+        if (!GAME.canvas) return;
+        GAME.canvas.width = window.innerWidth;
+        GAME.canvas.height = window.innerHeight;
+    }
+
+    function dismissGameInstructions() {
+        const el = document.getElementById('spGameInstructions');
+        if (el) el.style.display = 'none';
+    }
+
+    // ─── Input ───
+    function onGamePointerDown(e) {
+        GAME.pointerDown = true;
+        updatePointerTarget(e);
+    }
+    function onGamePointerMove(e) {
+        if (GAME.pointerDown) updatePointerTarget(e);
+    }
+    function onGamePointerUp() { GAME.pointerDown = false; }
+    function updatePointerTarget(e) {
+        if (!GAME.canvas) return;
+        GAME.pointerTarget.x = e.clientX / GAME.canvas.width;
+        GAME.pointerTarget.y = e.clientY / GAME.canvas.height;
+    }
+
+    // ─── Keyboard Input (WASD + Arrows) ───
+    function onGameKeyDown(e) {
+        const k = e.key;
+        if (['w','a','s','d','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k)) {
+            e.preventDefault();
+            GAME.keysDown.add(k);
+        }
+        if (k === 'Escape') exitBeeGame();
+    }
+    function onGameKeyUp(e) {
+        GAME.keysDown.delete(e.key);
+    }
+
+    // ─── Game Loop ───
+    function gameLoop() {
+        if (!GAME.active) return;
+        const now = performance.now();
+        const dt = Math.min((now - GAME.lastTime) / 1000, 0.1);
+        GAME.lastTime = now;
+
+        updateBeeMovement(dt);
+
+        // Only teacher runs the hornet AI and temperature logic
+        if (SP.mode === 'teacher') {
+            updateHornetAI(dt);
+            updateTemperature(dt);
+        }
+
+        renderGame();
+        GAME.animFrame = requestAnimationFrame(gameLoop);
+    }
+
+    function updateBeeMovement(dt) {
+        // Keyboard input (WASD/arrows) — direct velocity control
+        const keys = GAME.keysDown;
+        let kx = 0, ky = 0;
+        if (keys.has('w') || keys.has('ArrowUp')) ky = -1;
+        if (keys.has('s') || keys.has('ArrowDown')) ky = 1;
+        if (keys.has('a') || keys.has('ArrowLeft')) kx = -1;
+        if (keys.has('d') || keys.has('ArrowRight')) kx = 1;
+        const hasKeyInput = kx !== 0 || ky !== 0;
+
+        if (hasKeyInput && !GAME.victory) {
+            // Normalize diagonal movement
+            const len = Math.sqrt(kx * kx + ky * ky);
+            const move = GAME.beeSpeed * dt;
+            GAME.myBee.x += (kx / len) * move;
+            GAME.myBee.y += (ky / len) * move;
+            const targetAngle = Math.atan2(ky, kx);
+            GAME.myBee.heading = lerpAngle(GAME.myBee.heading, targetAngle, 0.15);
+        } else if (GAME.pointerDown && !GAME.victory) {
+            // Pointer/touch input — move toward target
+            const dx = GAME.pointerTarget.x - GAME.myBee.x;
+            const dy = GAME.pointerTarget.y - GAME.myBee.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist > 0.005) {
+                const move = Math.min(GAME.beeSpeed * dt, dist);
+                GAME.myBee.x += (dx / dist) * move;
+                GAME.myBee.y += (dy / dist) * move;
+                const targetAngle = Math.atan2(dy, dx);
+                GAME.myBee.heading = lerpAngle(GAME.myBee.heading, targetAngle, 0.15);
+            }
+        }
+        // Clamp
+        GAME.myBee.x = Math.max(0.02, Math.min(0.98, GAME.myBee.x));
+        GAME.myBee.y = Math.max(0.02, Math.min(0.98, GAME.myBee.y));
+    }
+
+    // Smooth angle interpolation (handles wrapping)
+    function lerpAngle(a, b, t) {
+        let diff = b - a;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        return a + diff * t;
+    }
+
+    function updateHornetAI(dt) {
+        if (GAME.victory) return;
+        const h = GAME.hornet;
+
+        // Collect all bees (teacher's own + remote)
+        const bees = [];
+        if (SP.mode === 'teacher') {
+            // Teacher also plays as a bee
+            bees.push({ x: GAME.myBee.x, y: GAME.myBee.y, id: 'teacher' });
+        }
+        GAME.allBees.forEach((bee, sid) => {
+            bees.push({ x: bee.x, y: bee.y, id: sid });
+        });
+
+        if (bees.length === 0) return;
+
+        // Chase timer
+        h.chaseTimer -= dt;
+
+        // Find nearest bee OR retarget
+        if (!h.targetBee || h.chaseTimer <= 0) {
+            let nearest = null, nearestDist = Infinity;
+            bees.forEach(b => {
+                const dx = b.x - h.x, dy = b.y - h.y;
+                const d = Math.sqrt(dx * dx + dy * dy);
+                if (d < nearestDist) { nearestDist = d; nearest = b; }
+            });
+
+            // Check if another bee is very close to the hornet (defender)
+            const defenders = bees.filter(b => {
+                const dx = b.x - h.x, dy = b.y - h.y;
+                return Math.sqrt(dx * dx + dy * dy) < GAME.heatRadius * 1.5;
+            });
+
+            if (defenders.length >= 3) {
+                // If enough bees are swarming, hornet slows down (overwhelmed)
+                h.speed = 0.06;
+            } else {
+                h.speed = 0.12;
+            }
+
+            h.targetBee = nearest ? nearest.id : null;
+            h.chaseTimer = GAME.chaseStickTime;
+        }
+
+        // Move toward target
+        const target = bees.find(b => b.id === h.targetBee) || bees[0];
+        if (target) {
+            const dx = target.x - h.x;
+            const dy = target.y - h.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist > 0.01) {
+                h.vx = (dx / dist) * h.speed;
+                h.vy = (dy / dist) * h.speed;
+            }
+        }
+
+        h.x += h.vx * dt;
+        h.y += h.vy * dt;
+        h.x = Math.max(0.03, Math.min(0.97, h.x));
+        h.y = Math.max(0.03, Math.min(0.97, h.y));
+        // Track heading from velocity
+        if (Math.abs(h.vx) > 0.001 || Math.abs(h.vy) > 0.001) {
+            h.heading = lerpAngle(h.heading, Math.atan2(h.vy, h.vx), 0.1);
+        }
+    }
+
+    function updateTemperature(dt) {
+        if (GAME.victory) return;
+        const h = GAME.hornet;
+
+        // Count bees within heat radius
+        let nearbyCount = 0;
+        const bees = [{ x: GAME.myBee.x, y: GAME.myBee.y }];
+        GAME.allBees.forEach(b => bees.push({ x: b.x, y: b.y }));
+
+        bees.forEach(b => {
+            const dx = b.x - h.x, dy = b.y - h.y;
+            if (Math.sqrt(dx * dx + dy * dy) < GAME.heatRadius) nearbyCount++;
+        });
+
+        if (nearbyCount > 0) {
+            // Heat = more bees = faster (quadratic-ish for teamwork bonus)
+            const heatBonus = 1 + (nearbyCount - 1) * 0.5;
+            GAME.temperature += GAME.heatRate * nearbyCount * heatBonus * dt;
+        } else {
+            GAME.temperature -= GAME.coolRate * dt;
+        }
+
+        GAME.temperature = Math.max(GAME.ambientTemp, Math.min(55, GAME.temperature));
+
+        // Check victory
+        if (GAME.temperature >= GAME.lethalTemp) {
+            showVictory();
+        }
+
+        // Update HUD
+        updateTempHUD();
+    }
+
+    function updateTempHUD() {
+        const fill = document.getElementById('spGameTempFill');
+        const text = document.getElementById('spGameTempText');
+        const status = document.getElementById('spGameStatus');
+
+        const pct = ((GAME.temperature - GAME.ambientTemp) / (GAME.lethalTemp - GAME.ambientTemp)) * 100;
+        if (fill) fill.style.width = Math.min(100, pct) + '%';
+        if (text) text.textContent = GAME.temperature.toFixed(1) + '°C';
+        if (status) {
+            if (GAME.temperature < 30) status.textContent = 'Samla bina runt getingen!';
+            else if (GAME.temperature < 38) status.textContent = 'Temperaturen stiger! Håll er nära!';
+            else if (GAME.temperature < 45) status.textContent = 'Nästan! Getingen är trängd!';
+            else status.textContent = 'KRITISK TEMPERATUR!';
+        }
+    }
+
+    function showVictory() {
+        GAME.victory = true;
+        GAME.victoryTime = performance.now();
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+
+        const wrap = document.getElementById('spGameWrap');
+        if (!wrap) return;
+
+        const victoryDiv = document.createElement('div');
+        victoryDiv.className = 'sp-game-victory';
+        victoryDiv.id = 'spGameVictory';
+        victoryDiv.innerHTML = `
+            <div style="font-size:3rem;margin-bottom:1rem;font-weight:700;color:var(--sp-accent)">★ SEGER ★</div>
+            <h1>GETINGEN BESEGRADES!</h1>
+            <p>Temperaturen nådde ${GAME.temperature.toFixed(1)}°C — dödligt för Vespa mandarinia!</p>
+            <p style="font-size:0.85rem;color:var(--sp-text-muted);max-width:500px;text-align:center">
+                I verkligheten bildar japanska honungsbin (Apis cerana japonica) en "värmeboll" runt angripande
+                jättegetingar. Hundratals bin vibrerar sina flygmuskler och höjer temperaturen till ~47°C.
+                Bina tål upp till 50°C, men getingen dör av överhettning.
+            </p>
+            <button class="sp-btn-primary" style="width:auto;padding:0.8rem 2rem;margin-top:1rem;"
+                onclick="exitBeeGame()">
+                Tillbaka till SoundPulse
+            </button>`;
+        wrap.appendChild(victoryDiv);
+    }
+
+    function exitBeeGame() {
+        GAME.active = false;
+        if (GAME.animFrame) cancelAnimationFrame(GAME.animFrame);
+        if (GAME.syncInterval) clearInterval(GAME.syncInterval);
+        window.removeEventListener('resize', resizeGameCanvas);
+        window.removeEventListener('keydown', onGameKeyDown);
+        window.removeEventListener('keyup', onGameKeyUp);
+        GAME.keysDown.clear();
+
+        const wrap = document.getElementById('spGameWrap');
+        if (wrap) wrap.remove();
+    }
+
+    // ─── Render ───
+    function renderGame() {
+        const ctx = GAME.ctx;
+        const W = GAME.canvas.width;
+        const H = GAME.canvas.height;
+        if (!ctx) return;
+
+        // Background — dark nature scene
+        ctx.fillStyle = '#0a1a0a';
+        ctx.fillRect(0, 0, W, H);
+
+        // Subtle grass/ground gradient
+        const grd = ctx.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, W * 0.6);
+        grd.addColorStop(0, 'rgba(16, 48, 16, 0.3)');
+        grd.addColorStop(1, 'rgba(5, 15, 5, 0)');
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, W, H);
+
+        // "Stars" / ambient particles
+        GAME.bgStars.forEach(s => {
+            ctx.beginPath();
+            ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(200, 230, 200, ${s.a * (0.5 + 0.5 * Math.sin(performance.now() / 2000 + s.x * 10))})`;
+            ctx.fill();
+        });
+
+        const toX = (nx) => nx * W;
+        const toY = (ny) => ny * H;
+        const beeSize = Math.min(W, H) * 0.03;
+        const hornetSize = Math.min(W, H) * 0.05;
+
+        // Heat radius visualization
+        if (!GAME.victory) {
+            const hr = GAME.heatRadius * Math.min(W, H);
+            ctx.beginPath();
+            ctx.arc(toX(GAME.hornet.x), toY(GAME.hornet.y), hr, 0, Math.PI * 2);
+            const heatAlpha = Math.min(0.25, (GAME.temperature - 25) / 50);
+            ctx.fillStyle = `rgba(239, 68, 68, ${heatAlpha})`;
+            ctx.fill();
+            ctx.strokeStyle = `rgba(239, 68, 68, ${0.15 + heatAlpha})`;
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Draw remote bees (heading from synced data or 0)
+        GAME.allBees.forEach((bee, sid) => {
+            drawBee(ctx, toX(bee.x), toY(bee.y), beeSize, bee.name, false, bee.heading || 0);
+        });
+
+        // Draw my bee (with tracked heading)
+        drawBee(ctx, toX(GAME.myBee.x), toY(GAME.myBee.y), beeSize * 1.1,
+            SP.mode === 'teacher' ? 'Lärare' : SP.studentName, true, GAME.myBee.heading);
+
+        // Draw hornet
+        drawHornet(ctx, toX(GAME.hornet.x), toY(GAME.hornet.y), hornetSize);
+
+        // Temperature visual on hornet
+        if (GAME.temperature > 30) {
+            const glowRadius = hornetSize * (1 + (GAME.temperature - 30) / 15);
+            const gradient = ctx.createRadialGradient(
+                toX(GAME.hornet.x), toY(GAME.hornet.y), hornetSize * 0.3,
+                toX(GAME.hornet.x), toY(GAME.hornet.y), glowRadius
+            );
+            gradient.addColorStop(0, `rgba(245, 158, 11, ${(GAME.temperature - 30) / 40})`);
+            gradient.addColorStop(1, 'rgba(239, 68, 68, 0)');
+            ctx.beginPath();
+            ctx.arc(toX(GAME.hornet.x), toY(GAME.hornet.y), glowRadius, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+        }
+
+        // HUD update for student
+        if (SP.mode !== 'teacher') updateTempHUD();
+    }
+
+    function drawBee(ctx, x, y, size, name, isMe, heading) {
+        const angle = typeof heading === 'number' ? heading : 0;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+
+        // Glow for own bee
+        if (isMe) {
+            ctx.beginPath();
+            ctx.arc(0, 0, size * 2, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(245, 200, 50, 0.12)';
+            ctx.fill();
+        }
+
+        const t = performance.now();
+
+        // === WINGS (behind body) — translucent, animated ===
+        const wingFlap = Math.sin(t / 30) * 0.4;  // fast flapping
+        // Left wing
+        ctx.beginPath();
+        ctx.ellipse(-size * 0.15, -size * 0.55, size * 0.65, size * 0.28, -0.2 + wingFlap, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(200, 225, 255, 0.25)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(180, 210, 255, 0.2)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+        // Right wing
+        ctx.beginPath();
+        ctx.ellipse(-size * 0.15, size * 0.55, size * 0.65, size * 0.28, 0.2 - wingFlap, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(200, 225, 255, 0.25)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(180, 210, 255, 0.2)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+
+        // === ABDOMEN (rear, striped) ===
+        ctx.beginPath();
+        ctx.ellipse(-size * 0.3, 0, size * 0.75, size * 0.5, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#e8a217';
+        ctx.fill();
+        // Stripes on abdomen
+        ctx.save();
+        ctx.clip();
+        for (let i = -3; i <= 3; i++) {
+            ctx.fillStyle = '#2a1a00';
+            ctx.fillRect(-size * 1.1, i * size * 0.22 - size * 0.04, size * 2.2, size * 0.08);
+        }
+        ctx.restore();
+        // Stinger
+        ctx.beginPath();
+        ctx.moveTo(-size * 1.0, 0);
+        ctx.lineTo(-size * 1.25, -size * 0.04);
+        ctx.lineTo(-size * 1.25, size * 0.04);
+        ctx.closePath();
+        ctx.fillStyle = '#1a0e00';
+        ctx.fill();
+
+        // === THORAX (middle, fuzzy) ===
+        ctx.beginPath();
+        ctx.ellipse(size * 0.25, 0, size * 0.4, size * 0.38, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#b5780f';
+        ctx.fill();
+        // Fuzzy texture (pre-generated dots for stable rendering)
+        GAME.beeFuzzyDots.forEach(d => {
+            const fx = size * 0.25 + d.dx * size;
+            const fy = d.dy * size;
+            ctx.beginPath();
+            ctx.arc(fx, fy, size * 0.03, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(200, 160, 60, 0.4)';
+            ctx.fill();
+        });
+
+        // === HEAD ===
+        ctx.beginPath();
+        ctx.ellipse(size * 0.65, 0, size * 0.28, size * 0.25, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#c48a12';
+        ctx.fill();
+        // Eyes (large, compound)
+        ctx.beginPath();
+        ctx.ellipse(size * 0.78, -size * 0.12, size * 0.1, size * 0.08, 0.2, 0, Math.PI * 2);
+        ctx.fillStyle = '#111';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(size * 0.78, size * 0.12, size * 0.1, size * 0.08, -0.2, 0, Math.PI * 2);
+        ctx.fillStyle = '#111';
+        ctx.fill();
+        // Antennae
+        ctx.beginPath();
+        ctx.moveTo(size * 0.85, -size * 0.15);
+        ctx.quadraticCurveTo(size * 1.1, -size * 0.35, size * 1.15, -size * 0.25);
+        ctx.moveTo(size * 0.85, size * 0.15);
+        ctx.quadraticCurveTo(size * 1.1, size * 0.35, size * 1.15, size * 0.25);
+        ctx.strokeStyle = '#4a3000';
+        ctx.lineWidth = Math.max(1, size * 0.04);
+        ctx.stroke();
+
+        // === LEGS (3 pairs, simple) ===
+        ctx.strokeStyle = '#3a2200';
+        ctx.lineWidth = Math.max(1, size * 0.04);
+        [-0.1, 0.15, 0.4].forEach(xOff => {
+            const legWiggle = Math.sin(t / 100 + xOff * 20) * size * 0.05;
+            ctx.beginPath();
+            ctx.moveTo(size * xOff, -size * 0.35);
+            ctx.lineTo(size * xOff - size * 0.1, -size * 0.55 + legWiggle);
+            ctx.moveTo(size * xOff, size * 0.35);
+            ctx.lineTo(size * xOff - size * 0.1, size * 0.55 - legWiggle);
+            ctx.stroke();
+        });
+
+        ctx.restore();
+
+        // Name label (unrotated)
+        if (name) {
+            ctx.font = `bold ${Math.max(10, size * 0.65)}px Inter, sans-serif`;
+            ctx.fillStyle = isMe ? '#f5a623' : 'rgba(255,255,255,0.55)';
+            ctx.textAlign = 'center';
+            ctx.fillText(name, x, y + size * 1.4 + 10);
+        }
+    }
+
+    // ─── SAMMETSJÄTTING (Vespa mandarinia) ───
+    // Characteristic features: large orange-yellow head, dark velvety thorax,
+    // pronounced mandibles, dark brown body with orange-yellow bands
+    function drawHornet(ctx, x, y, size) {
+        const angle = GAME.hornet.heading || 0;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+
+        const t = performance.now();
+
+        // === WINGS (behind body, larger than bee's) ===
+        const wingFlap = Math.sin(t / 40) * 0.3;
+        ctx.beginPath();
+        ctx.ellipse(-size * 0.1, -size * 0.6, size * 0.85, size * 0.3, -0.15 + wingFlap, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(160, 140, 80, 0.18)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(140, 120, 60, 0.15)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.ellipse(-size * 0.1, size * 0.6, size * 0.85, size * 0.3, 0.15 - wingFlap, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(160, 140, 80, 0.18)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(140, 120, 60, 0.15)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+
+        // === ABDOMEN (large, dark with orange bands) ===
+        ctx.beginPath();
+        ctx.ellipse(-size * 0.35, 0, size * 0.85, size * 0.55, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#1a0d00';
+        ctx.fill();
+        // Orange-yellow banding (sammetsjätting pattern)
+        ctx.save();
+        ctx.beginPath();
+        ctx.ellipse(-size * 0.35, 0, size * 0.85, size * 0.55, 0, 0, Math.PI * 2);
+        ctx.clip();
+        const bandColors = ['#d4780a', '#1a0d00', '#e8930e', '#1a0d00', '#d4780a'];
+        bandColors.forEach((col, i) => {
+            const by = -size * 0.55 + i * (size * 1.1 / bandColors.length);
+            ctx.fillStyle = col;
+            ctx.fillRect(-size * 1.3, by, size * 2.6, size * 1.1 / bandColors.length);
+        });
+        ctx.restore();
+        // Velvet texture (pre-generated dots for stable rendering)
+        GAME.hornetFuzzyDots.forEach(d => {
+            const vx = -size * 0.35 + d.dx * size;
+            const vy = d.dy * size;
+            ctx.beginPath();
+            ctx.arc(vx, vy, size * 0.025, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(100, 50, 0, 0.3)';
+            ctx.fill();
+        });
+        // Stinger
+        ctx.beginPath();
+        ctx.moveTo(-size * 1.15, 0);
+        ctx.lineTo(-size * 1.45, -size * 0.05);
+        ctx.lineTo(-size * 1.45, size * 0.05);
+        ctx.closePath();
+        ctx.fillStyle = '#0d0600';
+        ctx.fill();
+
+        // === THORAX (dark, muscular) ===
+        ctx.beginPath();
+        ctx.ellipse(size * 0.3, 0, size * 0.45, size * 0.42, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#2a1500';
+        ctx.fill();
+        // Darker midline
+        ctx.fillStyle = '#1a0d00';
+        ctx.fillRect(size * 0.05, -size * 0.03, size * 0.5, size * 0.06);
+
+        // === HEAD (large orange — defining feature of Vespa mandarinia) ===
+        ctx.beginPath();
+        ctx.ellipse(size * 0.78, 0, size * 0.38, size * 0.32, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#e68a0e';
+        ctx.fill();
+        // Darker face plate
+        ctx.beginPath();
+        ctx.ellipse(size * 0.88, 0, size * 0.2, size * 0.18, 0, 0, Math.PI * 2);
+        ctx.fillStyle = '#c46a08';
+        ctx.fill();
+        // Eyes (dark, menacing)
+        ctx.beginPath();
+        ctx.ellipse(size * 0.85, -size * 0.15, size * 0.12, size * 0.09, 0.15, 0, Math.PI * 2);
+        ctx.fillStyle = '#1a0000';
+        ctx.fill();
+        // Eye highlight
+        ctx.beginPath();
+        ctx.arc(size * 0.88, -size * 0.13, size * 0.03, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(200, 50, 50, 0.6)';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(size * 0.85, size * 0.15, size * 0.12, size * 0.09, -0.15, 0, Math.PI * 2);
+        ctx.fillStyle = '#1a0000';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(size * 0.88, size * 0.13, size * 0.03, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(200, 50, 50, 0.6)';
+        ctx.fill();
+        // MANDIBLES (prominent — sammetsjätting's weapon)
+        ctx.beginPath();
+        ctx.moveTo(size * 1.1, -size * 0.08);
+        ctx.quadraticCurveTo(size * 1.35, -size * 0.2, size * 1.3, -size * 0.35);
+        ctx.strokeStyle = '#3a1e00';
+        ctx.lineWidth = Math.max(2, size * 0.06);
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(size * 1.1, size * 0.08);
+        ctx.quadraticCurveTo(size * 1.35, size * 0.2, size * 1.3, size * 0.35);
+        ctx.stroke();
+        // Antennae (shorter, thicker than bee)
+        ctx.beginPath();
+        ctx.moveTo(size * 0.95, -size * 0.22);
+        ctx.quadraticCurveTo(size * 1.15, -size * 0.4, size * 1.05, -size * 0.45);
+        ctx.moveTo(size * 0.95, size * 0.22);
+        ctx.quadraticCurveTo(size * 1.15, size * 0.4, size * 1.05, size * 0.45);
+        ctx.strokeStyle = '#3a1e00';
+        ctx.lineWidth = Math.max(1.5, size * 0.05);
+        ctx.stroke();
+
+        // === LEGS (3 pairs, thicker) ===
+        ctx.strokeStyle = '#2a1500';
+        ctx.lineWidth = Math.max(1.5, size * 0.05);
+        [-0.15, 0.15, 0.45].forEach(xOff => {
+            const legWiggle = Math.sin(t / 80 + xOff * 15) * size * 0.04;
+            ctx.beginPath();
+            ctx.moveTo(size * xOff, -size * 0.4);
+            ctx.lineTo(size * xOff - size * 0.12, -size * 0.65 + legWiggle);
+            ctx.moveTo(size * xOff, size * 0.4);
+            ctx.lineTo(size * xOff - size * 0.12, size * 0.65 - legWiggle);
+            ctx.stroke();
+        });
+
+        ctx.restore();
+
+        // Label (unrotated, below)
+        ctx.font = `bold ${Math.max(11, size * 0.45)}px Inter, sans-serif`;
+        ctx.fillStyle = '#ef4444';
+        ctx.textAlign = 'center';
+        ctx.fillText('SAMMETSJÄTTING', x, y + size + 16);
+    }
+
+    // ═══════════════════════════════════════════
+    // INITIALIZATION
+    // ═══════════════════════════════════════════
+
+    async function init() {
+        // Load config
+        try {
+            const resp = await fetch('assets/soundpulse_config.json');
+            CONFIG_DATA = await resp.json();
+            SP_CONFIG.APP_KEY = CONFIG_DATA.appKey || SP_CONFIG.APP_KEY;
+            SP_CONFIG.AUDIO_FILE = CONFIG_DATA.audioFile || SP_CONFIG.AUDIO_FILE;
+        } catch(e) {
+            console.warn('Config not loaded, using defaults:', e);
+        }
+
+        // V8: Validate triggerTimes
+        if (CONFIG_DATA && CONFIG_DATA.questions) {
+            CONFIG_DATA.questions.forEach((q, i) => {
+                if (typeof q.triggerTime !== 'number' || q.triggerTime < 0) {
+                    console.warn(`Question ${i} has invalid triggerTime:`, q.triggerTime);
+                    q.triggerTime = 0;
+                }
+            });
+        }
+
+        // Check mode
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('mode') === 'teacher') {
+            SP.mode = 'teacher';
+            renderTeacherPanel();
+        } else {
+            renderLogin();
+        }
+    }
+
+    // Online/offline events
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', () => { SP.offlineCount = 2; handleOffline(); });
+
+    // Start app
+    init();
+
+    </script>
+</body>
+</html>
