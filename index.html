@@ -2425,9 +2425,12 @@
         keysDown: new Set(),  // Active keyboard keys (WASD/arrows)
         beeSpeed: 0.18,
 
-        // Victory
+        // Victory/Defeat
         victory: false,
+        defeat: false,
         victoryTime: 0,
+        deadBees: new Set(),
+        initialBeeCount: 0,
 
         // Visuals
         beeEmoji: '',
@@ -2438,6 +2441,9 @@
     function startBeeGame(isTeacher) {
         GAME.active = true;
         GAME.victory = false;
+        GAME.defeat = false;
+        GAME.deadBees = new Set();
+        GAME.initialBeeCount = 0;
         GAME.temperature = GAME.ambientTemp;
         GAME.hornet = { x: 0.5, y: 0.5, vx: 0, vy: 0, speed: 0.12, targetBee: null, chaseTimer: 0, heading: 0 };
         GAME.myBee = { x: 0.2 + Math.random() * 0.6, y: 0.2 + Math.random() * 0.6, heading: 0 };
@@ -2514,6 +2520,12 @@
                         GAME.hornet.y = parseFloat(header[1]) || 0.5;
                         GAME.temperature = parseFloat(header[2]) || 25;
                         if (header[3] === '1' && !GAME.victory) showVictory();
+                        if (header.length > 4 && header[4] === '1' && !GAME.defeat) showDefeat();
+                        if (header.length > 5 && header[5]) {
+                            GAME.deadBees = new Set(header[5].split(':'));
+                        } else {
+                            GAME.deadBees = new Set();
+                        }
                     }
                     // Sections 1+: sid,x,y,name per bee
                     GAME.allBees.clear();
@@ -2549,7 +2561,8 @@
                 });
 
                 // 2. Build game_state: header|bee1|bee2|...
-                let stateStr = `${GAME.hornet.x.toFixed(3)},${GAME.hornet.y.toFixed(3)},${GAME.temperature.toFixed(1)},${GAME.victory ? '1' : '0'}`;
+                const deadStr = Array.from(GAME.deadBees).join(':');
+                let stateStr = `${GAME.hornet.x.toFixed(3)},${GAME.hornet.y.toFixed(3)},${GAME.temperature.toFixed(1)},${GAME.victory ? '1' : '0'},${GAME.defeat ? '1' : '0'},${deadStr}`;
                 // Include teacher's own bee
                 stateStr += `|teacher,${GAME.myBee.x.toFixed(3)},${GAME.myBee.y.toFixed(3)},Lärare,${(GAME.myBee.heading || 0).toFixed(2)}`;
                 // Include all student bees
@@ -2624,6 +2637,8 @@
     }
 
     function updateBeeMovement(dt) {
+        if (GAME.deadBees && GAME.deadBees.has(SP.mode === 'teacher' ? 'teacher' : SP.studentId)) return;
+
         // Keyboard input (WASD/arrows) — direct velocity control
         const keys = GAME.keysDown;
         let kx = 0, ky = 0;
@@ -2683,6 +2698,9 @@
 
         if (bees.length === 0) return;
 
+        // Collect living bees for target selection
+        const livingBees = bees.filter(b => !GAME.deadBees.has(b.id));
+
         // Chase timer
         h.chaseTimer -= dt;
 
@@ -2732,6 +2750,26 @@
         if (Math.abs(h.vx) > 0.001 || Math.abs(h.vy) > 0.001) {
             h.heading = lerpAngle(h.heading, Math.atan2(h.vy, h.vx), 0.1);
         }
+
+        // Hornet eats bees if temperature is below 42C (cannot eat effectively when overheating)
+        if (GAME.temperature < 42) {
+            const eatRadius = 0.03;
+            livingBees.forEach(b => {
+                const dx = b.x - h.x, dy = b.y - h.y;
+                if (Math.sqrt(dx * dx + dy * dy) < eatRadius) {
+                    GAME.deadBees.add(b.id);
+                }
+            });
+        }
+
+        // Track initial swarm size and check for Swarm Collapse
+        const aliveCount = bees.length - GAME.deadBees.size;
+        if (GAME.initialBeeCount === 0) GAME.initialBeeCount = Math.max(1, bees.length);
+        
+        // Swarm collapse: Game over if less than half the swarm remains (or < 3 total and someone died)
+        if (GAME.initialBeeCount > 0 && GAME.deadBees.size > 0 && aliveCount < Math.max(3, GAME.initialBeeCount / 2)) {
+            if (!GAME.defeat) showDefeat();
+        }
     }
 
     function updateTemperature(dt) {
@@ -2744,8 +2782,10 @@
         GAME.allBees.forEach(b => bees.push({ x: b.x, y: b.y }));
 
         bees.forEach(b => {
-            const dx = b.x - h.x, dy = b.y - h.y;
-            if (Math.sqrt(dx * dx + dy * dy) < GAME.heatRadius) nearbyCount++;
+            if (!GAME.deadBees.has(b.id)) {
+                const dx = b.x - h.x, dy = b.y - h.y;
+                if (Math.sqrt(dx * dx + dy * dy) < GAME.heatRadius) nearbyCount++;
+            }
         });
 
         if (nearbyCount > 0) {
@@ -2776,7 +2816,8 @@
         if (fill) fill.style.width = Math.min(100, pct) + '%';
         if (text) text.textContent = GAME.temperature.toFixed(1) + '°C';
         if (status) {
-            if (GAME.temperature < 30) status.textContent = 'Samla bina runt getingen!';
+            if (GAME.defeat) status.textContent = 'SVÄRMEN ÄR BESEGRAD!';
+            else if (GAME.temperature < 30) status.textContent = 'Samla bina runt getingen!';
             else if (GAME.temperature < 38) status.textContent = 'Temperaturen stiger! Håll er nära!';
             else if (GAME.temperature < 45) status.textContent = 'Nästan! Getingen är trängd!';
             else status.textContent = 'KRITISK TEMPERATUR!';
@@ -2808,6 +2849,33 @@
                 Tillbaka till SoundPulse
             </button>`;
         wrap.appendChild(victoryDiv);
+    }
+
+    function showDefeat() {
+        if (GAME.defeat) return;
+        GAME.defeat = true;
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 300]);
+
+        const wrap = document.getElementById('spGameWrap');
+        if (!wrap) return;
+
+        const defeatDiv = document.createElement('div');
+        defeatDiv.className = 'sp-game-victory';
+        defeatDiv.id = 'spGameDefeat';
+        defeatDiv.innerHTML = `
+            <div style="font-size:3rem;margin-bottom:1rem;font-weight:700;color:var(--sp-incorrect)">☠ KOLLAPS ☠</div>
+            <h1>SVÄRMEN ÄR UPPÄTEN!</h1>
+            <p>För många bin dog och värmebollen kollapsade.</p>
+            <p style="font-size:0.85rem;color:var(--sp-text-muted);max-width:500px;text-align:center">
+                För att lyckas måste bina nå den dödliga temperaturen 47°C snabbt. Om för många bin blir 
+                uppätna försvinner den kritiska massan som krävs för att generera och isolera värmen. 
+                Sammetsgetingen dör inte utan er kollektiva värme.
+            </p>
+            <button class="sp-btn-primary" style="width:auto;padding:0.8rem 2rem;margin-top:1rem;background:var(--sp-incorrect);border-color:var(--sp-incorrect)"
+                onclick="exitBeeGame()">
+                Tillbaka till SoundPulse
+            </button>`;
+        wrap.appendChild(defeatDiv);
     }
 
     function exitBeeGame() {
@@ -2871,12 +2939,17 @@
 
         // Draw remote bees (heading from synced data or 0)
         GAME.allBees.forEach((bee, sid) => {
+            if (GAME.deadBees && GAME.deadBees.has(sid)) ctx.globalAlpha = 0.3;
             drawBee(ctx, toX(bee.x), toY(bee.y), beeSize, bee.name, false, bee.heading || 0);
+            ctx.globalAlpha = 1.0;
         });
 
         // Draw my bee (with tracked heading)
+        const myId = SP.mode === 'teacher' ? 'teacher' : SP.studentId;
+        if (GAME.deadBees && GAME.deadBees.has(myId)) ctx.globalAlpha = 0.3;
         drawBee(ctx, toX(GAME.myBee.x), toY(GAME.myBee.y), beeSize * 1.1,
             SP.mode === 'teacher' ? 'Lärare' : SP.studentName, true, GAME.myBee.heading);
+        ctx.globalAlpha = 1.0;
 
         // Draw hornet
         drawHornet(ctx, toX(GAME.hornet.x), toY(GAME.hornet.y), hornetSize);
