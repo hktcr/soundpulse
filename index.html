@@ -802,9 +802,46 @@
         }
         .sp-game-exit-btn:hover { color: var(--sp-text); border-color: var(--sp-accent); }
 
+        /* === A11Y & THEME === */
+        .sp-skip-link {
+            position: absolute;
+            top: -50px;
+            left: 10px;
+            background: var(--sp-accent);
+            color: var(--sp-bg-primary);
+            padding: 8px 16px;
+            border-radius: var(--sp-radius-sm);
+            z-index: 10000;
+            font-weight: bold;
+            transition: top 0.2s;
+            text-decoration: none;
+        }
+        .sp-skip-link:focus { top: 10px; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: var(--sp-bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--sp-border-hover); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--sp-text-muted); }
+
+        /* Light Theme Support */
+        @media (prefers-color-scheme: light) {
+            :root {
+                --sp-bg-deep: #f8fafc;
+                --sp-bg-primary: #ffffff;
+                --sp-bg-surface: rgba(240, 245, 250, 0.85);
+                --sp-bg-surface-light: rgba(230, 235, 240, 0.7);
+                --sp-text: #0f172a;
+                --sp-text-secondary: #334155;
+                --sp-text-muted: #64748b;
+                --sp-border: rgba(0, 0, 0, 0.1);
+                --sp-border-hover: rgba(0, 0, 0, 0.2);
+            }
+        }
     </style>
 </head>
 <body>
+    <a href="#spRoot" class="sp-skip-link">Hoppa till innehåll</a>
     <div class="sp-bg"></div>
     <div id="spOfflineBanner" role="alert" aria-live="assertive">Anslutningen bruten — försöker återansluta…</div>
     <div class="sp-progress-wrap"><div class="sp-progress-fill" id="spProgressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div></div>
@@ -950,6 +987,13 @@
     };
     let currentLang = 'sv';
     function t(key) { return (STRINGS[currentLang] && STRINGS[currentLang][key]) || STRINGS.sv[key] || key; }
+
+    window.switchLang = function(lang) {
+        currentLang = lang;
+        document.documentElement.lang = lang;
+        document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+        if (document.querySelector('.sp-login')) renderLogin();
+    };
 
     // ─── CONFIG ───
     const SP_CONFIG = {
@@ -1194,7 +1238,13 @@
                 <h1>${t('appName')}</h1>
                 <p class="sp-subtitle">${CONFIG_DATA ? CONFIG_DATA.title : 'Interaktiv Ljudupplevelse'}</p>
                 <p class="sp-subtitle" style="font-size:0.8rem;color:var(--sp-text-muted)">${CONFIG_DATA ? CONFIG_DATA.subject : ''}</p>
-                <div style="height:1.5rem"></div>
+                <div style="margin-top:0.5rem; margin-bottom: 1rem;">
+                    <select class="sp-login-input" style="width:auto; padding:0.4rem 1rem; display:inline-block;" onchange="window.switchLang(this.value)" aria-label="Språk">
+                        <option value="sv" ${currentLang==='sv'?'selected':''}>Svenska</option>
+                        <option value="en" ${currentLang==='en'?'selected':''}>English</option>
+                        <option value="ar" ${currentLang==='ar'?'selected':''}>العربية</option>
+                    </select>
+                </div>
                 <input type="text" id="spNameInput" class="sp-login-input"
                     placeholder="${t('namePlaceholder')}"
                     aria-label="${t('namePlaceholder')}"
@@ -1205,8 +1255,8 @@
                     onclick="document.getElementById('spModeSelector').scrollIntoView({behavior:'smooth'})"
                     ${keyHandler("document.getElementById('spModeSelector').scrollIntoView({behavior:'smooth'});")}
                     role="button" tabindex="0"
-                    aria-label="Valj lage">
-                    Valj lage &#x2193;
+                    aria-label="Välj läge">
+                    Välj läge &#x2193;
                 </button>
                 <div class="sp-divider">eller</div>
                 <div class="sp-mode-selector" id="spModeSelector">
@@ -2406,7 +2456,7 @@
         wrap.id = 'spGameWrap';
         wrap.className = 'sp-game-wrap';
         wrap.innerHTML = `
-            <canvas class="sp-game-canvas" id="spGameCanvas"></canvas>
+            <canvas class="sp-game-canvas" id="spGameCanvas" aria-label="Spelplan för bi-spelet" role="img"></canvas>
             <div class="sp-game-hud" id="spGameHud">
                 <div class="sp-game-title">VÄRMEBOLLSFÖRSVARET</div>
                 <div class="sp-game-temp-wrap">
