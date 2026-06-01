@@ -1,8 +1,8 @@
 {
   "version": "2.0",
-  "title": "Mördargetingen som riskerar slå ut svenska bin",
-  "subtitle": "Dagens Eko — Sammetsjättingen i Sverige",
-  "subject": "Biologi · Invasiva arter · Ekologi",
+  "title": "Sammetsjattingen som riskerar sla ut svenska bin",
+  "subtitle": "Dagens Eko — Sammetsjattingen i Sverige",
+  "subject": "Biologi - Invasiva arter - Ekologi",
   "audioFile": "assets/soundpulse_sammetsjattingen.mp3",
   "transcriptionFile": "assets/soundpulse_transcription.json",
   "duration": 1187.6,
@@ -12,13 +12,13 @@
       "start": 0,
       "end": 200,
       "image": "assets/soundpulse/seg1_hero.png",
-      "title": "Sammetsjättingen — Världens Största Geting"
+      "title": "Sammetsjattingen — Varldens Storsta Geting"
     },
     {
       "start": 200,
       "end": 400,
       "image": "assets/soundpulse/seg2_hive_attack.png",
-      "title": "Hotet mot Bisamhällen"
+      "title": "Hotet mot Bisamhallen"
     },
     {
       "start": 400,
@@ -30,46 +30,59 @@
       "start": 600,
       "end": 800,
       "image": "assets/soundpulse/seg4_bee_defense.png",
-      "title": "Binas Försvar"
+      "title": "Binas Forsvar"
     },
     {
       "start": 800,
       "end": 1000,
       "image": "assets/soundpulse/seg5_ecosystem.png",
-      "title": "Konsekvenser för Ekosystemet"
+      "title": "Konsekvenser for Ekosystemet"
     },
     {
       "start": 1000,
       "end": 1188,
       "image": "assets/soundpulse/seg6_conservation.png",
-      "title": "Vad kan vi göra?"
+      "title": "Vad kan vi gora?"
     }
   ],
   "questions": [
     {
       "id": "q1",
       "type": "multiple-choice",
-      "triggerTime": 120,
-      "text": "Sammetsjättingen (Vespa velutina) är en stor invasiv geting. Var kommer den ursprungligen ifrån?",
+      "triggerTime": 60,
+      "difficulty": "easy",
+      "text": "I inledningen nämns att sammetsjättingen har hittats i Sverige. Ungefär hur stor är den jämfört med en vanlig geting?",
       "options": [
-        { "letter": "A", "text": "Sydamerika — tropiska regnskogar" },
-        { "letter": "B", "text": "Sydostasien — tropiskt och subtropiskt klimat" },
-        { "letter": "C", "text": "Nordafrika — ökenområden" },
-        { "letter": "D", "text": "Australien — eukalyptusskogar" }
+        { "letter": "A", "text": "Ungefär lika stor som en vanlig geting" },
+        { "letter": "B", "text": "Dubbelt så stor — ca 3 cm" },
+        { "letter": "C", "text": "Tre till fem gånger större — upp till 5 cm" },
+        { "letter": "D", "text": "Stor som en kolibri — ca 8 cm" }
       ],
-      "correct": "B",
-      "feedbackOk": "Rätt! Vespa velutina kommer ursprungligen från Sydostasien och har spridit sig till Europa via internationell handel.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsjättingen (Vespa velutina) har sitt ursprung i Sydostasien. Den kom till Europa (Frankrike) år 2004 via importerade keramikkrukor från Kina.",
-      "translations": {
-        "sv": "Sammetsjättingen (Vespa velutina) är en stor invasiv geting. Var kommer den ursprungligen ifrån?",
-        "en": "The Asian hornet (Vespa velutina) is a large invasive wasp. Where does it originally come from?",
-        "ar": "الدبور الآسيوي (Vespa velutina) هو دبور غازي كبير. من أين يأتي في الأصل؟"
-      }
+      "correct": "C",
+      "feedbackOk": "Rätt! Sammetsjättingen (Vespa mandarinia) kan bli upp till 5 cm lång — världens största geting.",
+      "feedbackNok": "Rätt svar: <strong>C</strong>. Sammetsjättingen kan bli 4-5 cm lång, alltså tre till fem gånger större än en vanlig geting."
     },
     {
       "id": "q2",
+      "type": "multiple-choice",
+      "triggerTime": 120,
+      "difficulty": "medium",
+      "text": "Sammetsjättingen (Vespa mandarinia) är en invasiv art. Var kommer den ursprungligen ifrån?",
+      "options": [
+        { "letter": "A", "text": "Sydamerika — tropiska regnskogar" },
+        { "letter": "B", "text": "Ost- och Sydostasien — tropiskt och tempererat klimat" },
+        { "letter": "C", "text": "Nordafrika — medelhavsområdet" },
+        { "letter": "D", "text": "Australien — eukalyptusskogar" }
+      ],
+      "correct": "B",
+      "feedbackOk": "Rätt! Vespa mandarinia kommer ursprungligen från Ost- och Sydostasien, bland annat Japan, Kina och Korea.",
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsjättingen (Vespa mandarinia) har sitt ursprung i Ost- och Sydostasien. Den har på senare år påträffats i Nordamerika och Europa."
+    },
+    {
+      "id": "q3",
       "type": "categorize",
-      "triggerTime": 300,
+      "triggerTime": 200,
+      "difficulty": "medium",
       "text": "Sortera faktorerna: vilka är biotiska (levande) och vilka är abiotiska (icke-levande)?",
       "categories": ["Biotiska faktorer", "Abiotiska faktorer"],
       "items": [
@@ -78,53 +91,76 @@
         { "word": "Predation av fåglar", "cat": 0 },
         { "word": "Nederbörd", "cat": 1 },
         { "word": "Konkurrens om föda", "cat": 0 },
-        { "word": "Vindstyrka", "cat": 1 }
+        { "word": "Vindstyrka", "cat": 1 },
+        { "word": "Parasitism", "cat": 0 },
+        { "word": "Solljus", "cat": 1 }
       ],
       "feedbackOk": "Helt rätt! Du kan skilja på biotiska (levande) och abiotiska (icke-levande) faktorer i ett ekosystem.",
-      "feedbackNok": "Inte helt rätt. Biotiska faktorer handlar om levande organismer (pollinering, predation, konkurrens), medan abiotiska faktorer är icke-levande (temperatur, nederbörd, vind).",
-      "translations": {
-        "sv": "Sortera faktorerna: vilka är biotiska (levande) och vilka är abiotiska (icke-levande)?",
-        "en": "Sort the factors: which are biotic (living) and which are abiotic (non-living)?",
-        "ar": "صنّف العوامل: أيها حيوية (حية) وأيها لاحيوية (غير حية)؟"
-      }
+      "feedbackNok": "Inte helt rätt. Biotiska faktorer handlar om levande organismer (pollinering, predation, konkurrens, parasitism), medan abiotiska faktorer är icke-levande (temperatur, nederbörd, vind, solljus)."
     },
     {
-      "id": "q3",
+      "id": "q4",
+      "type": "multiple-choice",
+      "triggerTime": 300,
+      "difficulty": "easy",
+      "text": "I programmet nämns att sammetsjättingen angriper bisamhällen. Vad är det den främst är ute efter?",
+      "options": [
+        { "letter": "A", "text": "Honungen — den äter honung i stora mängder" },
+        { "letter": "B", "text": "Larverna och pupporna — proteinrik föda till sina egna larver" },
+        { "letter": "C", "text": "Bivaxet — som byggmaterial till sitt eget bo" },
+        { "letter": "D", "text": "Pollenet — som den samlar för egen pollinering" }
+      ],
+      "correct": "B",
+      "feedbackOk": "Rätt! Sammetsjättingar attackerar bikupor för att komma åt larverna och pupporna, som är proteinrika och matas till deras egna larver.",
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsjättingar angriper bisamhällen för att komma åt larverna och pupporna. En enda geting kan döda tusentals bin på kort tid."
+    },
+    {
+      "id": "q5",
       "type": "match",
-      "triggerTime": 450,
+      "triggerTime": 400,
+      "difficulty": "medium",
       "text": "Para ihop varje ekologiskt begrepp med rätt definition.",
       "pairs": [
         { "left": "Invasiv art", "right": "En art som sprider sig utanför sitt naturliga område och skadar ekosystemet" },
         { "left": "Biodiversitet", "right": "Mångfalden av arter och ekosystem i ett område" },
         { "left": "Pollinering", "right": "Överföring av pollen mellan blommor, ofta via insekter" },
-        { "left": "Ekologisk nisch", "right": "En arts roll och plats i ett ekosystem" }
+        { "left": "Ekologisk nisch", "right": "En arts roll och plats i ett ekosystem" },
+        { "left": "Näringskedja", "right": "Visar hur energi överförs från en organism till nästa" }
       ],
       "feedbackOk": "Perfekt! Du har koll på de ekologiska begreppen.",
-      "feedbackNok": "Inte alla rätt. Läs igenom begreppen — de är viktiga för att förstå hur invasiva arter påverkar naturen.",
-      "translations": {
-        "sv": "Para ihop varje ekologiskt begrepp med rätt definition.",
-        "en": "Match each ecological concept with its correct definition.",
-        "ar": "طابق كل مفهوم بيئي مع تعريفه الصحيح."
-      }
+      "feedbackNok": "Inte alla rätt. Läs igenom begreppen — de är viktiga för att förstå hur invasiva arter påverkar naturen."
     },
     {
-      "id": "q4",
+      "id": "q6",
+      "type": "multiple-choice",
+      "triggerTime": 500,
+      "difficulty": "hard",
+      "text": "I programmet diskuteras hur sammetsjättingen kan påverka ekosystemet om den etablerar sig i Sverige. Vilken effekt skulle vara mest allvarlig för jordbruket?",
+      "options": [
+        { "letter": "A", "text": "Minskad pollinering av frukt- och grödor" },
+        { "letter": "B", "text": "Ökad spridning av växtsjukdomar" },
+        { "letter": "C", "text": "Förgiftning av jordbruksmark" },
+        { "letter": "D", "text": "Minskad nedbrytning av organiskt material" }
+      ],
+      "correct": "A",
+      "feedbackOk": "Rätt! Om honungsbipopulationerna minskar drastiskt påverkas pollineringen av grödor, frukt och bär — med enorma konsekvenser för livsmedelsproduktionen.",
+      "feedbackNok": "Rätt svar: <strong>A</strong>. Ungefär en tredjedel av vår mat är beroende av insektspollinering. Om sammetsjättingen decimerar bipopulationer drabbas jordbruket hårt."
+    },
+    {
+      "id": "q7",
       "type": "lucktext",
       "triggerTime": 600,
+      "difficulty": "medium",
       "text": "En ___ art är en organism som har spridit sig till ett nytt ___ med hjälp av människan och som hotar den lokala ___.",
       "correctAnswers": ["invasiv", "område", "biodiversiteten"],
       "feedbackOk": "Helt rätt! En invasiv art sprids till nya områden och hotar biodiversiteten.",
-      "feedbackNok": "Rätt svar: 'invasiv', 'område', 'biodiversiteten'. En invasiv art har spridit sig utanför sitt naturliga utbredningsområde och påverkar den lokala mångfalden negativt.",
-      "translations": {
-        "sv": "En ___ art är en organism som har spridit sig till ett nytt ___ med hjälp av människan och som hotar den lokala ___.",
-        "en": "An ___ species is an organism that has spread to a new ___ with human help and threatens the local ___.",
-        "ar": "النوع ___ هو كائن حي انتشر إلى ___ جديدة بمساعدة الإنسان ويهدد ___ المحلي."
-      }
+      "feedbackNok": "Rätt svar: 'invasiv', 'område', 'biodiversiteten'. En invasiv art har spridit sig utanför sitt naturliga utbredningsområde och påverkar den lokala mångfalden negativt."
     },
     {
-      "id": "q5",
+      "id": "q8",
       "type": "multiple-choice",
-      "triggerTime": 800,
+      "triggerTime": 700,
+      "difficulty": "easy",
       "text": "Japanska honungsbin har utvecklat ett unikt försvar mot jättegetingar. Vad gör de?",
       "options": [
         { "letter": "A", "text": "De sticker getingen med extra starkt gift" },
@@ -133,26 +169,69 @@
         { "letter": "D", "text": "De flyger i en virvlande formation som förvirrar getingen" }
       ],
       "correct": "B",
-      "feedbackOk": "Rätt! Det kallas 'hot defensive bee ball' — hundratals bin omringar getingen och vibrerar sina flygmuskler tills temperaturen når ~47°C.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska bin bildar en 'värmeboll' runt inkräktaren. De vibrerar sina muskler och höjer temperaturen till ca 47°C — dödligt för getingen men inte för bina.",
-      "translations": {
-        "sv": "Japanska honungsbin har utvecklat ett unikt försvar mot jättegetingar. Vad gör de?",
-        "en": "Japanese honeybees have developed a unique defense against giant hornets. What do they do?",
-        "ar": "طوّر نحل العسل الياباني دفاعاً فريداً ضد الدبابير العملاقة. ماذا يفعل؟"
-      }
+      "feedbackOk": "Rätt! Det kallas 'hot defensive bee ball' — hundratals bin omringar getingen och vibrerar sina flygmuskler tills temperaturen når ca 47 grader C.",
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska bin bildar en 'värmeboll' runt inkräktaren. De vibrerar sina muskler och höjer temperaturen till ca 47 grader C — dödligt för getingen men inte för bina."
     },
     {
-      "id": "q6",
+      "id": "q9",
+      "type": "multiple-choice",
+      "triggerTime": 800,
+      "difficulty": "hard",
+      "text": "Europeiska honungsbin (Apis mellifera) har inte samma försvarsstrategi som de japanska. Varför?",
+      "options": [
+        { "letter": "A", "text": "De är för få i varje samhälle" },
+        { "letter": "B", "text": "De har aldrig levt tillsammans med jättegetingar och har därför inte utvecklat försvaret" },
+        { "letter": "C", "text": "De är fysiskt för stora för att bilda en tät klunga" },
+        { "letter": "D", "text": "De saknar flygmuskler som kan generera värme" }
+      ],
+      "correct": "B",
+      "feedbackOk": "Rätt! Evolution kräver tid. Europeiska bin har inte haft jättegetingar som selektionstryck och har därför aldrig utvecklat värmebollsförsvaret.",
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska bin har samexisterat med jättegetingar i miljontals år. Europeiska bin har aldrig utsatts för det trycket och saknar därför beteendet — ett tydligt exempel på naturligt urval."
+    },
+    {
+      "id": "q10",
+      "type": "categorize",
+      "triggerTime": 900,
+      "difficulty": "hard",
+      "text": "Vilka av dessa arter är invasiva i Sverige och vilka är inhemska?",
+      "categories": ["Invasiva i Sverige", "Inhemska i Sverige"],
+      "items": [
+        { "word": "Sammetsjätting", "cat": 0 },
+        { "word": "Bålgeting", "cat": 1 },
+        { "word": "Mördarsnigel (spansk skogssnigel)", "cat": 0 },
+        { "word": "Honungsbi", "cat": 1 },
+        { "word": "Signalkräfta", "cat": 0 },
+        { "word": "Flodkräfta", "cat": 1 },
+        { "word": "Jätteloka", "cat": 0 },
+        { "word": "Älggräs", "cat": 1 }
+      ],
+      "feedbackOk": "Imponerande! Du har koll på vilka arter som hör hemma i Sverige och vilka som är invasiva.",
+      "feedbackNok": "Inte helt rätt. Invasiva arter i Sverige inkluderar sammetsjättingen, mördarsnigeln, signalkräftan och jättelokan. Inhemska arter är bålgetingen, honungsbiet, flodkräftan och älggräset."
+    },
+    {
+      "id": "q11",
       "type": "freetext",
-      "triggerTime": 1000,
-      "text": "Vad tycker du att vi — som individer och samhälle — kan göra för att minska spridningen av invasiva arter? Ge minst ett konkret förslag.",
-      "placeholder": "Skriv ditt svar här...",
-      "feedbackMsg": "Tack för ditt svar! Det finns många sätt att bekämpa invasiva arter — från rapportering och forskning till politiska beslut och ändrade konsumtionsvanor.",
-      "translations": {
-        "sv": "Vad tycker du att vi — som individer och samhälle — kan göra för att minska spridningen av invasiva arter?",
-        "en": "What do you think we — as individuals and society — can do to reduce the spread of invasive species?",
-        "ar": "ما الذي تعتقد أنه يمكننا — كأفراد ومجتمع — فعله للحد من انتشار الأنواع الغازية؟"
-      }
+      "triggerTime": 1050,
+      "difficulty": "medium",
+      "text": "I programmet nämns flera åtgärder mot invasiva arter. Beskriv med egna ord en åtgärd som du tror skulle fungera i Sverige och förklara varför.",
+      "placeholder": "Skriv ditt svar har...",
+      "feedbackMsg": "Tack for ditt svar! Det finns manga satt att bekampa invasiva arter — fran rapportering och forskning till politiska beslut och andrade konsumtionsvanor."
+    },
+    {
+      "id": "q12",
+      "type": "multiple-choice",
+      "triggerTime": 1100,
+      "difficulty": "hard",
+      "text": "Sammetsjättingens vetenskapliga namn är Vespa mandarinia. Vad berättar det latinska artnamnet 'mandarinia' om artens ursprung?",
+      "options": [
+        { "letter": "A", "text": "Den upptäcktes av en forskare vid namn Mandarin" },
+        { "letter": "B", "text": "Den heter så efter Mandarin-regionen i Kina" },
+        { "letter": "C", "text": "Den har orangefärgad 'mandarin-liknande' färg" },
+        { "letter": "D", "text": "Den liknar en mandarin (citrusfrukt) i storleken" }
+      ],
+      "correct": "B",
+      "feedbackOk": "Rätt! Artnamnet 'mandarinia' syftar på Manchuriet/Mandarin-regionen i norra Kina där arten först beskrevs vetenskapligt.",
+      "feedbackNok": "Rätt svar: <strong>B</strong>. 'Mandarinia' kommer av Mandarin-regionen i Kina. Vetenskapliga artnamn ger ofta ledtrådar om var en art först upptäcktes eller beskrevs."
     }
   ]
 }
