@@ -49,7 +49,7 @@
     {
       "id": "q1",
       "type": "multiple-choice",
-      "triggerTime": 60,
+      "triggerTime": 45,
       "difficulty": "easy",
       "text": "I inledningen nämns att sammetsjättingen har hittats i Sverige. Ungefär hur stor är den jämfört med en vanlig geting?",
       "options": [
@@ -65,7 +65,7 @@
     {
       "id": "q2",
       "type": "multiple-choice",
-      "triggerTime": 120,
+      "triggerTime": 100,
       "difficulty": "medium",
       "text": "Sammetsjättingen (Vespa mandarinia) är en invasiv art. Var kommer den ursprungligen ifrån?",
       "options": [
@@ -80,6 +80,22 @@
     },
     {
       "id": "q3",
+      "type": "multiple-choice",
+      "triggerTime": 150,
+      "difficulty": "easy",
+      "text": "Vad kallas det när en art sprids till ett nytt område där den inte naturligt hör hemma och orsakar skada?",
+      "options": [
+        { "letter": "A", "text": "Utrotning" },
+        { "letter": "B", "text": "Migration" },
+        { "letter": "C", "text": "Invasion — arten kallas invasiv" },
+        { "letter": "D", "text": "Mutation" }
+      ],
+      "correct": "C",
+      "feedbackOk": "Rätt! En invasiv art är en organism som sprids till nya områden och orsakar ekologisk eller ekonomisk skada.",
+      "feedbackNok": "Rätt svar: <strong>C</strong>. Invasiv art är termen. Migration är naturlig förflyttning, mutation är en DNA-förändring, och utrotning betyder att arten försvinner helt."
+    },
+    {
+      "id": "q4",
       "type": "categorize",
       "triggerTime": 200,
       "difficulty": "medium",
@@ -99,9 +115,9 @@
       "feedbackNok": "Inte helt rätt. Biotiska faktorer handlar om levande organismer (pollinering, predation, konkurrens, parasitism), medan abiotiska faktorer är icke-levande (temperatur, nederbörd, vind, solljus)."
     },
     {
-      "id": "q4",
+      "id": "q5",
       "type": "multiple-choice",
-      "triggerTime": 300,
+      "triggerTime": 260,
       "difficulty": "easy",
       "text": "I programmet nämns att sammetsjättingen angriper bisamhällen. Vad är det den främst är ute efter?",
       "options": [
@@ -112,12 +128,12 @@
       ],
       "correct": "B",
       "feedbackOk": "Rätt! Sammetsjättingar attackerar bikupor för att komma åt larverna och pupporna, som är proteinrika och matas till deras egna larver.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsjättingar angriper bisamhällen för att komma åt larverna och pupporna. En enda geting kan döda tusentals bin på kort tid."
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsjättingar angriper bisamhällen för att komma åt larverna och pupporna. En grupp getingar kan utplåna ett helt bisamhälle på några timmar."
     },
     {
-      "id": "q5",
+      "id": "q6",
       "type": "match",
-      "triggerTime": 400,
+      "triggerTime": 330,
       "difficulty": "medium",
       "text": "Para ihop varje ekologiskt begrepp med rätt definition.",
       "pairs": [
@@ -131,25 +147,46 @@
       "feedbackNok": "Inte alla rätt. Läs igenom begreppen — de är viktiga för att förstå hur invasiva arter påverkar naturen."
     },
     {
-      "id": "q6",
-      "type": "multiple-choice",
-      "triggerTime": 500,
-      "difficulty": "hard",
-      "text": "I programmet diskuteras hur sammetsjättingen kan påverka ekosystemet om den etablerar sig i Sverige. Vilken effekt skulle vara mest allvarlig för jordbruket?",
-      "options": [
-        { "letter": "A", "text": "Minskad pollinering av frukt- och grödor" },
-        { "letter": "B", "text": "Ökad spridning av växtsjukdomar" },
-        { "letter": "C", "text": "Förgiftning av jordbruksmark" },
-        { "letter": "D", "text": "Minskad nedbrytning av organiskt material" }
+      "id": "q7",
+      "type": "categorize",
+      "triggerTime": 400,
+      "difficulty": "medium",
+      "text": "Ekosystemtjänster är nyttor som naturen ger oss gratis. Sortera dessa i rätt kategori.",
+      "categories": ["Producerande tjänster", "Reglerande tjänster", "Kulturella tjänster"],
+      "items": [
+        { "word": "Honungsproduktion", "cat": 0 },
+        { "word": "Pollinering av grödor", "cat": 1 },
+        { "word": "Friluftsliv och naturupplevelser", "cat": 2 },
+        { "word": "Timmer och ved", "cat": 0 },
+        { "word": "Vattenrening via våtmarker", "cat": 1 },
+        { "word": "Inspiration för konst och vetenskap", "cat": 2 },
+        { "word": "Medicinska växter", "cat": 0 },
+        { "word": "Skadedjursbekämpning via rovdjur", "cat": 1 },
+        { "word": "Rekreation och mental hälsa", "cat": 2 }
       ],
-      "correct": "A",
-      "feedbackOk": "Rätt! Om honungsbipopulationerna minskar drastiskt påverkas pollineringen av grödor, frukt och bär — med enorma konsekvenser för livsmedelsproduktionen.",
-      "feedbackNok": "Rätt svar: <strong>A</strong>. Ungefär en tredjedel av vår mat är beroende av insektspollinering. Om sammetsjättingen decimerar bipopulationer drabbas jordbruket hårt."
+      "feedbackOk": "Strålande! Du har koll på de tre kategorierna av ekosystemtjänster.",
+      "feedbackNok": "Inte helt rätt. Producerande = saker vi skördar (honung, timmer, medicin). Reglerande = processer som reglerar miljön (pollinering, vattenrening, skadedjurskontroll). Kulturella = upplevelser och inspiration."
     },
     {
-      "id": "q7",
+      "id": "q8",
+      "type": "multiple-choice",
+      "triggerTime": 470,
+      "difficulty": "hard",
+      "text": "I programmet diskuteras hur sammetsjättingen kan påverka ekosystemet om den etablerar sig i Sverige. Vilken ekosystemtjänst hotas mest direkt?",
+      "options": [
+        { "letter": "A", "text": "Pollinering — en reglerande ekosystemtjänst värd miljarder kronor årligen" },
+        { "letter": "B", "text": "Nedbrytning — en stödjande ekosystemtjänst" },
+        { "letter": "C", "text": "Vattenrening — en reglerande ekosystemtjänst" },
+        { "letter": "D", "text": "Koldioxidupptag — en reglerande ekosystemtjänst" }
+      ],
+      "correct": "A",
+      "feedbackOk": "Rätt! Pollinering är den mest direkt hotade ekosystemtjänsten. Ungefär 75% av världens odlade grödor är helt eller delvis beroende av insektspollinering.",
+      "feedbackNok": "Rätt svar: <strong>A</strong>. Pollinering är värd uppskattningsvis 150 miljarder dollar globalt per år. Om sammetsjättingen decimerar bipopulationer drabbas frukt-, bär- och grödproduktion direkt."
+    },
+    {
+      "id": "q9",
       "type": "lucktext",
-      "triggerTime": 600,
+      "triggerTime": 530,
       "difficulty": "medium",
       "text": "En ___ art är en organism som har spridit sig till ett nytt ___ med hjälp av människan och som hotar den lokala ___.",
       "correctAnswers": ["invasiv", "område", "biodiversiteten"],
@@ -157,9 +194,25 @@
       "feedbackNok": "Rätt svar: 'invasiv', 'område', 'biodiversiteten'. En invasiv art har spridit sig utanför sitt naturliga utbredningsområde och påverkar den lokala mångfalden negativt."
     },
     {
-      "id": "q8",
+      "id": "q10",
       "type": "multiple-choice",
-      "triggerTime": 700,
+      "triggerTime": 580,
+      "difficulty": "medium",
+      "text": "Bin är inte de enda pollinatörerna. Vilka andra djurgrupper bidrar till pollinering?",
+      "options": [
+        { "letter": "A", "text": "Bara fjärilar" },
+        { "letter": "B", "text": "Fjärilar, flugor, skalbaggar och vissa fåglar och fladdermöss" },
+        { "letter": "C", "text": "Bara fåglar i tropiska områden" },
+        { "letter": "D", "text": "Myror och daggmaskar" }
+      ],
+      "correct": "B",
+      "feedbackOk": "Rätt! Pollinatörer är en mångfald av djur: fjärilar, blomflugor, skalbaggar, nattfjärilar, kolibrier och till och med fladdermöss.",
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Även om bin är de viktigaste pollinatörerna bidrar även fjärilar, blomflugor, skalbaggar, nattfjärilar och i tropikerna fåglar och fladdermöss."
+    },
+    {
+      "id": "q11",
+      "type": "multiple-choice",
+      "triggerTime": 630,
       "difficulty": "easy",
       "text": "Japanska honungsbin har utvecklat ett unikt försvar mot jättegetingar. Vad gör de?",
       "options": [
@@ -170,12 +223,12 @@
       ],
       "correct": "B",
       "feedbackOk": "Rätt! Det kallas 'hot defensive bee ball' — hundratals bin omringar getingen och vibrerar sina flygmuskler tills temperaturen når ca 47 grader C.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska bin bildar en 'värmeboll' runt inkräktaren. De vibrerar sina muskler och höjer temperaturen till ca 47 grader C — dödligt för getingen men inte för bina."
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska bin bildar en 'värmeboll' runt inkräktaren och höjer temperaturen till ca 47 grader C — dödligt för getingen men inte för bina som tål upp till 50 grader."
     },
     {
-      "id": "q9",
+      "id": "q12",
       "type": "multiple-choice",
-      "triggerTime": 800,
+      "triggerTime": 680,
       "difficulty": "hard",
       "text": "Europeiska honungsbin (Apis mellifera) har inte samma försvarsstrategi som de japanska. Varför?",
       "options": [
@@ -186,12 +239,44 @@
       ],
       "correct": "B",
       "feedbackOk": "Rätt! Evolution kräver tid. Europeiska bin har inte haft jättegetingar som selektionstryck och har därför aldrig utvecklat värmebollsförsvaret.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska bin har samexisterat med jättegetingar i miljontals år. Europeiska bin har aldrig utsatts för det trycket och saknar därför beteendet — ett tydligt exempel på naturligt urval."
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska bin har samexisterat med jättegetingar i miljontals år. Europeiska bin har aldrig utsatts för det trycket — ett tydligt exempel på naturligt urval."
     },
     {
-      "id": "q10",
+      "id": "q13",
+      "type": "match",
+      "triggerTime": 730,
+      "difficulty": "hard",
+      "text": "Para ihop varje organism med dess roll i näringsväven.",
+      "pairs": [
+        { "left": "Klöver (växt)", "right": "Producent — skapar energi via fotosyntes" },
+        { "left": "Honungsbi", "right": "Primärkonsument — äter nektar och pollen" },
+        { "left": "Sammetsjätting", "right": "Sekundärkonsument — predator som äter bin" },
+        { "left": "Bivråk (fågel)", "right": "Tertiärkonsument — toppredator som äter getingar" },
+        { "left": "Svampar i marken", "right": "Nedbrytare — bryter ner dött organiskt material" }
+      ],
+      "feedbackOk": "Perfekt! Du förstår energiflödet i en näringsväv — från producent genom konsumentnivåerna till nedbrytare.",
+      "feedbackNok": "Inte alla rätt. Producenter (växter) fångar solenergi. Primärkonsumenter äter växter. Sekundärkonsumenter äter primärkonsumenter. Tertiärkonsumenter är toppredatorer. Nedbrytare återför näring."
+    },
+    {
+      "id": "q14",
+      "type": "multiple-choice",
+      "triggerTime": 790,
+      "difficulty": "medium",
+      "text": "Om sammetsjättingen slår ut honungsbina i ett område, vad händer med växterna som är beroende av pollinering?",
+      "options": [
+        { "letter": "A", "text": "Ingenting — vinden pollinerar alla växter" },
+        { "letter": "B", "text": "De kan fortplanta sig men producerar mindre frukt och frön" },
+        { "letter": "C", "text": "Många arter minskar kraftigt eller dör ut lokalt eftersom de inte kan sätta frö" },
+        { "letter": "D", "text": "Växterna anpassar sig snabbt till självpollinering" }
+      ],
+      "correct": "C",
+      "feedbackOk": "Rätt! Utan pollinatörer kan många blommande växter inte producera frön. Kaskadeffekten sprider sig genom hela ekosystemet.",
+      "feedbackNok": "Rätt svar: <strong>C</strong>. Många växter (t.ex. äppelträd, klöver, raps) är helt beroende av insektspollinering. Utan bin sätter de inte frukt — en kaskadeffekt som påverkar allt från fåglar till däggdjur."
+    },
+    {
+      "id": "q15",
       "type": "categorize",
-      "triggerTime": 900,
+      "triggerTime": 850,
       "difficulty": "hard",
       "text": "Vilka av dessa arter är invasiva i Sverige och vilka är inhemska?",
       "categories": ["Invasiva i Sverige", "Inhemska i Sverige"],
@@ -206,21 +291,114 @@
         { "word": "Älggräs", "cat": 1 }
       ],
       "feedbackOk": "Imponerande! Du har koll på vilka arter som hör hemma i Sverige och vilka som är invasiva.",
-      "feedbackNok": "Inte helt rätt. Invasiva arter i Sverige inkluderar sammetsjättingen, mördarsnigeln, signalkräftan och jättelokan. Inhemska arter är bålgetingen, honungsbiet, flodkräftan och älggräset."
+      "feedbackNok": "Inte helt rätt. Invasiva: sammetsjätting, mördarsnigel, signalkräfta, jätteloka. Inhemska: bålgeting, honungsbi, flodkräfta, älggräs. Signalkräftan introducerades från Nordamerika och sprider kräftpest till vår inhemska flodkräfta."
     },
     {
-      "id": "q11",
-      "type": "freetext",
+      "id": "q16",
+      "type": "multiple-choice",
+      "triggerTime": 900,
+      "difficulty": "medium",
+      "text": "Vilken typ av samspel beskriver förhållandet mellan sammetsjättingen och honungsbina bäst?",
+      "options": [
+        { "letter": "A", "text": "Mutualism — båda har nytta" },
+        { "letter": "B", "text": "Kommensalism — den ena gynnas, den andra påverkas inte" },
+        { "letter": "C", "text": "Predation — getingen jagar och dödar bin" },
+        { "letter": "D", "text": "Parasitism — getingen lever i bisamhället" }
+      ],
+      "correct": "C",
+      "feedbackOk": "Rätt! Sammetsjättingen är en predator som aktivt jagar och dödar honungsbin. Det är inte parasitism eftersom getingen inte lever på eller i biet.",
+      "feedbackNok": "Rätt svar: <strong>C</strong>. Predation innebär att en organism (predatorn) dödar och äter en annan (bytet). Parasitism innebär att parasiten lever på värden utan att döda den direkt."
+    },
+    {
+      "id": "q17",
+      "type": "lucktext",
+      "triggerTime": 950,
+      "difficulty": "hard",
+      "text": "I en näringsväv kallas växter för ___. De äts av ___ som i sin tur kan ätas av ___.",
+      "correctAnswers": ["producenter", "konsumenter", "predatorer"],
+      "feedbackOk": "Helt rätt! Producenter fångar solenergi, konsumenter (herbivorer) äter växter, och predatorer (rovdjur/karnivorer) äter andra djur.",
+      "feedbackNok": "Rätt svar: 'producenter', 'konsumenter', 'predatorer'. Producenterna (växterna) är basen i näringsväven. Konsumenter äter producenter, och predatorer äter andra djur."
+    },
+    {
+      "id": "q18",
+      "type": "multiple-choice",
+      "triggerTime": 1000,
+      "difficulty": "hard",
+      "text": "Begreppet 'kaskadeffekt' används i ekologin. Vad innebär det i sammanhanget med sammetsjättingen?",
+      "options": [
+        { "letter": "A", "text": "Att getingen sprider sig snabbare och snabbare" },
+        { "letter": "B", "text": "Att en förändring i en del av ekosystemet utlöser en kedja av följdeffekter i andra delar" },
+        { "letter": "C", "text": "Att bina flyr till andra platser" },
+        { "letter": "D", "text": "Att getingens gift sprids genom näringskedjan" }
+      ],
+      "correct": "B",
+      "feedbackOk": "Rätt! En kaskadeffekt innebär att t.ex. minskade bipopulationer leder till minskad pollinering, som leder till färre frön, som leder till färre växter, som påverkar alla andra arter.",
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Kaskadeffekten: getingen minskar bipopulationen, brist på bin minskar pollineringen, färre frön och frukter bildas, växtätande djur får mindre mat, deras predatorer påverkas — hela ekosystemet förändras."
+    },
+    {
+      "id": "q19",
+      "type": "match",
       "triggerTime": 1050,
       "difficulty": "medium",
-      "text": "I programmet nämns flera åtgärder mot invasiva arter. Beskriv med egna ord en åtgärd som du tror skulle fungera i Sverige och förklara varför.",
-      "placeholder": "Skriv ditt svar har...",
-      "feedbackMsg": "Tack for ditt svar! Det finns manga satt att bekampa invasiva arter — fran rapportering och forskning till politiska beslut och andrade konsumtionsvanor."
+      "text": "Para ihop varje ekosystemtjänst med ett konkret exempel kopplat till bin.",
+      "pairs": [
+        { "left": "Producerande tjänst", "right": "Honungsproduktion — bin ger oss honung och bivax" },
+        { "left": "Reglerande tjänst", "right": "Pollinering — bin pollinerar grödor och vilda växter" },
+        { "left": "Stödjande tjänst", "right": "Biologisk mångfald — bin upprätthåller växtsamhällen" },
+        { "left": "Kulturell tjänst", "right": "Biodling som tradition — kunskap som förts vidare i generationer" }
+      ],
+      "feedbackOk": "Perfekt! Bin bidrar till alla fyra kategorier av ekosystemtjänster.",
+      "feedbackNok": "Inte alla rätt. Producerande = honung/vax vi skördar. Reglerande = pollinering som process. Stödjande = att bin upprätthåller mångfald. Kulturella = biodling som tradition och kunskap."
     },
     {
-      "id": "q12",
+      "id": "q20",
       "type": "multiple-choice",
-      "triggerTime": 1100,
+      "triggerTime": 1080,
+      "difficulty": "medium",
+      "text": "Klimatförändringarna gör att sammetsjättingen kan sprida sig norrut. Vad är den ekologiska förklaringen?",
+      "options": [
+        { "letter": "A", "text": "Varmare vintrar gör att fler drottningar överlever och kan grunda nya kolonier på våren" },
+        { "letter": "B", "text": "Högre koldioxidhalt gör getingarna större" },
+        { "letter": "C", "text": "Ökad nederbörd skapar fler boplatser" },
+        { "letter": "D", "text": "UV-strålning gör getingarna mer aggressiva" }
+      ],
+      "correct": "A",
+      "feedbackOk": "Rätt! Sammetsjättingens drottningar övervintrar i marken. Mildare vintrar ökar överlevnaden, och längre säsonger ger mer tid att bygga stora kolonier.",
+      "feedbackNok": "Rätt svar: <strong>A</strong>. Temperaturen är den avgörande abiotiska faktorn. Mildare vintrar = fler överlevande drottningar = fler kolonier = snabbare spridning norrut."
+    },
+    {
+      "id": "q21",
+      "type": "freetext",
+      "triggerTime": 1120,
+      "difficulty": "medium",
+      "text": "Beskriv med egna ord vad en kaskadeffekt är och ge ett exempel på vad som kan hända i ett svenskt ekosystem om honungsbina minskar kraftigt.",
+      "placeholder": "Skriv ditt svar här...",
+      "feedbackMsg": "Bra svar! En kaskadeffekt innebär att en förändring i en del av ekosystemet sprider sig till andra delar. Exempel: färre bin leder till sämre pollinering av blåbär, som leder till mindre mat för björnar och fåglar."
+    },
+    {
+      "id": "q22",
+      "type": "categorize",
+      "triggerTime": 1140,
+      "difficulty": "medium",
+      "text": "Sortera dessa pollineringssätt: vilka sköts av djur (zoofili) och vilka sköts av vind (anemofili)?",
+      "categories": ["Djurpollinering (zoofili)", "Vindpollinering (anemofili)"],
+      "items": [
+        { "word": "Äppelträd", "cat": 0 },
+        { "word": "Gran", "cat": 1 },
+        { "word": "Klöver", "cat": 0 },
+        { "word": "Björk", "cat": 1 },
+        { "word": "Raps", "cat": 0 },
+        { "word": "Gräs", "cat": 1 },
+        { "word": "Solros", "cat": 0 },
+        { "word": "Tall", "cat": 1 }
+      ],
+      "feedbackOk": "Helt rätt! Färgglada blommande växter (äpple, klöver, raps, solros) är typiskt djurpollinerade, medan barrträd, björk och gräs pollineras av vinden.",
+      "feedbackNok": "Inte helt rätt. Tumregel: har växten färgglada kronblad och doft? Då är den djurpollinerad. Diskreta blommor utan kronblad (barrträd, björk, gräs) pollineras av vinden."
+    },
+    {
+      "id": "q23",
+      "type": "multiple-choice",
+      "triggerTime": 1160,
       "difficulty": "hard",
       "text": "Sammetsjättingens vetenskapliga namn är Vespa mandarinia. Vad berättar det latinska artnamnet 'mandarinia' om artens ursprung?",
       "options": [
@@ -232,6 +410,15 @@
       "correct": "B",
       "feedbackOk": "Rätt! Artnamnet 'mandarinia' syftar på Manchuriet/Mandarin-regionen i norra Kina där arten först beskrevs vetenskapligt.",
       "feedbackNok": "Rätt svar: <strong>B</strong>. 'Mandarinia' kommer av Mandarin-regionen i Kina. Vetenskapliga artnamn ger ofta ledtrådar om var en art först upptäcktes eller beskrevs."
+    },
+    {
+      "id": "q24",
+      "type": "freetext",
+      "triggerTime": 1180,
+      "difficulty": "hard",
+      "text": "I programmet nämns flera åtgärder mot invasiva arter. Om du var ansvarig för att skydda svenska bin mot sammetsjättingen, vilka tre åtgärder skulle du prioritera och varför?",
+      "placeholder": "Skriv dina tre åtgärder här...",
+      "feedbackMsg": "Tack för ditt svar! Viktiga åtgärder inkluderar tidig upptäckt och rapportering, forskning om biologisk bekämpning, skydd av vilda pollinatörer, importkontroller och information till biodlare."
     }
   ]
 }
