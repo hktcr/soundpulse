@@ -671,9 +671,12 @@
         /* === REDUCED MOTION === */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
+                animation: none !important;
+                transition: none !important;
+            }
+            .sp-live-dot {
+                animation: none !important;
+                opacity: 1;
             }
         }
 
@@ -1320,12 +1323,16 @@
             <div class="sp-question-card" id="spQuestionCard"></div>
         </div>`;
 
-        audioEl.addEventListener('loadedmetadata', () => {
+        // Guard against duplicate event listeners (Bug 6)
+        audioEl.removeEventListener('timeupdate', onAudioTimeUpdate);
+        if (audioEl._spLoadedMeta) audioEl.removeEventListener('loadedmetadata', audioEl._spLoadedMeta);
+        if (audioEl._spEnded) audioEl.removeEventListener('ended', audioEl._spEnded);
+
+        audioEl._spLoadedMeta = () => {
             document.getElementById('spTimeDur').textContent = formatTime(audioEl.duration);
             document.getElementById('spTimeline').max = Math.floor(audioEl.duration);
-        });
-        audioEl.addEventListener('timeupdate', onAudioTimeUpdate);
-        audioEl.addEventListener('ended', () => {
+        };
+        audioEl._spEnded = () => {
             SP.isPlaying = false;
             updatePlayBtn();
             // Show results after a short delay, then offer bee game
@@ -1334,7 +1341,10 @@
                     showResults();
                 }
             }, 1500);
-        });
+        };
+        audioEl.addEventListener('loadedmetadata', audioEl._spLoadedMeta);
+        audioEl.addEventListener('timeupdate', onAudioTimeUpdate);
+        audioEl.addEventListener('ended', audioEl._spEnded);
 
         loadTranscript();
         updateVisualSegment();
@@ -2003,12 +2013,17 @@
             </div>
         </div>`;
 
-        audioEl.addEventListener('loadedmetadata', () => {
+        // Guard against duplicate event listeners (Bug 6)
+        audioEl.removeEventListener('timeupdate', onAudioTimeUpdate);
+        if (audioEl._spTeacherLoadedMeta) audioEl.removeEventListener('loadedmetadata', audioEl._spTeacherLoadedMeta);
+
+        audioEl._spTeacherLoadedMeta = () => {
             const dur = document.getElementById('spTimeDur');
             if (dur) dur.textContent = formatTime(audioEl.duration);
             const tl = document.getElementById('spTeacherTimeline');
             if (tl) tl.max = Math.floor(audioEl.duration);
-        });
+        };
+        audioEl.addEventListener('loadedmetadata', audioEl._spTeacherLoadedMeta);
         audioEl.addEventListener('timeupdate', onAudioTimeUpdate);
 
         // Start polling (K1)
@@ -2319,6 +2334,8 @@
 
         card.innerHTML = html;
         wrap.classList.add('show');
+        // Activate focus trap for results overlay (Bug 1)
+        requestAnimationFrame(() => trapFocus(card));
     }
 
 
@@ -2372,8 +2389,8 @@
         GAME.active = true;
         GAME.victory = false;
         GAME.temperature = GAME.ambientTemp;
-        GAME.hornet = { x: 0.5, y: 0.5, vx: 0, vy: 0, speed: 0.12, targetBee: null, chaseTimer: 0 };
-        GAME.myBee = { x: 0.2 + Math.random() * 0.6, y: 0.2 + Math.random() * 0.6 };
+        GAME.hornet = { x: 0.5, y: 0.5, vx: 0, vy: 0, speed: 0.12, targetBee: null, chaseTimer: 0, heading: 0 };
+        GAME.myBee = { x: 0.2 + Math.random() * 0.6, y: 0.2 + Math.random() * 0.6, heading: 0 };
         GAME.allBees.clear();
         GAME.bgStars = Array.from({ length: 60 }, () => ({
             x: Math.random(), y: Math.random(),
@@ -2381,34 +2398,34 @@
             a: 0.2 + Math.random() * 0.4
         }));
 
-        // Create game DOM
+        // Create game DOM — remove old wrap to clean up leftover victory elements (Bug 7)
         let wrap = document.getElementById('spGameWrap');
-        if (!wrap) {
-            wrap = document.createElement('div');
-            wrap.id = 'spGameWrap';
-            wrap.className = 'sp-game-wrap';
-            wrap.innerHTML = `
-                <canvas class="sp-game-canvas" id="spGameCanvas"></canvas>
-                <div class="sp-game-hud" id="spGameHud">
-                    <div class="sp-game-title">VÄRMEBOLLSFÖRSVARET</div>
-                    <div class="sp-game-temp-wrap">
-                        <div class="sp-game-temp-fill" id="spGameTempFill"></div>
-                        <div class="sp-game-temp-text" id="spGameTempText">25.0°C</div>
-                    </div>
-                    <div class="sp-game-status" id="spGameStatus">Samla bina runt getingen!</div>
+        if (wrap) wrap.remove();
+
+        wrap = document.createElement('div');
+        wrap.id = 'spGameWrap';
+        wrap.className = 'sp-game-wrap';
+        wrap.innerHTML = `
+            <canvas class="sp-game-canvas" id="spGameCanvas"></canvas>
+            <div class="sp-game-hud" id="spGameHud">
+                <div class="sp-game-title">VÄRMEBOLLSFÖRSVARET</div>
+                <div class="sp-game-temp-wrap">
+                    <div class="sp-game-temp-fill" id="spGameTempFill"></div>
+                    <div class="sp-game-temp-text" id="spGameTempText">25.0°C</div>
                 </div>
-                <div class="sp-game-instructions" id="spGameInstructions">
-                    <p><strong>Värmebollsförsvaret</strong></p>
-                    <p>Styr ditt bi med fingret/musen. Samarbeta med klassen — omringa getingen för att höja dess temperatur till 47°C!</p>
-                    <p style="font-size:0.75rem;color:var(--sp-text-muted)">Japanska honungsbin bildar en vibrerande klunga som övervärmer angriparen — exakt som i verkligheten!</p>
-                    <button class="sp-btn-primary" style="width:auto;margin-top:0.5rem;padding:0.6rem 2rem;" onclick="dismissGameInstructions()">Starta!</button>
-                </div>
-                <button class="sp-game-exit-btn" role="button" tabindex="0" onclick="exitBeeGame()"
-                    ${keyHandler('exitBeeGame()')}
-                    aria-label="Avsluta spelet">✗ Avsluta</button>
-            `;
-            document.body.appendChild(wrap);
-        }
+                <div class="sp-game-status" id="spGameStatus">Samla bina runt getingen!</div>
+            </div>
+            <div class="sp-game-instructions" id="spGameInstructions">
+                <p><strong>Värmebollsförsvaret</strong></p>
+                <p>Styr ditt bi med fingret/musen. Samarbeta med klassen — omringa getingen för att höja dess temperatur till 47°C!</p>
+                <p style="font-size:0.75rem;color:var(--sp-text-muted)">Japanska honungsbin bildar en vibrerande klunga som övervärmer angriparen — exakt som i verkligheten!</p>
+                <button class="sp-btn-primary" style="width:auto;margin-top:0.5rem;padding:0.6rem 2rem;" onclick="dismissGameInstructions()">Starta!</button>
+            </div>
+            <button class="sp-game-exit-btn" role="button" tabindex="0" onclick="exitBeeGame()"
+                ${keyHandler('exitBeeGame()')}
+                aria-label="Avsluta spelet">✗ Avsluta</button>
+        `;
+        document.body.appendChild(wrap);
         wrap.classList.add('show');
 
         GAME.canvas = document.getElementById('spGameCanvas');
