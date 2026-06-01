@@ -966,6 +966,7 @@
         answers: {},
         activatedQuestions: new Set(),
         isPlaying: false,
+        studentPaused: false, // Student manually paused (prevents live sync override)
         syncInterval: null,
         pollInterval: null,
         audioTime: 0,
@@ -1195,17 +1196,17 @@
                     placeholder="${t('namePlaceholder')}"
                     aria-label="${t('namePlaceholder')}"
                     autocomplete="name"
-                    onkeydown="if(event.key==='Enter'){event.preventDefault();joinSession('live');}"
+                    onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('spModeSelector').scrollIntoView({behavior:'smooth'});}"
                 >
                 <button class="sp-btn-primary" id="spJoinBtn"
-                    onclick="joinSession('live')"
-                    ${keyHandler("joinSession('live')")}
+                    onclick="document.getElementById('spModeSelector').scrollIntoView({behavior:'smooth'})"
+                    ${keyHandler("document.getElementById('spModeSelector').scrollIntoView({behavior:'smooth'});")}
                     role="button" tabindex="0"
-                    aria-label="${t('joinBtn')}">
-                    ${t('joinBtn')}
+                    aria-label="Valj lage">
+                    Valj lage &#x2193;
                 </button>
                 <div class="sp-divider">eller</div>
-                <div class="sp-mode-selector">
+                <div class="sp-mode-selector" id="spModeSelector">
                     <div class="sp-mode-card" role="button" tabindex="0"
                         onclick="joinSession('live')"
                         ${keyHandler("joinSession('live')")}>
@@ -1345,6 +1346,8 @@
 
     function toggleAudio() {
         if (audioEl.paused) {
+            // Student manually playing — clear pause flag
+            if (SP.mode === 'live') SP.studentPaused = false;
             const playPromise = audioEl.play();
             if (playPromise !== undefined) {
                 playPromise.then(() => {
@@ -1355,7 +1358,6 @@
                     console.warn('Play failed:', err.message);
                     SP.isPlaying = false;
                     updatePlayBtn();
-                    // If not loaded yet, retry when ready
                     if (audioEl.readyState < 3) {
                         audioEl.addEventListener('canplaythrough', function retry() {
                             audioEl.removeEventListener('canplaythrough', retry);
@@ -1373,6 +1375,8 @@
         } else {
             audioEl.pause();
             SP.isPlaying = false;
+            // Student manually paused — set flag to prevent sync override
+            if (SP.mode === 'live') SP.studentPaused = true;
             updatePlayBtn();
             if (SP.mode === 'teacher') broadcastTeacherState();
         }
@@ -2085,7 +2089,8 @@
 
     function startTeacherBroadcast() {
         setInterval(() => {
-            if (SP.isPlaying) broadcastTeacherState();
+            // Always broadcast so students see pause/play state changes
+            broadcastTeacherState();
         }, SP_CONFIG.SYNC_INTERVAL);
     }
 
@@ -2229,18 +2234,25 @@
 
                 // Sync audio (only if not answering a question)
                 if (SP.currentQ === -1) {
-                    const diff = Math.abs(audioEl.currentTime - state.audioTime);
-                    if (diff > 3) {
-                        audioEl.currentTime = state.audioTime;
+                    // If teacher paused, always pause student
+                    if (!state.isPlaying && !audioEl.paused) {
+                        audioEl.pause();
+                        SP.isPlaying = false;
+                        SP.studentPaused = false; // Reset local pause since teacher paused
+                        updatePlayBtn();
                     }
-                    if (state.isPlaying && audioEl.paused) {
+                    // If teacher is playing, only resume if student hasn't locally paused
+                    else if (state.isPlaying && audioEl.paused && !SP.studentPaused) {
+                        const diff = Math.abs(audioEl.currentTime - state.audioTime);
+                        if (diff > 3) audioEl.currentTime = state.audioTime;
                         audioEl.play().catch(() => {});
                         SP.isPlaying = true;
                         updatePlayBtn();
-                    } else if (!state.isPlaying && !audioEl.paused) {
-                        audioEl.pause();
-                        SP.isPlaying = false;
-                        updatePlayBtn();
+                    }
+                    // Time sync (only when playing)
+                    else if (state.isPlaying && !audioEl.paused) {
+                        const diff = Math.abs(audioEl.currentTime - state.audioTime);
+                        if (diff > 3) audioEl.currentTime = state.audioTime;
                     }
                 }
             } catch(e) {
