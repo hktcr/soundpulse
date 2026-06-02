@@ -553,17 +553,33 @@
             max-width: 1100px; margin: 0 auto;
             padding: 1.5rem; min-height: 100vh;
         }
-        .sp-teacher-grid {
+        .sp-teacher-layout {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 3fr 2fr;
+            grid-template-areas:
+                "top top"
+                "main sidebar"
+                "bottom bottom";
             gap: 1.5rem;
         }
+        @media (max-width: 900px) {
+            .sp-teacher-layout {
+                grid-template-columns: 1fr;
+                grid-template-areas: "top" "main" "sidebar" "bottom";
+            }
+        }
+        .sp-panel-top { grid-area: top; display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1.2rem; }
+        .sp-panel-main { grid-area: main; }
+        .sp-panel-sidebar { grid-area: sidebar; }
+        .sp-panel-bottom { grid-area: bottom; display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+        
         .sp-panel {
             background: var(--sp-bg-surface);
             backdrop-filter: blur(20px);
             border: 1px solid var(--sp-border);
             border-radius: var(--sp-radius);
             padding: 1.2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
         .sp-panel-title {
             font-family: var(--sp-font-display);
@@ -1305,12 +1321,12 @@
         const nameInput = document.getElementById('spNameInput');
         SP.studentName = nameInput ? nameInput.value.trim() : '';
         if (!SP.studentName) SP.studentName = 'Gäst';
-        SP.studentId = generateStudentId();
-        SP.mode = 'live';
-        registerStudent();
-        startLiveSync();
-        // Jump straight to the game
-        startBeeGame(false);
+        SP.studentId = 'teacher'; // act as host for local physics
+        SP.mode = 'teacher';
+        
+        // Clear login screen and jump straight to the demo game
+        root.innerHTML = '';
+        startBeeGame(true, true);
     }
 
     // ═══════════════════════════════════════════
@@ -1405,6 +1421,13 @@
     // ═══════════════════════════════════════════
 
     function toggleAudio() {
+        const isTeacher = !!document.getElementById('spTeacherDashboard');
+        
+        if (SP.mode === 'live' && !isTeacher && audioEl.paused && !SP.teacherIsPlaying) {
+            showFeedback(false, "Väntar på att läraren ska starta uppspelningen. (Vill du lyssna själv? Välj 'Lyssna Solo')");
+            return;
+        }
+
         if (audioEl.paused) {
             // Student manually playing — clear pause flag
             if (SP.mode === 'live') SP.studentPaused = false;
@@ -1413,7 +1436,7 @@
                 playPromise.then(() => {
                     SP.isPlaying = true;
                     updatePlayBtn();
-                    if (SP.mode === 'teacher') broadcastTeacherState();
+                    if (isTeacher) broadcastTeacherState();
                 }).catch(err => {
                     console.warn('Play failed:', err.message);
                     SP.isPlaying = false;
@@ -1438,7 +1461,7 @@
             // Student manually paused — set flag to prevent sync override
             if (SP.mode === 'live') SP.studentPaused = true;
             updatePlayBtn();
-            if (SP.mode === 'teacher') broadcastTeacherState();
+            if (isTeacher) broadcastTeacherState();
         }
     }
 
@@ -1962,102 +1985,62 @@
                 <div class="sp-header-badge" style="background:rgba(245,158,11,0.15);color:var(--sp-accent-warm);">TEACHER</div>
             </div>
 
-            <div class="sp-teacher-grid">
-                <!-- Audio Panel -->
-                <div class="sp-panel">
-                    <div class="sp-panel-title">Ljudspelare</div>
-                    <div class="sp-player" style="margin-bottom:0;">
-                        <button class="sp-player-btn" id="spTeacherPlayBtn"
-                            onclick="toggleAudio()" role="button" tabindex="0"
-                            aria-label="Spela/Pausa"
-                            ${keyHandler('toggleAudio()')}>
-                            ▶
-                        </button>
-                        <div class="sp-timeline-wrap">
-                            <input type="range" class="sp-timeline" id="spTeacherTimeline" min="0" max="${CONFIG_DATA ? CONFIG_DATA.duration : 1200}" value="0"
-                                oninput="seekAudio(this.value)" aria-label="Tidslinje">
-                            <div class="sp-time-row">
-                                <span id="spTimeNow">0:00</span>
-                                <span id="spTimeDur">${CONFIG_DATA ? formatTime(CONFIG_DATA.duration) : '0:00'}</span>
-                            </div>
+            <div class="sp-teacher-layout">
+                <!-- Top Bar: Audio Player -->
+                <div class="sp-panel sp-panel-top">
+                    <button class="sp-player-btn" id="spTeacherPlayBtn" onclick="toggleAudio()" role="button" tabindex="0" ${keyHandler('toggleAudio()')}>▶</button>
+                    <div class="sp-timeline-wrap" style="flex:1;">
+                        <input type="range" class="sp-timeline" id="spTeacherTimeline" min="0" max="${CONFIG_DATA ? CONFIG_DATA.duration : 1200}" value="0" oninput="seekAudio(this.value)" aria-label="Tidslinje">
+                        <div class="sp-time-row">
+                            <span id="spTimeNow">0:00</span>
+                            <span id="spTimeDur">${CONFIG_DATA ? formatTime(CONFIG_DATA.duration) : '0:00'}</span>
                         </div>
-                        <button class="sp-speed-btn" id="spTeacherSpeedBtn"
-                            onclick="cycleSpeed(event)" role="button" tabindex="0"
-                            aria-label="Hastighet"
-                            ${keyHandler('cycleSpeed(event)')}>
-                            1x
-                        </button>
                     </div>
+                    <button class="sp-speed-btn" id="spTeacherSpeedBtn" onclick="cycleSpeed(event)" role="button" tabindex="0" ${keyHandler('cycleSpeed(event)')}>1x</button>
                 </div>
 
-                <!-- Student Dashboard (K1) -->
-                <div class="sp-panel">
-                    <div class="sp-panel-title">Elevöversikt</div>
-                    <div id="spTeacherDashboard" aria-live="polite">
-                        <div class="sp-dash-header">${t('noStudents')}</div>
-                    </div>
-                    <div style="margin-top:0.8rem;display:flex;gap:0.5rem;">
-                        <button class="sp-btn-sm" onclick="pollStudentResponses()" role="button" tabindex="0"
-                            ${keyHandler('pollStudentResponses()')} aria-label="Uppdatera">
-                            Uppdatera
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Question Controls -->
-                <div class="sp-panel">
-                    <div class="sp-panel-title">Frågor (${totalQ})</div>
+                <!-- Main Left: Questions -->
+                <div class="sp-panel sp-panel-main">
+                    <div class="sp-panel-title">Frågebank (${totalQ})</div>
                     <div class="sp-q-list" id="spTeacherQList">
                         ${CONFIG_DATA ? CONFIG_DATA.questions.map((q, i) => `
-                            <div class="sp-q-list-item" role="button" tabindex="0" id="tq_${i}"
-                                onclick="teacherPushQuestion(${i})"
-                                ${keyHandler(`teacherPushQuestion(${i})`)}>
+                            <div class="sp-q-list-item" role="button" tabindex="0" id="tq_${i}" onclick="teacherPushQuestion(${i})" ${keyHandler(`teacherPushQuestion(${i})`)}>
                                 <span style="font-weight:600;color:var(--sp-accent);width:2rem;">${i + 1}.</span>
-                                <span style="flex:1;font-size:0.78rem;">${q.text.substring(0, 60)}${q.text.length > 60 ? '...' : ''}</span>
-                                <span style="font-size:0.65rem;color:var(--sp-text-muted)">${formatTime(q.triggerTime)}</span>
-                                <span style="font-size:0.65rem;background:var(--sp-bg-surface-light);padding:0.15rem 0.4rem;border-radius:4px;color:var(--sp-accent)">${q.type}</span>
+                                <span style="flex:1;font-size:0.85rem;">${q.text.substring(0, 70)}${q.text.length > 70 ? '...' : ''}</span>
+                                <span style="font-size:0.7rem;color:var(--sp-text-muted)">${formatTime(q.triggerTime)}</span>
+                                <span style="font-size:0.7rem;background:var(--sp-bg-surface-light);padding:0.2rem 0.5rem;border-radius:4px;color:var(--sp-accent)">${q.type}</span>
                             </div>
                         `).join('') : ''}
                     </div>
                 </div>
 
-                <!-- Message Panel -->
-                <div class="sp-panel">
-                    <div class="sp-panel-title">Meddelande till elever</div>
-                    <input type="text" class="sp-msg-input" id="spTeacherMsgInput"
-                        placeholder="Skriv ett meddelande..."
-                        aria-label="Meddelande till elever"
-                        onkeydown="if(event.key==='Enter'){event.preventDefault();sendTeacherMsg();}">
-                    <div class="sp-msg-btns">
-                        <button class="sp-btn-sm" onclick="sendTeacherMsg()" role="button" tabindex="0"
-                            ${keyHandler('sendTeacherMsg()')} aria-label="Skicka meddelande"
-                            style="background:var(--sp-accent-soft);color:var(--sp-accent);">
-                            ${t('sendMsg')}
-                        </button>
-                        <button class="sp-btn-sm" onclick="clearTeacherMsg()" role="button" tabindex="0"
-                            ${keyHandler('clearTeacherMsg()')} aria-label="Rensa meddelande">
-                            ${t('clearMsg')}
-                        </button>
+                <!-- Sidebar Right: Student Dashboard -->
+                <div class="sp-panel sp-panel-sidebar">
+                    <div class="sp-panel-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                        <span>Elevöversikt</span>
+                        <button class="sp-btn-sm" onclick="pollStudentResponses()" role="button" tabindex="0" style="padding:0.2rem 0.5rem;font-size:0.7rem;" ${keyHandler('pollStudentResponses()')}>Uppdatera</button>
                     </div>
+                    <div id="spTeacherDashboard" aria-live="polite">
+                        <div class="sp-dash-header">${t('noStudents')}</div>
+                    </div>
+                </div>
 
-                    <div style="margin-top:1.5rem;border-top:1px solid var(--sp-border);padding-top:1rem;">
-                        <div class="sp-panel-title" style="font-size:0.75rem;">Sessionsverktyg</div>
-                        <button class="sp-copy-btn" id="spCopyBtn" onclick="copyStudentLink()" role="button" tabindex="0"
-                            ${keyHandler('copyStudentLink()')} aria-label="${t('copyLink')}">
-                            ${t('copyLink')}
+                <!-- Bottom: Session Tools & Messaging -->
+                <div class="sp-panel sp-panel-bottom">
+                    <div style="display:flex; gap: 0.5rem; align-items: center; flex: 1; min-width:300px;">
+                        <input type="text" class="sp-msg-input" id="spTeacherMsgInput" placeholder="Skriv ett meddelande till klassen..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendTeacherMsg();}" aria-label="Meddelande">
+                        <button class="sp-btn-sm" onclick="sendTeacherMsg()" role="button" tabindex="0" style="background:var(--sp-accent-soft);color:var(--sp-accent);white-space:nowrap;" ${keyHandler('sendTeacherMsg()')}>Skicka</button>
+                        <button class="sp-btn-sm" onclick="clearTeacherMsg()" role="button" tabindex="0" style="white-space:nowrap;" ${keyHandler('clearTeacherMsg()')}>Rensa</button>
+                    </div>
+                    <div style="display:flex; gap: 0.5rem; flex-wrap:wrap; justify-content:flex-end;">
+                        <button class="sp-copy-btn" id="spCopyBtn" onclick="copyStudentLink()" role="button" tabindex="0" style="margin-bottom:0;" ${keyHandler('copyStudentLink()')}>${t('copyLink')}</button>
+                        <button class="sp-btn-sm" onclick="startBeeGame(true, false)" role="button" tabindex="0" style="background:var(--sp-bg-glass);color:#fff;border:1px solid var(--sp-border);" ${keyHandler('startBeeGame(true, false)')}>
+                            Bispel (Endast du)
                         </button>
-                        <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
-                            <button class="sp-btn-sm" onclick="resetSession()" role="button" tabindex="0"
-                                ${keyHandler('resetSession()')} aria-label="${t('resetBtn')}"
-                                style="color:var(--sp-incorrect);">
-                                ${t('resetBtn')}
-                            </button>
-                            <button class="sp-btn-sm" onclick="startBeeGame(true)" role="button" tabindex="0"
-                                ${keyHandler('startBeeGame(true)')} aria-label="Starta bi-spelet"
-                                style="background:rgba(245,166,35,0.15);color:#f5a623;border:1px solid rgba(245,166,35,0.3);">
-                                Starta Värmebollsförsvaret
-                            </button>
-                        </div>
+                        <button class="sp-btn-sm" onclick="startBeeGame(true, true)" role="button" tabindex="0" style="background:rgba(245,166,35,0.15);color:#f5a623;border:1px solid rgba(245,166,35,0.3);font-weight:600;" ${keyHandler('startBeeGame(true, true)')}>
+                            ▶ Bispel (DEMO-läge)
+                        </button>
+                        <button class="sp-btn-sm" onclick="resetSession()" role="button" tabindex="0" style="color:var(--sp-incorrect);" ${keyHandler('resetSession()')}>${t('resetBtn')}</button>
                     </div>
                 </div>
             </div>
@@ -2276,6 +2259,8 @@
                 const state = await getTeacherState();
                 if (!state) return;
                 handleOnline();
+                
+                SP.teacherIsPlaying = state.isPlaying;
 
                 // Handle fullscreen message
                 if (state.msgColor && state.msgColor !== 'none' && state.msgText) {
@@ -2391,7 +2376,7 @@
 
     // ═══════════════════════════════════════════
     // 🐝 BEE DEFENSE GAME — "Hot Defensive Bee Ball"
-    // Multiplayer: students = bees, AI = hornet (Vespa mandarinia / sammetsjätting)
+    // Multiplayer: students = bees, AI = hornet (Vespa mandarinia / sammetsgeting)
     // Real science: bees surround hornet, raise temp to ~47°C
     // ═══════════════════════════════════════════
 
@@ -2411,7 +2396,7 @@
         lethalTemp: 47,          // C -- lethal for Vespa mandarinia
         beeLethalTemp: 50,       // C -- bees can survive up to ~50C
         ambientTemp: 25,
-        heatRadius: 0.08,        // How close a bee must be to heat the hornet
+        heatRadius: 0.05,        // Reduced from 0.08
         heatRate: 2.5,           // C/sec per bee in range
         coolRate: 1.2,           // C/sec cooling when no bees near
         chaseStickTime: 3,       // seconds before retargeting
@@ -2438,8 +2423,65 @@
         bgStars: []
     };
 
-    function startBeeGame(isTeacher) {
+    // Image assets for game
+    const SPRITES = { beeLoaded: false, hornetLoaded: false };
+    
+    function makeTransparent(img) {
+        try {
+            const c = document.createElement('canvas');
+            c.width = img.width; c.height = img.height;
+            const ctx = c.getContext('2d', { willReadFrequently: true });
+            ctx.drawImage(img, 0, 0);
+            const imgData = ctx.getImageData(0, 0, c.width, c.height);
+            const data = imgData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i], g = data[i+1], b = data[i+2];
+                // Remove white background with soft edge
+                if (r > 240 && g > 240 && b > 240) {
+                    data[i+3] = 0;
+                } else if (r > 220 && g > 220 && b > 220) {
+                    const brightness = (r+g+b)/3;
+                    data[i+3] = Math.max(0, 255 - (brightness - 220) * 7);
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
+            return c;
+        } catch (e) {
+            console.warn("CORS or file:// protocol issue. Using raw image.", e);
+            return img;
+        }
+    }
+
+    SPRITES.beeRaw = new Image();
+    SPRITES.beeRaw.src = 'assets/bee.png?v=' + Date.now();
+    SPRITES.beeRaw.onload = () => { 
+        SPRITES.bee = makeTransparent(SPRITES.beeRaw);
+        SPRITES.beeLoaded = true; 
+    };
+    
+    SPRITES.hornetRaw = new Image();
+    SPRITES.hornetRaw.src = 'assets/hornet.png?v=' + Date.now();
+    SPRITES.hornetRaw.onload = () => { 
+        SPRITES.hornet = makeTransparent(SPRITES.hornetRaw);
+        SPRITES.hornetLoaded = true; 
+    };
+
+    function startBeeGame(isTeacher, isDemo = false) {
         GAME.active = true;
+        GAME.lastTime = performance.now();
+        GAME.isDemo = isDemo;
+        GAME.demoBees = [];
+        if (isDemo) {
+            for (let i = 0; i < 20; i++) {
+                GAME.demoBees.push({
+                    id: 'demo_' + i,
+                    name: 'AI-Bi ' + (i+1),
+                    x: 0.1 + Math.random() * 0.8,
+                    y: 0.1 + Math.random() * 0.8,
+                    heading: 0
+                });
+            }
+        }
         GAME.victory = false;
         GAME.defeat = false;
         GAME.deadBees = new Set();
@@ -2637,6 +2679,23 @@
     }
 
     function updateBeeMovement(dt) {
+        if (GAME.isDemo && GAME.demoBees) {
+            GAME.demoBees.forEach(b => {
+                if (GAME.deadBees.has(b.id)) return;
+                const dx = GAME.hornet.x - b.x;
+                const dy = GAME.hornet.y - b.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist > 0) {
+                    const speed = 0.05 + Math.random() * 0.03;
+                    b.x += (dx/dist + (Math.random()-0.5)*1.5) * speed * dt;
+                    b.y += (dy/dist + (Math.random()-0.5)*1.5) * speed * dt;
+                    b.x = Math.max(0.02, Math.min(0.98, b.x));
+                    b.y = Math.max(0.02, Math.min(0.98, b.y));
+                    b.heading = Math.atan2(dy, dx);
+                }
+            });
+        }
+
         if (GAME.deadBees && GAME.deadBees.has(SP.mode === 'teacher' ? 'teacher' : SP.studentId)) return;
 
         // Keyboard input (WASD/arrows) — direct velocity control
@@ -2695,26 +2754,31 @@
         GAME.allBees.forEach((bee, sid) => {
             bees.push({ x: bee.x, y: bee.y, id: sid });
         });
+        if (GAME.isDemo && GAME.demoBees) {
+            GAME.demoBees.forEach(b => bees.push({ x: b.x, y: b.y, id: b.id }));
+        }
 
         if (bees.length === 0) return;
 
         // Collect living bees for target selection
         const livingBees = bees.filter(b => !GAME.deadBees.has(b.id));
 
+        if (livingBees.length === 0) return;
+
         // Chase timer
         h.chaseTimer -= dt;
 
-        // Find nearest bee OR retarget
-        if (!h.targetBee || h.chaseTimer <= 0) {
+        // Find nearest bee OR retarget if target is dead or timer expired
+        if (!h.targetBee || h.chaseTimer <= 0 || GAME.deadBees.has(h.targetBee)) {
             let nearest = null, nearestDist = Infinity;
-            bees.forEach(b => {
+            livingBees.forEach(b => {
                 const dx = b.x - h.x, dy = b.y - h.y;
                 const d = Math.sqrt(dx * dx + dy * dy);
                 if (d < nearestDist) { nearestDist = d; nearest = b; }
             });
 
             // Check if another bee is very close to the hornet (defender)
-            const defenders = bees.filter(b => {
+            const defenders = livingBees.filter(b => {
                 const dx = b.x - h.x, dy = b.y - h.y;
                 return Math.sqrt(dx * dx + dy * dy) < GAME.heatRadius * 1.5;
             });
@@ -2731,7 +2795,7 @@
         }
 
         // Move toward target
-        const target = bees.find(b => b.id === h.targetBee) || bees[0];
+        const target = livingBees.find(b => b.id === h.targetBee) || livingBees[0];
         if (target) {
             const dx = target.x - h.x;
             const dy = target.y - h.y;
@@ -2753,7 +2817,7 @@
 
         // Hornet eats bees if temperature is below 42C (cannot eat effectively when overheating)
         if (GAME.temperature < 42) {
-            const eatRadius = 0.03;
+            const eatRadius = 0.015; // Match new beeSize
             livingBees.forEach(b => {
                 const dx = b.x - h.x, dy = b.y - h.y;
                 if (Math.sqrt(dx * dx + dy * dy) < eatRadius) {
@@ -2778,8 +2842,12 @@
 
         // Count bees within heat radius
         let nearbyCount = 0;
-        const bees = [{ x: GAME.myBee.x, y: GAME.myBee.y }];
-        GAME.allBees.forEach(b => bees.push({ x: b.x, y: b.y }));
+        const myId = SP.mode === 'teacher' ? 'teacher' : SP.studentId;
+        const bees = [{ id: myId, x: GAME.myBee.x, y: GAME.myBee.y }];
+        GAME.allBees.forEach((b, sid) => bees.push({ id: sid, x: b.x, y: b.y }));
+        if (GAME.isDemo && GAME.demoBees) {
+            GAME.demoBees.forEach(b => bees.push({ id: b.id, x: b.x, y: b.y }));
+        }
 
         bees.forEach(b => {
             if (!GAME.deadBees.has(b.id)) {
@@ -2919,8 +2987,8 @@
 
         const toX = (nx) => nx * W;
         const toY = (ny) => ny * H;
-        const beeSize = Math.min(W, H) * 0.03;
-        const hornetSize = Math.min(W, H) * 0.05;
+        const beeSize = Math.min(W, H) * 0.018; // Reduced from 0.03
+        const hornetSize = Math.min(W, H) * 0.03; // Reduced from 0.05
 
         // Heat radius visualization
         if (!GAME.victory) {
@@ -2943,6 +3011,15 @@
             drawBee(ctx, toX(bee.x), toY(bee.y), beeSize, bee.name, false, bee.heading || 0);
             ctx.globalAlpha = 1.0;
         });
+
+        // Draw demo bees
+        if (GAME.isDemo && GAME.demoBees) {
+            GAME.demoBees.forEach(bee => {
+                if (GAME.deadBees && GAME.deadBees.has(bee.id)) ctx.globalAlpha = 0.3;
+                drawBee(ctx, toX(bee.x), toY(bee.y), beeSize, bee.name, false, bee.heading || 0);
+                ctx.globalAlpha = 1.0;
+            });
+        }
 
         // Draw my bee (with tracked heading)
         const myId = SP.mode === 'teacher' ? 'teacher' : SP.studentId;
@@ -2979,121 +3056,59 @@
         ctx.translate(x, y);
         ctx.rotate(angle);
 
-        // Glow for own bee
+        // Highlight for own bee
         if (isMe) {
+            const pulse = 1 + Math.sin(performance.now() / 150) * 0.15;
             ctx.beginPath();
-            ctx.arc(0, 0, size * 2, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(245, 200, 50, 0.12)';
+            ctx.arc(0, 0, size * 2.2 * pulse, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(245, 158, 11, 0.15)';
             ctx.fill();
-        }
-
-        const t = performance.now();
-
-        // === WINGS (behind body) — translucent, animated ===
-        const wingFlap = Math.sin(t / 30) * 0.4;  // fast flapping
-        // Left wing
-        ctx.beginPath();
-        ctx.ellipse(-size * 0.15, -size * 0.55, size * 0.65, size * 0.28, -0.2 + wingFlap, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(200, 225, 255, 0.25)';
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(180, 210, 255, 0.2)';
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-        // Right wing
-        ctx.beginPath();
-        ctx.ellipse(-size * 0.15, size * 0.55, size * 0.65, size * 0.28, 0.2 - wingFlap, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(200, 225, 255, 0.25)';
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(180, 210, 255, 0.2)';
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-
-        // === ABDOMEN (rear, striped) ===
-        ctx.beginPath();
-        ctx.ellipse(-size * 0.3, 0, size * 0.75, size * 0.5, 0, 0, Math.PI * 2);
-        ctx.fillStyle = '#e8a217';
-        ctx.fill();
-        // Stripes on abdomen
-        ctx.save();
-        ctx.clip();
-        for (let i = -3; i <= 3; i++) {
-            ctx.fillStyle = '#2a1a00';
-            ctx.fillRect(-size * 1.1, i * size * 0.22 - size * 0.04, size * 2.2, size * 0.08);
-        }
-        ctx.restore();
-        // Stinger
-        ctx.beginPath();
-        ctx.moveTo(-size * 1.0, 0);
-        ctx.lineTo(-size * 1.25, -size * 0.04);
-        ctx.lineTo(-size * 1.25, size * 0.04);
-        ctx.closePath();
-        ctx.fillStyle = '#1a0e00';
-        ctx.fill();
-
-        // === THORAX (middle, fuzzy) ===
-        ctx.beginPath();
-        ctx.ellipse(size * 0.25, 0, size * 0.4, size * 0.38, 0, 0, Math.PI * 2);
-        ctx.fillStyle = '#b5780f';
-        ctx.fill();
-        // Fuzzy texture (pre-generated dots for stable rendering)
-        GAME.beeFuzzyDots.forEach(d => {
-            const fx = size * 0.25 + d.dx * size;
-            const fy = d.dy * size;
-            ctx.beginPath();
-            ctx.arc(fx, fy, size * 0.03, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(200, 160, 60, 0.4)';
-            ctx.fill();
-        });
-
-        // === HEAD ===
-        ctx.beginPath();
-        ctx.ellipse(size * 0.65, 0, size * 0.28, size * 0.25, 0, 0, Math.PI * 2);
-        ctx.fillStyle = '#c48a12';
-        ctx.fill();
-        // Eyes (large, compound)
-        ctx.beginPath();
-        ctx.ellipse(size * 0.78, -size * 0.12, size * 0.1, size * 0.08, 0.2, 0, Math.PI * 2);
-        ctx.fillStyle = '#111';
-        ctx.fill();
-        ctx.beginPath();
-        ctx.ellipse(size * 0.78, size * 0.12, size * 0.1, size * 0.08, -0.2, 0, Math.PI * 2);
-        ctx.fillStyle = '#111';
-        ctx.fill();
-        // Antennae
-        ctx.beginPath();
-        ctx.moveTo(size * 0.85, -size * 0.15);
-        ctx.quadraticCurveTo(size * 1.1, -size * 0.35, size * 1.15, -size * 0.25);
-        ctx.moveTo(size * 0.85, size * 0.15);
-        ctx.quadraticCurveTo(size * 1.1, size * 0.35, size * 1.15, size * 0.25);
-        ctx.strokeStyle = '#4a3000';
-        ctx.lineWidth = Math.max(1, size * 0.04);
-        ctx.stroke();
-
-        // === LEGS (3 pairs, simple) ===
-        ctx.strokeStyle = '#3a2200';
-        ctx.lineWidth = Math.max(1, size * 0.04);
-        [-0.1, 0.15, 0.4].forEach(xOff => {
-            const legWiggle = Math.sin(t / 100 + xOff * 20) * size * 0.05;
-            ctx.beginPath();
-            ctx.moveTo(size * xOff, -size * 0.35);
-            ctx.lineTo(size * xOff - size * 0.1, -size * 0.55 + legWiggle);
-            ctx.moveTo(size * xOff, size * 0.35);
-            ctx.lineTo(size * xOff - size * 0.1, size * 0.55 - legWiggle);
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.5)';
             ctx.stroke();
-        });
+        }
+
+        if (SPRITES.beeLoaded && SPRITES.bee) {
+            ctx.rotate(Math.PI / 2);
+            ctx.drawImage(SPRITES.bee, -size*2, -size*2, size*4, size*4);
+            ctx.rotate(-Math.PI / 2);
+        } else {
+            // Fallback circle
+            ctx.beginPath();
+            ctx.arc(0, 0, size, 0, Math.PI*2);
+            ctx.fillStyle = '#e8a217';
+            ctx.fill();
+        }
 
         ctx.restore();
 
         // Name label (unrotated)
         if (name) {
-            ctx.font = `bold ${Math.max(10, size * 0.65)}px Inter, sans-serif`;
-            ctx.fillStyle = isMe ? '#f5a623' : 'rgba(255,255,255,0.55)';
+            const fontSize = Math.max(10, size * 0.65);
+            ctx.font = `bold ${fontSize}px Inter, sans-serif`;
+            const textWidth = ctx.measureText(name).width;
+            const labelY = y + size * 1.6 + 5;
+            
+            // Background pill for legibility
+            ctx.fillStyle = isMe ? 'rgba(245, 158, 11, 0.15)' : 'rgba(0, 0, 0, 0.4)';
+            if (ctx.roundRect) {
+                ctx.beginPath();
+                ctx.roundRect(x - textWidth/2 - 6, labelY - fontSize, textWidth + 12, fontSize + 4, 4);
+                ctx.fill();
+                if (isMe) {
+                    ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+            
+            ctx.fillStyle = isMe ? '#f5a623' : 'rgba(255,255,255,0.7)';
             ctx.textAlign = 'center';
-            ctx.fillText(name, x, y + size * 1.4 + 10);
+            ctx.fillText(name, x, labelY);
         }
     }
 
-    // ─── SAMMETSJÄTTING (Vespa mandarinia) ───
+    // ─── SAMMETSGETING (Vespa mandarinia) ───
     // Characteristic features: large orange-yellow head, dark velvety thorax,
     // pronounced mandibles, dark brown body with orange-yellow bands
     function drawHornet(ctx, x, y, size) {
@@ -3102,139 +3117,26 @@
         ctx.translate(x, y);
         ctx.rotate(angle);
 
-        const t = performance.now();
-
-        // === WINGS (behind body, larger than bee's) ===
-        const wingFlap = Math.sin(t / 40) * 0.3;
-        ctx.beginPath();
-        ctx.ellipse(-size * 0.1, -size * 0.6, size * 0.85, size * 0.3, -0.15 + wingFlap, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(160, 140, 80, 0.18)';
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(140, 120, 60, 0.15)';
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.ellipse(-size * 0.1, size * 0.6, size * 0.85, size * 0.3, 0.15 - wingFlap, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(160, 140, 80, 0.18)';
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(140, 120, 60, 0.15)';
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-
-        // === ABDOMEN (large, dark with orange bands) ===
-        ctx.beginPath();
-        ctx.ellipse(-size * 0.35, 0, size * 0.85, size * 0.55, 0, 0, Math.PI * 2);
-        ctx.fillStyle = '#1a0d00';
-        ctx.fill();
-        // Orange-yellow banding (sammetsjätting pattern)
-        ctx.save();
-        ctx.beginPath();
-        ctx.ellipse(-size * 0.35, 0, size * 0.85, size * 0.55, 0, 0, Math.PI * 2);
-        ctx.clip();
-        const bandColors = ['#d4780a', '#1a0d00', '#e8930e', '#1a0d00', '#d4780a'];
-        bandColors.forEach((col, i) => {
-            const by = -size * 0.55 + i * (size * 1.1 / bandColors.length);
-            ctx.fillStyle = col;
-            ctx.fillRect(-size * 1.3, by, size * 2.6, size * 1.1 / bandColors.length);
-        });
-        ctx.restore();
-        // Velvet texture (pre-generated dots for stable rendering)
-        GAME.hornetFuzzyDots.forEach(d => {
-            const vx = -size * 0.35 + d.dx * size;
-            const vy = d.dy * size;
+        if (SPRITES.hornetLoaded && SPRITES.hornet) {
+            ctx.rotate(Math.PI / 2);
+            ctx.drawImage(SPRITES.hornet, -size*3, -size*3, size*6, size*6);
+            ctx.rotate(-Math.PI / 2);
+        } else {
+            // Fallback circle
             ctx.beginPath();
-            ctx.arc(vx, vy, size * 0.025, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(100, 50, 0, 0.3)';
+            ctx.arc(0, 0, size, 0, Math.PI*2);
+            ctx.fillStyle = '#1a0d00';
             ctx.fill();
-        });
-        // Stinger
-        ctx.beginPath();
-        ctx.moveTo(-size * 1.15, 0);
-        ctx.lineTo(-size * 1.45, -size * 0.05);
-        ctx.lineTo(-size * 1.45, size * 0.05);
-        ctx.closePath();
-        ctx.fillStyle = '#0d0600';
-        ctx.fill();
-
-        // === THORAX (dark, muscular) ===
-        ctx.beginPath();
-        ctx.ellipse(size * 0.3, 0, size * 0.45, size * 0.42, 0, 0, Math.PI * 2);
-        ctx.fillStyle = '#2a1500';
-        ctx.fill();
-        // Darker midline
-        ctx.fillStyle = '#1a0d00';
-        ctx.fillRect(size * 0.05, -size * 0.03, size * 0.5, size * 0.06);
-
-        // === HEAD (large orange — defining feature of Vespa mandarinia) ===
-        ctx.beginPath();
-        ctx.ellipse(size * 0.78, 0, size * 0.38, size * 0.32, 0, 0, Math.PI * 2);
-        ctx.fillStyle = '#e68a0e';
-        ctx.fill();
-        // Darker face plate
-        ctx.beginPath();
-        ctx.ellipse(size * 0.88, 0, size * 0.2, size * 0.18, 0, 0, Math.PI * 2);
-        ctx.fillStyle = '#c46a08';
-        ctx.fill();
-        // Eyes (dark, menacing)
-        ctx.beginPath();
-        ctx.ellipse(size * 0.85, -size * 0.15, size * 0.12, size * 0.09, 0.15, 0, Math.PI * 2);
-        ctx.fillStyle = '#1a0000';
-        ctx.fill();
-        // Eye highlight
-        ctx.beginPath();
-        ctx.arc(size * 0.88, -size * 0.13, size * 0.03, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(200, 50, 50, 0.6)';
-        ctx.fill();
-        ctx.beginPath();
-        ctx.ellipse(size * 0.85, size * 0.15, size * 0.12, size * 0.09, -0.15, 0, Math.PI * 2);
-        ctx.fillStyle = '#1a0000';
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(size * 0.88, size * 0.13, size * 0.03, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(200, 50, 50, 0.6)';
-        ctx.fill();
-        // MANDIBLES (prominent — sammetsjätting's weapon)
-        ctx.beginPath();
-        ctx.moveTo(size * 1.1, -size * 0.08);
-        ctx.quadraticCurveTo(size * 1.35, -size * 0.2, size * 1.3, -size * 0.35);
-        ctx.strokeStyle = '#3a1e00';
-        ctx.lineWidth = Math.max(2, size * 0.06);
-        ctx.lineCap = 'round';
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(size * 1.1, size * 0.08);
-        ctx.quadraticCurveTo(size * 1.35, size * 0.2, size * 1.3, size * 0.35);
-        ctx.stroke();
-        // Antennae (shorter, thicker than bee)
-        ctx.beginPath();
-        ctx.moveTo(size * 0.95, -size * 0.22);
-        ctx.quadraticCurveTo(size * 1.15, -size * 0.4, size * 1.05, -size * 0.45);
-        ctx.moveTo(size * 0.95, size * 0.22);
-        ctx.quadraticCurveTo(size * 1.15, size * 0.4, size * 1.05, size * 0.45);
-        ctx.strokeStyle = '#3a1e00';
-        ctx.lineWidth = Math.max(1.5, size * 0.05);
-        ctx.stroke();
-
-        // === LEGS (3 pairs, thicker) ===
-        ctx.strokeStyle = '#2a1500';
-        ctx.lineWidth = Math.max(1.5, size * 0.05);
-        [-0.15, 0.15, 0.45].forEach(xOff => {
-            const legWiggle = Math.sin(t / 80 + xOff * 15) * size * 0.04;
-            ctx.beginPath();
-            ctx.moveTo(size * xOff, -size * 0.4);
-            ctx.lineTo(size * xOff - size * 0.12, -size * 0.65 + legWiggle);
-            ctx.moveTo(size * xOff, size * 0.4);
-            ctx.lineTo(size * xOff - size * 0.12, size * 0.65 - legWiggle);
-            ctx.stroke();
-        });
+        }
 
         ctx.restore();
+
 
         // Label (unrotated, below)
         ctx.font = `bold ${Math.max(11, size * 0.45)}px Inter, sans-serif`;
         ctx.fillStyle = '#ef4444';
         ctx.textAlign = 'center';
-        ctx.fillText('SAMMETSJÄTTING', x, y + size + 16);
+        ctx.fillText('SAMMETSGETING', x, y + size + 16);
     }
 
     // ═══════════════════════════════════════════

@@ -1,7 +1,7 @@
 {
   "version": "2.0",
-  "title": "Sammetsjattingen som riskerar sla ut svenska bin",
-  "subtitle": "Dagens Eko — Sammetsjattingen i Sverige",
+  "title": "Sammetsgetingen som riskerar sla ut svenska bin",
+  "subtitle": "Dagens Eko — Sammetsgetingen i Sverige",
   "subject": "Biologi - Invasiva arter - Ekologi",
   "audioFile": "assets/soundpulse_sammetsjattingen.mp3",
   "transcriptionFile": "assets/soundpulse_transcription.json",
@@ -12,7 +12,7 @@
       "start": 0,
       "end": 200,
       "image": "assets/soundpulse/seg1_hero.png",
-      "title": "Sammetsjattingen — Varldens Storsta Geting"
+      "title": "Sammetsgetingen — Varldens Storsta Geting"
     },
     {
       "start": 200,
@@ -51,7 +51,7 @@
       "type": "multiple-choice",
       "triggerTime": 45,
       "difficulty": "easy",
-      "text": "I inledningen nämns att sammetsjättingen har hittats i Sverige. Ungefär hur stor är den jämfört med en vanlig geting?",
+      "text": "I inledningen nämns att sammetsgetingen har hittats i Sverige. Ungefär hur stor är den jämfört med en vanlig geting?",
       "options": [
         { "letter": "A", "text": "Ungefär lika stor som en vanlig geting" },
         { "letter": "B", "text": "Dubbelt så stor — ca 3 cm" },
@@ -59,15 +59,15 @@
         { "letter": "D", "text": "Stor som en kolibri — ca 8 cm" }
       ],
       "correct": "C",
-      "feedbackOk": "Rätt! Sammetsjättingen (Vespa mandarinia) kan bli upp till 5 cm lång — världens största geting.",
-      "feedbackNok": "Rätt svar: <strong>C</strong>. Sammetsjättingen kan bli 4-5 cm lång, alltså tre till fem gånger större än en vanlig geting."
+      "feedbackOk": "Rätt! Sammetsgetingen (Vespa mandarinia) kan bli upp till 5 cm lång — världens största geting.",
+      "feedbackNok": "Rätt svar: <strong>C</strong>. Sammetsgetingen kan bli 4-5 cm lång, alltså tre till fem gånger större än en vanlig geting."
     },
     {
       "id": "q2",
       "type": "multiple-choice",
       "triggerTime": 100,
       "difficulty": "medium",
-      "text": "Sammetsjättingen (Vespa mandarinia) är en invasiv art. Var kommer den ursprungligen ifrån?",
+      "text": "Sammetsgetingen (Vespa mandarinia) är en invasiv art. Var kommer den ursprungligen ifrån?",
       "options": [
         { "letter": "A", "text": "Sydamerika — tropiska regnskogar" },
         { "letter": "B", "text": "Ost- och Sydostasien — tropiskt och tempererat klimat" },
@@ -76,7 +76,7 @@
       ],
       "correct": "B",
       "feedbackOk": "Rätt! Vespa mandarinia kommer ursprungligen från Ost- och Sydostasien, bland annat Japan, Kina och Korea.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsjättingen (Vespa mandarinia) har sitt ursprung i Ost- och Sydostasien. Den har på senare år påträffats i Nordamerika och Europa."
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsgetingen (Vespa mandarinia) har sitt ursprung i Ost- och Sydostasien. Den har på senare år påträffats i Nordamerika och Europa."
     },
     {
       "id": "q3",
@@ -119,7 +119,7 @@
       "type": "multiple-choice",
       "triggerTime": 260,
       "difficulty": "easy",
-      "text": "I programmet nämns att sammetsjättingen angriper bisamhällen. Vad är det den främst är ute efter?",
+      "text": "I programmet nämns att sammetsgetingen angriper bisamhällen. Vad är det den främst är ute efter?",
       "options": [
         { "letter": "A", "text": "Honungen — den äter honung i stora mängder" },
         { "letter": "B", "text": "Larverna och pupporna — proteinrik föda till sina egna larver" },
@@ -127,8 +127,8 @@
         { "letter": "D", "text": "Pollenet — som den samlar för egen pollinering" }
       ],
       "correct": "B",
-      "feedbackOk": "Rätt! Sammetsjättingar attackerar bikupor för att komma åt larverna och pupporna, som är proteinrika och matas till deras egna larver.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsjättingar angriper bisamhällen för att komma åt larverna och pupporna. En grupp getingar kan utplåna ett helt bisamhälle på några timmar."
+      "feedbackOk": "Rätt! Sammetsgetingar attackerar bikupor för att komma åt larverna och pupporna, som är proteinrika och matas till deras egna larver.",
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsgetingar angriper bisamhällen för att komma åt larverna och pupporna. En grupp getingar kan utplåna ett helt bisamhälle på några timmar."
     },
     {
       "id": "q6",
@@ -172,7 +172,7 @@
       "type": "multiple-choice",
       "triggerTime": 470,
       "difficulty": "hard",
-      "text": "I programmet diskuteras hur sammetsjättingen kan påverka ekosystemet om den etablerar sig i Sverige. Vilken ekosystemtjänst hotas mest direkt?",
+      "text": "I programmet diskuteras hur sammetsgetingen kan påverka ekosystemet om den etablerar sig i Sverige. Vilken ekosystemtjänst hotas mest direkt?",
       "options": [
         { "letter": "A", "text": "Pollinering — en reglerande ekosystemtjänst värd miljarder kronor årligen" },
         { "letter": "B", "text": "Nedbrytning — en stödjande ekosystemtjänst" },
@@ -181,7 +181,7 @@
       ],
       "correct": "A",
       "feedbackOk": "Rätt! Pollinering är den mest direkt hotade ekosystemtjänsten. Ungefär 75% av världens odlade grödor är helt eller delvis beroende av insektspollinering.",
-      "feedbackNok": "Rätt svar: <strong>A</strong>. Pollinering är värd uppskattningsvis 150 miljarder dollar globalt per år. Om sammetsjättingen decimerar bipopulationer drabbas frukt-, bär- och grödproduktion direkt."
+      "feedbackNok": "Rätt svar: <strong>A</strong>. Pollinering är värd uppskattningsvis 150 miljarder dollar globalt per år. Om sammetsgetingen decimerar bipopulationer drabbas frukt-, bär- och grödproduktion direkt."
     },
     {
       "id": "q9",
@@ -250,7 +250,7 @@
       "pairs": [
         { "left": "Klöver (växt)", "right": "Producent — skapar energi via fotosyntes" },
         { "left": "Honungsbi", "right": "Primärkonsument — äter nektar och pollen" },
-        { "left": "Sammetsjätting", "right": "Sekundärkonsument — predator som äter bin" },
+        { "left": "Sammetsgeting", "right": "Sekundärkonsument — predator som äter bin" },
         { "left": "Bivråk (fågel)", "right": "Tertiärkonsument — toppredator som äter getingar" },
         { "left": "Svampar i marken", "right": "Nedbrytare — bryter ner dött organiskt material" }
       ],
@@ -262,7 +262,7 @@
       "type": "multiple-choice",
       "triggerTime": 790,
       "difficulty": "medium",
-      "text": "Om sammetsjättingen slår ut honungsbina i ett område, vad händer med växterna som är beroende av pollinering?",
+      "text": "Om sammetsgetingen slår ut honungsbina i ett område, vad händer med växterna som är beroende av pollinering?",
       "options": [
         { "letter": "A", "text": "Ingenting — vinden pollinerar alla växter" },
         { "letter": "B", "text": "De kan fortplanta sig men producerar mindre frukt och frön" },
@@ -281,7 +281,7 @@
       "text": "Vilka av dessa arter är invasiva i Sverige och vilka är inhemska?",
       "categories": ["Invasiva i Sverige", "Inhemska i Sverige"],
       "items": [
-        { "word": "Sammetsjätting", "cat": 0 },
+        { "word": "Sammetsgeting", "cat": 0 },
         { "word": "Bålgeting", "cat": 1 },
         { "word": "Mördarsnigel (spansk skogssnigel)", "cat": 0 },
         { "word": "Honungsbi", "cat": 1 },
@@ -291,14 +291,14 @@
         { "word": "Älggräs", "cat": 1 }
       ],
       "feedbackOk": "Imponerande! Du har koll på vilka arter som hör hemma i Sverige och vilka som är invasiva.",
-      "feedbackNok": "Inte helt rätt. Invasiva: sammetsjätting, mördarsnigel, signalkräfta, jätteloka. Inhemska: bålgeting, honungsbi, flodkräfta, älggräs. Signalkräftan introducerades från Nordamerika och sprider kräftpest till vår inhemska flodkräfta."
+      "feedbackNok": "Inte helt rätt. Invasiva: sammetsgeting, mördarsnigel, signalkräfta, jätteloka. Inhemska: bålgeting, honungsbi, flodkräfta, älggräs. Signalkräftan introducerades från Nordamerika och sprider kräftpest till vår inhemska flodkräfta."
     },
     {
       "id": "q16",
       "type": "multiple-choice",
       "triggerTime": 900,
       "difficulty": "medium",
-      "text": "Vilken typ av samspel beskriver förhållandet mellan sammetsjättingen och honungsbina bäst?",
+      "text": "Vilken typ av samspel beskriver förhållandet mellan sammetsgetingen och honungsbina bäst?",
       "options": [
         { "letter": "A", "text": "Mutualism — båda har nytta" },
         { "letter": "B", "text": "Kommensalism — den ena gynnas, den andra påverkas inte" },
@@ -306,7 +306,7 @@
         { "letter": "D", "text": "Parasitism — getingen lever i bisamhället" }
       ],
       "correct": "C",
-      "feedbackOk": "Rätt! Sammetsjättingen är en predator som aktivt jagar och dödar honungsbin. Det är inte parasitism eftersom getingen inte lever på eller i biet.",
+      "feedbackOk": "Rätt! Sammetsgetingen är en predator som aktivt jagar och dödar honungsbin. Det är inte parasitism eftersom getingen inte lever på eller i biet.",
       "feedbackNok": "Rätt svar: <strong>C</strong>. Predation innebär att en organism (predatorn) dödar och äter en annan (bytet). Parasitism innebär att parasiten lever på värden utan att döda den direkt."
     },
     {
@@ -324,7 +324,7 @@
       "type": "multiple-choice",
       "triggerTime": 1000,
       "difficulty": "hard",
-      "text": "Begreppet 'kaskadeffekt' används i ekologin. Vad innebär det i sammanhanget med sammetsjättingen?",
+      "text": "Begreppet 'kaskadeffekt' används i ekologin. Vad innebär det i sammanhanget med sammetsgetingen?",
       "options": [
         { "letter": "A", "text": "Att getingen sprider sig snabbare och snabbare" },
         { "letter": "B", "text": "Att en förändring i en del av ekosystemet utlöser en kedja av följdeffekter i andra delar" },
@@ -355,7 +355,7 @@
       "type": "multiple-choice",
       "triggerTime": 1080,
       "difficulty": "medium",
-      "text": "Klimatförändringarna gör att sammetsjättingen kan sprida sig norrut. Vad är den ekologiska förklaringen?",
+      "text": "Klimatförändringarna gör att sammetsgetingen kan sprida sig norrut. Vad är den ekologiska förklaringen?",
       "options": [
         { "letter": "A", "text": "Varmare vintrar gör att fler drottningar överlever och kan grunda nya kolonier på våren" },
         { "letter": "B", "text": "Högre koldioxidhalt gör getingarna större" },
@@ -363,7 +363,7 @@
         { "letter": "D", "text": "UV-strålning gör getingarna mer aggressiva" }
       ],
       "correct": "A",
-      "feedbackOk": "Rätt! Sammetsjättingens drottningar övervintrar i marken. Mildare vintrar ökar överlevnaden, och längre säsonger ger mer tid att bygga stora kolonier.",
+      "feedbackOk": "Rätt! Sammetsgetingens drottningar övervintrar i marken. Mildare vintrar ökar överlevnaden, och längre säsonger ger mer tid att bygga stora kolonier.",
       "feedbackNok": "Rätt svar: <strong>A</strong>. Temperaturen är den avgörande abiotiska faktorn. Mildare vintrar = fler överlevande drottningar = fler kolonier = snabbare spridning norrut."
     },
     {
@@ -400,7 +400,7 @@
       "type": "multiple-choice",
       "triggerTime": 1160,
       "difficulty": "hard",
-      "text": "Sammetsjättingens vetenskapliga namn är Vespa mandarinia. Vad berättar det latinska artnamnet 'mandarinia' om artens ursprung?",
+      "text": "Sammetsgetingens vetenskapliga namn är Vespa mandarinia. Vad berättar det latinska artnamnet 'mandarinia' om artens ursprung?",
       "options": [
         { "letter": "A", "text": "Den upptäcktes av en forskare vid namn Mandarin" },
         { "letter": "B", "text": "Den heter så efter Mandarin-regionen i Kina" },
@@ -416,7 +416,7 @@
       "type": "freetext",
       "triggerTime": 1180,
       "difficulty": "hard",
-      "text": "I programmet nämns flera åtgärder mot invasiva arter. Om du var ansvarig för att skydda svenska bin mot sammetsjättingen, vilka tre åtgärder skulle du prioritera och varför?",
+      "text": "I programmet nämns flera åtgärder mot invasiva arter. Om du var ansvarig för att skydda svenska bin mot sammetsgetingen, vilka tre åtgärder skulle du prioritera och varför?",
       "placeholder": "Skriv dina tre åtgärder här...",
       "feedbackMsg": "Tack för ditt svar! Viktiga åtgärder inkluderar tidig upptäckt och rapportering, forskning om biologisk bekämpning, skydd av vilda pollinatörer, importkontroller och information till biodlare."
     }

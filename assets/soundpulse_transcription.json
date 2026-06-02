@@ -171,7 +171,7 @@
       "id": 2,
       "start": 23.18,
       "end": 30.34,
-      "text": "Idag om mördargetingen som riskerar slut de svenska honungsbina.",
+      "text": "Idag om mördargetingen som riskerar slå ut de svenska honungsbina.",
       "words": [
         {
           "word": "Idag",
@@ -387,7 +387,7 @@
       "id": 5,
       "start": 48.68,
       "end": 53.16,
-      "text": "En lokal tv-reporter kommenterar upphetsat när en nördhjälpare,",
+      "text": "En lokal tv-reporter kommenterar upphetsat när en nödhjälpare,",
       "words": [
         {
           "word": "En",
@@ -438,7 +438,7 @@
           "probability": 0.986
         },
         {
-          "word": "nördhjälpare,",
+          "word": "nödhjälpare,",
           "start": 52.94,
           "end": 53.16,
           "probability": 0.544
@@ -663,7 +663,7 @@
       "id": 8,
       "start": 72.52,
       "end": 80.46,
-      "text": "Det är ett bålgetingbo som tillhör arten Vespa velutina, samhällsgeting på svenska,",
+      "text": "Det är ett bålgetingbo som tillhör arten Vespa velutina, sammetsgeting på svenska,",
       "words": [
         {
           "word": "Det",
@@ -720,7 +720,7 @@
           "probability": 0.958
         },
         {
-          "word": "samhällsgeting",
+          "word": "sammetsgeting",
           "start": 77.5,
           "end": 79.84,
           "probability": 0.892
@@ -1209,10 +1209,10 @@
       "id": 17,
       "start": 117.56,
       "end": 119.46,
-      "text": "Samhällsgetingen äter nämligen bin.",
+      "text": "Sammetsgetingen äter nämligen bin.",
       "words": [
         {
-          "word": "Samhällsgetingen",
+          "word": "Sammetsgetingen",
           "start": 117.56,
           "end": 118.08,
           "probability": 0.827
@@ -1241,7 +1241,7 @@
       "id": 18,
       "start": 123.12,
       "end": 127.38,
-      "text": "Bina vågar inte lämna sina bon på grund av samhällsgetingarna, säger en av dem.",
+      "text": "Bina vågar inte lämna sina bon på grund av sammetsgetingarna, säger en av dem.",
       "words": [
         {
           "word": "Bina",
@@ -1298,7 +1298,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingarna,",
+          "word": "sammetsgetingarna,",
           "start": 125.68,
           "end": 126.52,
           "probability": 0.992
@@ -1519,7 +1519,7 @@
       "id": 22,
       "start": 143.18,
       "end": 148.54,
-      "text": "Senare har samhällsgetingen spridit sig över Europa, ända upp till Danmark.",
+      "text": "Senare har sammetsgetingen spridit sig över Europa, ända upp till Danmark.",
       "words": [
         {
           "word": "Senare",
@@ -1534,7 +1534,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingen",
+          "word": "sammetsgetingen",
           "start": 144.0,
           "end": 144.94,
           "probability": 0.921
@@ -1869,7 +1869,7 @@
       "id": 26,
       "start": 170.86,
       "end": 172.0,
-      "text": "Alltså den här samhällsgetingen.",
+      "text": "Alltså den här sammetsgetingen.",
       "words": [
         {
           "word": "Alltså",
@@ -1890,7 +1890,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingen.",
+          "word": "sammetsgetingen.",
           "start": 171.26,
           "end": 172.0,
           "probability": 0.997
@@ -2551,7 +2551,7 @@
       "id": 37,
       "start": 216.6,
       "end": 220.26,
-      "text": "Och där inne så finns samhällsgetingens samhälle.",
+      "text": "Och där inne så finns sammetsgetingens samhälle.",
       "words": [
         {
           "word": "Och",
@@ -2584,7 +2584,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingens",
+          "word": "sammetsgetingens",
           "start": 218.1,
           "end": 219.24,
           "probability": 0.921
@@ -2885,7 +2885,7 @@
       "id": 42,
       "start": 235.84,
       "end": 242.56,
-      "text": "Och i det här stora bot så kan det bo i alla fall mer än 6000 samhällsgetingar.",
+      "text": "Och i det här stora bot så kan det bo i alla fall mer än 6000 sammetsgetingar.",
       "words": [
         {
           "word": "Och",
@@ -2984,7 +2984,7 @@
           "probability": 0.441
         },
         {
-          "word": "samhällsgetingar.",
+          "word": "sammetsgetingar.",
           "start": 241.38,
           "end": 242.56,
           "probability": 0.85
@@ -3039,7 +3039,7 @@
       "id": 44,
       "start": 247.02,
       "end": 252.56,
-      "text": "De flesta som ser en sån här samhällsgeting de skulle nog tänka stor geting.",
+      "text": "De flesta som ser en sån här sammetsgeting de skulle nog tänka stor geting.",
       "words": [
         {
           "word": "De",
@@ -3084,7 +3084,7 @@
           "probability": 0.999
         },
         {
-          "word": "samhällsgeting",
+          "word": "sammetsgeting",
           "start": 249.48,
           "end": 250.14,
           "probability": 1.0
@@ -3593,7 +3593,7 @@
       "id": 54,
       "start": 279.4,
       "end": 281.3,
-      "text": "Och att den heter samhällsgeting.",
+      "text": "Och att den heter sammetsgeting.",
       "words": [
         {
           "word": "Och",
@@ -3620,7 +3620,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgeting.",
+          "word": "sammetsgeting.",
           "start": 280.18,
           "end": 281.3,
           "probability": 0.883
@@ -3889,7 +3889,7 @@
       "id": 61,
       "start": 296.2,
       "end": 302.34,
-      "text": "Men nu är vi liksom i den här samhällsgetingens naturliga habitat eller?",
+      "text": "Men nu är vi liksom i den här sammetsgetingens naturliga habitat eller?",
       "words": [
         {
           "word": "Men",
@@ -3940,7 +3940,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingens",
+          "word": "sammetsgetingens",
           "start": 299.38,
           "end": 300.28,
           "probability": 0.898
@@ -3989,7 +3989,7 @@
       "id": 63,
       "start": 304.42,
       "end": 311.04,
-      "text": "Och för att föda upp alla de här medborgarna i samhällsgetingssamhället",
+      "text": "Och för att föda upp alla de här medborgarna i sammetsgetingssamhället",
       "words": [
         {
           "word": "Och",
@@ -4052,7 +4052,7 @@
           "probability": 0.999
         },
         {
-          "word": "samhällsgetingssamhället",
+          "word": "sammetsgetingssamhället",
           "start": 309.34,
           "end": 311.04,
           "probability": 0.993
@@ -4285,7 +4285,7 @@
       "id": 70,
       "start": 326.18,
       "end": 332.1,
-      "text": "Och då flyger de här samhällsgetingarna omkring och jagar alla möjliga olika andra bin.",
+      "text": "Och då flyger de här sammetsgetingarna omkring och jagar alla möjliga olika andra bin.",
       "words": [
         {
           "word": "Och",
@@ -4318,7 +4318,7 @@
           "probability": 0.998
         },
         {
-          "word": "samhällsgetingarna",
+          "word": "sammetsgetingarna",
           "start": 327.38,
           "end": 328.14,
           "probability": 0.882
@@ -4769,7 +4769,7 @@
       "id": 78,
       "start": 355.8,
       "end": 359.16,
-      "text": "Alltså när sådana här samhällsgetingar jagar de bina?",
+      "text": "Alltså när sådana här sammetsgetingar jagar de bina?",
       "words": [
         {
           "word": "Alltså",
@@ -4796,7 +4796,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingar",
+          "word": "sammetsgetingar",
           "start": 356.94,
           "end": 357.68,
           "probability": 0.731
@@ -5457,7 +5457,7 @@
       "id": 89,
       "start": 399.74,
       "end": 403.24,
-      "text": "Men de kan också bli lite mer storska de här samhällsgetingarna.",
+      "text": "Men de kan också bli lite mer storska de här sammetsgetingarna.",
       "words": [
         {
           "word": "Men",
@@ -5520,7 +5520,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingarna.",
+          "word": "sammetsgetingarna.",
           "start": 402.5,
           "end": 403.24,
           "probability": 0.801
@@ -5831,7 +5831,7 @@
       "id": 93,
       "start": 419.14,
       "end": 423.88,
-      "text": "Men när de väl har siktat in sig på ett bi de här samhällsgetingarna då kan de vara ganska ihärdiga.",
+      "text": "Men när de väl har siktat in sig på ett bi de här sammetsgetingarna då kan de vara ganska ihärdiga.",
       "words": [
         {
           "word": "Men",
@@ -5912,7 +5912,7 @@
           "probability": 0.998
         },
         {
-          "word": "samhällsgetingarna",
+          "word": "sammetsgetingarna",
           "start": 421.8,
           "end": 422.56,
           "probability": 0.871
@@ -6095,7 +6095,7 @@
       "id": 96,
       "start": 433.32,
       "end": 438.78,
-      "text": "För att få då ett perfekt litet proteinpaket att ta med sig hem till sina samhällsgetingslarver.",
+      "text": "För att få då ett perfekt litet proteinpaket att ta med sig hem till sina sammetsgetingslarver.",
       "words": [
         {
           "word": "För",
@@ -6188,7 +6188,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingslarver.",
+          "word": "sammetsgetingslarver.",
           "start": 437.38,
           "end": 438.78,
           "probability": 0.998
@@ -6647,7 +6647,7 @@
       "id": 102,
       "start": 465.34,
       "end": 470.32,
-      "text": "Och det är att de kan värma ihjäl samhällsgetingar med en dödsbiboll.",
+      "text": "Och det är att de kan värma ihjäl sammetsgetingar med en dödsbiboll.",
       "words": [
         {
           "word": "Och",
@@ -6698,7 +6698,7 @@
           "probability": 0.957
         },
         {
-          "word": "samhällsgetingar",
+          "word": "sammetsgetingar",
           "start": 467.36,
           "end": 468.28,
           "probability": 0.953
@@ -6789,7 +6789,7 @@
       "id": 104,
       "start": 474.84,
       "end": 484.26,
-      "text": "Det är japanska forskare som har sett hur honungsbin kan försvara sig genom att de svärmar samman i en klump, en boll, runt samhällsgetingen.",
+      "text": "Det är japanska forskare som har sett hur honungsbin kan försvara sig genom att de svärmar samman i en klump, en boll, runt sammetsgetingen.",
       "words": [
         {
           "word": "Det",
@@ -6930,7 +6930,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingen.",
+          "word": "sammetsgetingen.",
           "start": 483.52,
           "end": 484.26,
           "probability": 0.932
@@ -7181,7 +7181,7 @@
       "id": 108,
       "start": 497.94,
       "end": 499.92,
-      "text": "Ja och det blir alldeles för varmt för samhällsgetingen.",
+      "text": "Ja och det blir alldeles för varmt för sammetsgetingen.",
       "words": [
         {
           "word": "Ja",
@@ -7232,7 +7232,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingen.",
+          "word": "sammetsgetingen.",
           "start": 499.9,
           "end": 500.12,
           "probability": 1.0
@@ -7243,7 +7243,7 @@
       "id": 109,
       "start": 501.0,
       "end": 506.3,
-      "text": "Det är ganska varmt för bina också men de klarar ett par grader mer än samhällsgetingen.",
+      "text": "Det är ganska varmt för bina också men de klarar ett par grader mer än sammetsgetingen.",
       "words": [
         {
           "word": "Det",
@@ -7336,7 +7336,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingen.",
+          "word": "sammetsgetingen.",
           "start": 505.6,
           "end": 506.3,
           "probability": 0.936
@@ -7361,7 +7361,7 @@
       "id": 111,
       "start": 507.62,
       "end": 515.76,
-      "text": "Och så där kan de hålla på. De kan sitta där och stänga in den här samhällsgetingen i upp till en halvtimme och då har det dött sedan av överhettning.",
+      "text": "Och så där kan de hålla på. De kan sitta där och stänga in den här sammetsgetingen i upp till en halvtimme och då har det dött sedan av överhettning.",
       "words": [
         {
           "word": "Och",
@@ -7460,7 +7460,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingen",
+          "word": "sammetsgetingen",
           "start": 510.54,
           "end": 511.5,
           "probability": 0.999
@@ -7613,7 +7613,7 @@
       "id": 114,
       "start": 519.56,
       "end": 526.12,
-      "text": "Men det här är på ställen där bina har levt väldigt länge tillsammans med samhällsgetingen.",
+      "text": "Men det här är på ställen där bina har levt väldigt länge tillsammans med sammetsgetingen.",
       "words": [
         {
           "word": "Men",
@@ -7700,7 +7700,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingen.",
+          "word": "sammetsgetingen.",
           "start": 525.34,
           "end": 526.12,
           "probability": 1.0
@@ -8080,7 +8080,7 @@
       "id": 120,
       "start": 550.58,
       "end": 557.56,
-      "text": "Alltså hur kommer det sig att sådana här samhällsgetingar då plötsligt börjar dyka upp här på vår kontinent?",
+      "text": "Alltså hur kommer det sig att sådana här sammetsgetingar då plötsligt börjar dyka upp här på vår kontinent?",
       "words": [
         {
           "word": "Alltså",
@@ -8131,7 +8131,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingar",
+          "word": "sammetsgetingar",
           "start": 553.42,
           "end": 554.32,
           "probability": 0.769
@@ -8196,7 +8196,7 @@
       "id": 121,
       "start": 559.84,
       "end": 560.88,
-      "text": "Teorin är att det är en del av samhällsgetingen som är pågående.",
+      "text": "Teorin är att det är en del av sammetsgetingen som är pågående.",
       "words": [
         {
           "word": "Teorin",
@@ -8247,7 +8247,7 @@
           "probability": 0.97
         },
         {
-          "word": "samhällsgetingen",
+          "word": "sammetsgetingen",
           "start": 560.88,
           "end": 560.88,
           "probability": 0.463
@@ -8619,7 +8619,7 @@
       "id": 126,
       "start": 580.3,
       "end": 587.2,
-      "text": "För på något sätt så har det surrat in en eller flera samhällsgetingar i det här fartyget innan de for iväg.",
+      "text": "För på något sätt så har det surrat in en eller flera sammetsgetingar i det här fartyget innan de for iväg.",
       "words": [
         {
           "word": "För",
@@ -8694,7 +8694,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingar",
+          "word": "sammetsgetingar",
           "start": 583.86,
           "end": 584.66,
           "probability": 0.826
@@ -8999,7 +8999,7 @@
       "id": 130,
       "start": 603.14,
       "end": 611.06,
-      "text": "Och då är det ju sådär att honungsbina i Europa, de har ju aldrig sett en samhällsgeting förut.",
+      "text": "Och då är det ju sådär att honungsbina i Europa, de har ju aldrig sett en sammetsgeting förut.",
       "words": [
         {
           "word": "Och",
@@ -9098,7 +9098,7 @@
           "probability": 0.999
         },
         {
-          "word": "samhällsgeting",
+          "word": "sammetsgeting",
           "start": 609.18,
           "end": 610.66,
           "probability": 0.93
@@ -9399,7 +9399,7 @@
       "id": 135,
       "start": 628.84,
       "end": 635.02,
-      "text": "Så de har väl ingen aning om vad de ska göra när de börjar plockas bort en efter en av samhällsgetingen.",
+      "text": "Så de har väl ingen aning om vad de ska göra när de börjar plockas bort en efter en av sammetsgetingen.",
       "words": [
         {
           "word": "Så",
@@ -9522,7 +9522,7 @@
           "probability": 0.999
         },
         {
-          "word": "samhällsgetingen.",
+          "word": "sammetsgetingen.",
           "start": 634.4,
           "end": 635.02,
           "probability": 0.794
@@ -9989,7 +9989,7 @@
       "id": 142,
       "start": 663.98,
       "end": 670.34,
-      "text": "Den här invasiva samhällsgetingen, den blir ju ytterligare ett allvarligt hot mot våra pollinatörer.",
+      "text": "Den här invasiva sammetsgetingen, den blir ju ytterligare ett allvarligt hot mot våra pollinatörer.",
       "words": [
         {
           "word": "Den",
@@ -10010,7 +10010,7 @@
           "probability": 0.998
         },
         {
-          "word": "samhällsgetingen,",
+          "word": "sammetsgetingen,",
           "start": 665.14,
           "end": 665.82,
           "probability": 0.838
@@ -10541,7 +10541,7 @@
       "id": 148,
       "start": 697.72,
       "end": 702.82,
-      "text": "Så de har redan det ganska tufft. Och så kommer den här samhällsgetingen ovanpå allt det där.",
+      "text": "Så de har redan det ganska tufft. Och så kommer den här sammetsgetingen ovanpå allt det där.",
       "words": [
         {
           "word": "Så",
@@ -10616,7 +10616,7 @@
           "probability": 0.973
         },
         {
-          "word": "samhällsgetingen",
+          "word": "sammetsgetingen",
           "start": 701.04,
           "end": 701.68,
           "probability": 0.953
@@ -11197,7 +11197,7 @@
       "id": 155,
       "start": 735.22,
       "end": 740.28,
-      "text": "För det som händer då är att samhällsgetingen åtminstone inte kan komma in i samhället.",
+      "text": "För det som händer då är att sammetsgetingen åtminstone inte kan komma in i samhället.",
       "words": [
         {
           "word": "För",
@@ -11242,7 +11242,7 @@
           "probability": 0.999
         },
         {
-          "word": "samhällsgetingen",
+          "word": "sammetsgetingen",
           "start": 737.2,
           "end": 737.94,
           "probability": 0.819
@@ -11295,7 +11295,7 @@
       "id": 156,
       "start": 740.48,
       "end": 747.6,
-      "text": "Men oftast behöver man ändå försöka bekämpa samhällsgetingen aktivt genom att hitta och förstöra deras bon till exempel.",
+      "text": "Men oftast behöver man ändå försöka bekämpa sammetsgetingen aktivt genom att hitta och förstöra deras bon till exempel.",
       "words": [
         {
           "word": "Men",
@@ -11340,7 +11340,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingen",
+          "word": "sammetsgetingen",
           "start": 743.9,
           "end": 744.6,
           "probability": 1.0
@@ -11517,7 +11517,7 @@
       "id": 159,
       "start": 755.32,
       "end": 763.26,
-      "text": "Det är ju ingenting som vi verkar ha lyckats med så jättebra hittills eftersom samhällsgetingen har ju fortsatt att spridas dig.",
+      "text": "Det är ju ingenting som vi verkar ha lyckats med så jättebra hittills eftersom sammetsgetingen har ju fortsatt att spridas dig.",
       "words": [
         {
           "word": "Det",
@@ -11604,7 +11604,7 @@
           "probability": 0.967
         },
         {
-          "word": "samhällsgetingen",
+          "word": "sammetsgetingen",
           "start": 760.46,
           "end": 761.92,
           "probability": 1.0
@@ -12263,7 +12263,7 @@
       "id": 169,
       "start": 791.82,
       "end": 799.1,
-      "text": "En getingbekämpare som spränger bort ett samhällsgetingsbo med någon sorts smällare eller något sånt.",
+      "text": "En getingbekämpare som spränger bort ett sammetsgetingsbo med någon sorts smällare eller något sånt.",
       "words": [
         {
           "word": "En",
@@ -12302,7 +12302,7 @@
           "probability": 0.996
         },
         {
-          "word": "samhällsgetingsbo",
+          "word": "sammetsgetingsbo",
           "start": 795.92,
           "end": 797.06,
           "probability": 0.961
@@ -12966,7 +12966,7 @@
       "id": 182,
       "start": 831.54,
       "end": 842.02,
-      "text": "Men intressant är att för bara ett par år sedan, 2024, så konstaterade man att en samhällsgeting för första gången hade överlevt en vinter i Storbritannien.",
+      "text": "Men intressant är att för bara ett par år sedan, 2024, så konstaterade man att en sammetsgeting för första gången hade överlevt en vinter i Storbritannien.",
       "words": [
         {
           "word": "Men",
@@ -13065,7 +13065,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgeting",
+          "word": "sammetsgeting",
           "start": 837.92,
           "end": 838.54,
           "probability": 0.762
@@ -13770,7 +13770,7 @@
       "id": 191,
       "start": 878.88,
       "end": 882.8,
-      "text": "Och berättar att samhällsgetingen nu kommit till landet.",
+      "text": "Och berättar att sammetsgetingen nu kommit till landet.",
       "words": [
         {
           "word": "Och",
@@ -13791,7 +13791,7 @@
           "probability": 0.998
         },
         {
-          "word": "samhällsgetingen",
+          "word": "sammetsgetingen",
           "start": 880.48,
           "end": 881.62,
           "probability": 0.901
@@ -14706,7 +14706,7 @@
       "id": 203,
       "start": 940.86,
       "end": 949.24,
-      "text": "Så ja Sara, då har vi ju kommit till det här som du sa att samhällsgetingen på något sätt också står och knackar på dörren för att ta sig in i Sverige.",
+      "text": "Så ja Sara, då har vi ju kommit till det här som du sa att sammetsgetingen på något sätt också står och knackar på dörren för att ta sig in i Sverige.",
       "words": [
         {
           "word": "Så",
@@ -14799,7 +14799,7 @@
           "probability": 0.863
         },
         {
-          "word": "samhällsgetingen",
+          "word": "sammetsgetingen",
           "start": 943.68,
           "end": 944.48,
           "probability": 0.856
@@ -15496,7 +15496,7 @@
       "id": 211,
       "start": 981.18,
       "end": 985.72,
-      "text": "Jag menar i de länder där samhällsgetingen redan finns.",
+      "text": "Jag menar i de länder där sammetsgetingen redan finns.",
       "words": [
         {
           "word": "Jag",
@@ -15535,7 +15535,7 @@
           "probability": 1.0
         },
         {
-          "word": "samhällsgetingen",
+          "word": "sammetsgetingen",
           "start": 983.56,
           "end": 984.38,
           "probability": 0.634
@@ -17006,7 +17006,7 @@
       "id": 231,
       "start": 1067.06,
       "end": 1072.48,
-      "text": "Så det jag tänker är att nu när vi har det här nya hotet då med samhällsgetingen.",
+      "text": "Så det jag tänker är att nu när vi har det här nya hotet då med sammetsgetingen.",
       "words": [
         {
           "word": "Så",
@@ -17105,7 +17105,7 @@
           "probability": 0.998
         },
         {
-          "word": "samhällsgetingen.",
+          "word": "sammetsgetingen.",
           "start": 1071.18,
           "end": 1072.48,
           "probability": 0.984
@@ -17792,7 +17792,7 @@
       "id": 240,
       "start": 1108.2,
       "end": 1112.54,
-      "text": "Samtidigt som man såklart också försöker tänka på strategier och bekämpa samhällsgetingen.",
+      "text": "Samtidigt som man såklart också försöker tänka på strategier och bekämpa sammetsgetingen.",
       "words": [
         {
           "word": "Samtidigt",
@@ -17861,7 +17861,7 @@
           "probability": 0.989
         },
         {
-          "word": "samhällsgetingen.",
+          "word": "sammetsgetingen.",
           "start": 1112.52,
           "end": 1112.74,
           "probability": 0.951
@@ -18020,7 +18020,7 @@
       "id": 243,
       "start": 1117.46,
       "end": 1125.7,
-      "text": "Och vågar man hoppas någonstans på att de europeiska bina ska också lära sig det här med att tvinga samhällsgetingarna att basta?",
+      "text": "Och vågar man hoppas någonstans på att de europeiska bina ska också lära sig det här med att tvinga sammetsgetingarna att basta?",
       "words": [
         {
           "word": "Och",
@@ -18137,7 +18137,7 @@
           "probability": 0.999
         },
         {
-          "word": "samhällsgetingarna",
+          "word": "sammetsgetingarna",
           "start": 1124.26,
           "end": 1125.24,
           "probability": 0.72
