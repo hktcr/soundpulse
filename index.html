@@ -1299,6 +1299,30 @@
                         <div class="sp-mode-desc">Multiplayer bi-spel</div>
                     </div>
                 </div>
+                
+                <div class="sp-legend-box" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:1rem; margin-top: 1.5rem; margin-bottom:1.5rem; text-align:left;">
+                    <div style="font-size:0.95rem; font-weight:bold; color:var(--sp-text); margin-bottom:1rem; text-align:center;">Värmebollsspelet - Så här ser ni ut:</div>
+                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.8rem;">
+                        <img src="assets/hornet.png" alt="Sammetsgeting" style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">
+                        <span style="font-size:1.2rem; color:var(--sp-text-muted);">➞</span>
+                        <div style="width:24px; height:24px; border-radius:50%; background:#f97316; flex-shrink:0; box-shadow: 0 0 10px rgba(249,115,22,0.5);"></div>
+                        <span style="font-size:0.9rem; color:var(--sp-text);"><strong>Sammetsgeting</strong><br><span style="color:var(--sp-text-muted); font-size:0.8rem;">Fienden (ai-styrd)</span></span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.8rem;">
+                        <img src="assets/bee.png" alt="Honungsbi" style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">
+                        <span style="font-size:1.2rem; color:var(--sp-text-muted);">➞</span>
+                        <div style="width:20px; height:20px; border-radius:50%; background:#eab308; flex-shrink:0;"></div>
+                        <span style="font-size:0.9rem; color:var(--sp-text);"><strong>Honungsbin</strong><br><span style="color:var(--sp-text-muted); font-size:0.8rem;">Dina klasskamrater</span></span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:1rem;">
+                        <img src="assets/bee.png" alt="Ditt Bi" style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">
+                        <span style="font-size:1.2rem; color:var(--sp-text-muted);">➞</span>
+                        <div style="width:20px; height:20px; border-radius:50%; background:#eab308; border:3px solid #ef4444; flex-shrink:0; position:relative;">
+                            <div style="position:absolute; top:-6px; left:-6px; right:-6px; bottom:-6px; border:1px solid rgba(239,68,68,0.5); border-radius:50%;"></div>
+                        </div>
+                        <span style="font-size:0.9rem; color:var(--sp-text);"><strong>Ditt eget bi</strong><br><span style="color:var(--sp-text-muted); font-size:0.8rem;">(Markerat med röd ring)</span></span>
+                    </div>
+                </div>
                 <p class="sp-gdpr">${t('gdprText')}</p>
             </div>
         </div>`;
@@ -3061,24 +3085,18 @@
             const pulse = 1 + Math.sin(performance.now() / 150) * 0.15;
             ctx.beginPath();
             ctx.arc(0, 0, size * 2.2 * pulse, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.15)'; // Red background pulse
             ctx.fill();
-            ctx.lineWidth = 1.5;
-            ctx.strokeStyle = 'rgba(245, 158, 11, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'rgba(239, 68, 68, 0.8)'; // Red border
             ctx.stroke();
         }
 
-        if (SPRITES.beeLoaded && SPRITES.bee) {
-            ctx.rotate(Math.PI / 2);
-            ctx.drawImage(SPRITES.bee, -size*2, -size*2, size*4, size*4);
-            ctx.rotate(-Math.PI / 2);
-        } else {
-            // Fallback circle
-            ctx.beginPath();
-            ctx.arc(0, 0, size, 0, Math.PI*2);
-            ctx.fillStyle = '#e8a217';
-            ctx.fill();
-        }
+        // Always use yellow circle for bee
+        ctx.beginPath();
+        ctx.arc(0, 0, size, 0, Math.PI*2);
+        ctx.fillStyle = '#eab308'; // Tailwind Yellow-500
+        ctx.fill();
 
         ctx.restore();
 
@@ -3090,51 +3108,43 @@
             const labelY = y + size * 1.6 + 5;
             
             // Background pill for legibility
-            ctx.fillStyle = isMe ? 'rgba(245, 158, 11, 0.15)' : 'rgba(0, 0, 0, 0.4)';
+            ctx.fillStyle = isMe ? 'rgba(239, 68, 68, 0.15)' : 'rgba(0, 0, 0, 0.4)';
             if (ctx.roundRect) {
                 ctx.beginPath();
                 ctx.roundRect(x - textWidth/2 - 6, labelY - fontSize, textWidth + 12, fontSize + 4, 4);
                 ctx.fill();
                 if (isMe) {
-                    ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
+                    ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
                     ctx.lineWidth = 1;
                     ctx.stroke();
                 }
             }
             
-            ctx.fillStyle = isMe ? '#f5a623' : 'rgba(255,255,255,0.7)';
+            ctx.fillStyle = isMe ? '#ef4444' : 'rgba(255,255,255,0.7)';
             ctx.textAlign = 'center';
             ctx.fillText(name, x, labelY);
         }
     }
 
     // ─── SAMMETSGETING (Vespa mandarinia) ───
-    // Characteristic features: large orange-yellow head, dark velvety thorax,
-    // pronounced mandibles, dark brown body with orange-yellow bands
     function drawHornet(ctx, x, y, size) {
         const angle = GAME.hornet.heading || 0;
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(angle);
 
-        if (SPRITES.hornetLoaded && SPRITES.hornet) {
-            ctx.rotate(Math.PI / 2);
-            ctx.drawImage(SPRITES.hornet, -size*3, -size*3, size*6, size*6);
-            ctx.rotate(-Math.PI / 2);
-        } else {
-            // Fallback circle
-            ctx.beginPath();
-            ctx.arc(0, 0, size, 0, Math.PI*2);
-            ctx.fillStyle = '#1a0d00';
-            ctx.fill();
-        }
+        // Always use orange circle for hornet
+        ctx.beginPath();
+        ctx.arc(0, 0, size, 0, Math.PI*2);
+        ctx.fillStyle = '#f97316'; // Tailwind Orange-500
+        ctx.fill();
 
         ctx.restore();
 
 
         // Label (unrotated, below)
         ctx.font = `bold ${Math.max(11, size * 0.45)}px Inter, sans-serif`;
-        ctx.fillStyle = '#ef4444';
+        ctx.fillStyle = '#f97316';
         ctx.textAlign = 'center';
         ctx.fillText('SAMMETSGETING', x, y + size + 16);
     }
