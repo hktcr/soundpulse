@@ -1299,30 +1299,6 @@
                         <div class="sp-mode-desc">Multiplayer bi-spel</div>
                     </div>
                 </div>
-                
-                <div class="sp-legend-box" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:1rem; margin-top: 1.5rem; margin-bottom:1.5rem; text-align:left;">
-                    <div style="font-size:0.95rem; font-weight:bold; color:var(--sp-text); margin-bottom:1rem; text-align:center;">Värmebollsspelet - Så här ser ni ut:</div>
-                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.8rem;">
-                        <img src="assets/hornet.png" alt="Sammetsgeting" style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">
-                        <span style="font-size:1.2rem; color:var(--sp-text-muted);">➞</span>
-                        <div style="width:24px; height:24px; border-radius:50%; background:#f97316; flex-shrink:0; box-shadow: 0 0 10px rgba(249,115,22,0.5);"></div>
-                        <span style="font-size:0.9rem; color:var(--sp-text);"><strong>Sammetsgeting</strong><br><span style="color:var(--sp-text-muted); font-size:0.8rem;">Fienden (ai-styrd)</span></span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.8rem;">
-                        <img src="assets/bee.png" alt="Honungsbi" style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">
-                        <span style="font-size:1.2rem; color:var(--sp-text-muted);">➞</span>
-                        <div style="width:20px; height:20px; border-radius:50%; background:#eab308; flex-shrink:0;"></div>
-                        <span style="font-size:0.9rem; color:var(--sp-text);"><strong>Honungsbin</strong><br><span style="color:var(--sp-text-muted); font-size:0.8rem;">Dina klasskamrater</span></span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:1rem;">
-                        <img src="assets/bee.png" alt="Ditt Bi" style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">
-                        <span style="font-size:1.2rem; color:var(--sp-text-muted);">➞</span>
-                        <div style="width:20px; height:20px; border-radius:50%; background:#eab308; border:3px solid #ef4444; flex-shrink:0; position:relative;">
-                            <div style="position:absolute; top:-6px; left:-6px; right:-6px; bottom:-6px; border:1px solid rgba(239,68,68,0.5); border-radius:50%;"></div>
-                        </div>
-                        <span style="font-size:0.9rem; color:var(--sp-text);"><strong>Ditt eget bi</strong><br><span style="color:var(--sp-text-muted); font-size:0.8rem;">(Markerat med röd ring)</span></span>
-                    </div>
-                </div>
                 <p class="sp-gdpr">${t('gdprText')}</p>
             </div>
         </div>`;
@@ -2537,11 +2513,36 @@
                 </div>
                 <div class="sp-game-status" id="spGameStatus">Samla bina runt getingen!</div>
             </div>
-            <div class="sp-game-instructions" id="spGameInstructions">
-                <p><strong>Värmebollsförsvaret</strong></p>
+            <div class="sp-game-instructions" id="spGameInstructions" style="max-width: 400px; padding: 2rem;">
+                <p style="font-size: 1.2rem;"><strong>Värmebollsförsvaret</strong></p>
                 <p>Styr ditt bi med fingret/musen. Samarbeta med klassen — omringa getingen för att höja dess temperatur till 47°C!</p>
+                
+                <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:1rem; margin: 1.5rem 0; text-align:left;">
+                    <div style="font-size:0.95rem; font-weight:bold; color:var(--sp-text); margin-bottom:1rem; text-align:center;">Så här ser ni ut i spelet:</div>
+                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.8rem;">
+                        <img src="assets/hornet.png" alt="Sammetsgeting" style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">
+                        <span style="font-size:1.2rem; color:var(--sp-text-muted);">➞</span>
+                        <div style="width:24px; height:24px; border-radius:50%; background:#f97316; flex-shrink:0; box-shadow: 0 0 10px rgba(249,115,22,0.5);"></div>
+                        <span style="font-size:0.9rem; color:var(--sp-text);"><strong>Sammetsgeting</strong><br><span style="color:var(--sp-text-muted); font-size:0.8rem;">Fienden (ai-styrd)</span></span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.8rem;">
+                        <img src="assets/bee.png" alt="Honungsbi" style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">
+                        <span style="font-size:1.2rem; color:var(--sp-text-muted);">➞</span>
+                        <div style="width:20px; height:20px; border-radius:50%; background:#eab308; flex-shrink:0;"></div>
+                        <span style="font-size:0.9rem; color:var(--sp-text);"><strong>Honungsbin</strong><br><span style="color:var(--sp-text-muted); font-size:0.8rem;">Dina klasskamrater</span></span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:1rem;">
+                        <img src="assets/bee.png" alt="Ditt Bi" style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">
+                        <span style="font-size:1.2rem; color:var(--sp-text-muted);">➞</span>
+                        <div style="width:20px; height:20px; border-radius:50%; background:#eab308; border:3px solid #ef4444; flex-shrink:0; position:relative;">
+                            <div style="position:absolute; top:-6px; left:-6px; right:-6px; bottom:-6px; border:1px solid rgba(239,68,68,0.5); border-radius:50%;"></div>
+                        </div>
+                        <span style="font-size:0.9rem; color:var(--sp-text);"><strong>Ditt eget bi</strong><br><span style="color:var(--sp-text-muted); font-size:0.8rem;">(Markerat med röd ring)</span></span>
+                    </div>
+                </div>
+
                 <p style="font-size:0.75rem;color:var(--sp-text-muted)">Japanska honungsbin bildar en vibrerande klunga som övervärmer angriparen — exakt som i verkligheten!</p>
-                <button class="sp-btn-primary" style="width:auto;margin-top:0.5rem;padding:0.6rem 2rem;" onclick="dismissGameInstructions()">Starta!</button>
+                <button class="sp-btn-primary" style="width:100%;margin-top:1rem;padding:0.8rem 2rem; font-size:1.1rem;" onclick="dismissGameInstructions()">Starta!</button>
             </div>
             <button class="sp-game-exit-btn" role="button" tabindex="0" onclick="exitBeeGame()"
                 ${keyHandler('exitBeeGame()')}
