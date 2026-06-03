@@ -32,10 +32,35 @@
 
     <div class="vb-instructions" id="instructions" style="display:none;">
         <h2 style="font-family:var(--vb-font-display);margin-bottom:0.5rem;">Instruktioner</h2>
-        <p style="font-size:0.9rem;color:var(--vb-text-muted);margin-bottom:1.5rem;">
+        <p style="font-size:0.9rem;color:var(--vb-text-muted);margin-bottom:0.5rem;">
             Styr ditt bi med fingret eller muspekaren. Samarbeta med klassen — omringa getingen för att höja dess kroppstemperatur till 47°C! Men se upp, getingen äter bin som kommer för nära innan värmen stiger!
         </p>
-        <button class="vb-btn" onclick="startGamePlay()">Börja spela!</button>
+
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:1rem; margin: 1.5rem 0; text-align:left;">
+            <div style="font-size:0.95rem; font-weight:bold; color:var(--vb-text); margin-bottom:1rem; text-align:center;">Så här ser ni ut i spelet:</div>
+            <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.8rem;">
+                <img src="../assets/hornet.png" alt="Sammetsgeting" style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">
+                <span style="font-size:1.2rem; color:var(--vb-text-muted);">➞</span>
+                <div style="width:24px; height:24px; border-radius:50%; background:#f97316; flex-shrink:0; box-shadow: 0 0 10px rgba(249,115,22,0.5);"></div>
+                <span style="font-size:0.9rem; color:var(--vb-text);"><strong>Sammetsgeting</strong><br><span style="color:var(--vb-text-muted); font-size:0.8rem;">Fienden (ai-styrd)</span></span>
+            </div>
+            <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.8rem;">
+                <img src="../assets/bee.png" alt="Honungsbi" style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">
+                <span style="font-size:1.2rem; color:var(--vb-text-muted);">➞</span>
+                <div style="width:20px; height:20px; border-radius:50%; background:#eab308; flex-shrink:0;"></div>
+                <span style="font-size:0.9rem; color:var(--vb-text);"><strong>Honungsbin</strong><br><span style="color:var(--vb-text-muted); font-size:0.8rem;">Dina klasskamrater</span></span>
+            </div>
+            <div style="display:flex; align-items:center; gap:1rem;">
+                <img src="../assets/bee.png" alt="Ditt Bi" style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.2);">
+                <span style="font-size:1.2rem; color:var(--vb-text-muted);">➞</span>
+                <div style="width:20px; height:20px; border-radius:50%; background:#eab308; border:3px solid #ef4444; flex-shrink:0; position:relative;">
+                    <div style="position:absolute; top:-6px; left:-6px; right:-6px; bottom:-6px; border:1px solid rgba(239,68,68,0.5); border-radius:50%;"></div>
+                </div>
+                <span style="font-size:0.9rem; color:var(--vb-text);"><strong>Ditt eget bi</strong><br><span style="color:var(--vb-text-muted); font-size:0.8rem;">(Markerat med röd ring)</span></span>
+            </div>
+        </div>
+
+        <button class="vb-btn" onclick="startGamePlay()" style="width: 100%;">Börja spela!</button>
     </div>
 
     <script src="game.js"></script>
