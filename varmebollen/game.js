@@ -79,10 +79,11 @@ async function apiSet(key, value) {
 async function apiGet(key) {
     try {
         const res = await fetchWithTimeout(`${CONFIG.BASE_URL}/GetValue/${CONFIG.APP_KEY}/${key}?t=${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error('Network error');
         const text = await res.text();
         if (!text || text.includes('not found')) return null;
         return text.replace(/"/g, '').trim();
-    } catch(e) { return null; }
+    } catch(e) { throw e; }
 }
 
 function lerpAngle(a, b, t) {
@@ -130,12 +131,16 @@ function joinGame(isTeacher) {
 }
 
 async function registerInLobby() {
-    let lobby = await apiGet('lobby');
-    if (!lobby) lobby = '';
-    let ids = lobby.split(',').filter(id => id.length > 0);
-    if (!ids.includes(GAME.studentId)) {
-        ids.push(GAME.studentId);
-        await apiSet('lobby', ids.join(','));
+    try {
+        let lobby = await apiGet('lobby');
+        if (!lobby) lobby = '';
+        let ids = lobby.split(',').filter(id => id.length > 0);
+        if (!ids.includes(GAME.studentId)) {
+            ids.push(GAME.studentId);
+            await apiSet('lobby', ids.join(','));
+        }
+    } catch(e) {
+        console.warn('Failed to register in lobby (network error), will retry later', e);
     }
 }
 
@@ -171,12 +176,13 @@ function startBeeGame() {
         // STUDENT
         GAME.syncInterval = setInterval(async () => {
             if (!GAME.active) return;
-            const posStr = `${GAME.myBee.x.toFixed(3)}_${GAME.myBee.y.toFixed(3)}_${(GAME.myBee.heading || 0).toFixed(2)}_${encodeURIComponent(GAME.studentName)}`;
-            apiSet(`pos_${GAME.studentId}`, posStr);
-
-            const gs = await apiGet('game_state');
-            if (!gs) return;
             try {
+                const posStr = `${GAME.myBee.x.toFixed(3)}_${GAME.myBee.y.toFixed(3)}_${(GAME.myBee.heading || 0).toFixed(2)}_${encodeURIComponent(GAME.studentName)}`;
+                apiSet(`pos_${GAME.studentId}`, posStr);
+
+                const gs = await apiGet('game_state');
+                if (!gs) return;
+                
                 const decoded = hexToStr(gs);
                 const sections = decoded.split('|');
                 const header = sections[0].split(',');
@@ -196,28 +202,38 @@ function startBeeGame() {
                     }
                 }
                 GAME.allBees.clear();
+                let foundMe = false;
                 for (let i = 1; i < sections.length; i++) {
                     const bParts = sections[i].split(',');
-                    if (bParts.length >= 4 && bParts[0] !== GAME.studentId) {
-                        GAME.allBees.set(bParts[0], {
-                            x: parseFloat(bParts[1]) || 0.5,
-                            y: parseFloat(bParts[2]) || 0.5,
-                            name: decodeURIComponent(bParts[3]),
-                            heading: parseFloat(bParts[4]) || 0
-                        });
+                    if (bParts.length >= 4) {
+                        if (bParts[0] === GAME.studentId) {
+                            foundMe = true;
+                        } else {
+                            GAME.allBees.set(bParts[0], {
+                                x: parseFloat(bParts[1]) || 0.5,
+                                y: parseFloat(bParts[2]) || 0.5,
+                                name: decodeURIComponent(bParts[3]),
+                                heading: parseFloat(bParts[4]) || 0
+                            });
+                        }
                     }
                 }
-            } catch(e) {}
+                
+                if (!foundMe && GAME.active) {
+                    setTimeout(registerInLobby, Math.random() * 1000 + 500);
+                }
+            } catch(e) { /* Network or parse error, skip tick */ }
         }, 500);
     } else {
         // HOST / TEACHER
         GAME.syncInterval = setInterval(async () => {
             if (!GAME.active) return;
-            // Fetch lobby
-            let lobby = await apiGet('lobby');
-            if (lobby) {
-                let studentIds = lobby.split(',').filter(id => id.length > 0 && id !== GAME.studentId);
-                const results = await Promise.all(studentIds.map(sid => apiGet(`pos_${sid}`).catch(() => null)));
+            try {
+                // Fetch lobby
+                let lobby = await apiGet('lobby');
+                if (lobby) {
+                    let studentIds = lobby.split(',').filter(id => id.length > 0 && id !== GAME.studentId);
+                    const results = await Promise.all(studentIds.map(sid => apiGet(`pos_${sid}`).catch(() => null)));
                 results.forEach((raw, i) => {
                     if (!raw) return;
                     const bParts = raw.split('_');
@@ -236,6 +252,7 @@ function startBeeGame() {
                 stateStr += `|${sid},${bee.x.toFixed(3)},${bee.y.toFixed(3)},${encodeURIComponent(bee.name)},${(bee.heading || 0).toFixed(2)}`;
             });
             await apiSet('game_state', strToHex(stateStr));
+            } catch(e) { /* Network error, skip tick */ }
         }, 600);
     }
 
