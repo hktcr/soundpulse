@@ -504,14 +504,17 @@
         .sp-segment-break { display: block; height: 0.5rem; }
         .sp-word.has-gloss {
             text-decoration: underline;
-            text-decoration-color: rgba(234, 179, 8, 0.45);
+            text-decoration-color: rgba(234, 179, 8, 0.7);
             text-decoration-style: dotted;
-            text-underline-offset: 3px;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 4px;
             cursor: help;
             position: relative;
         }
         .sp-word.has-gloss:hover, .sp-word.has-gloss:focus {
-            text-decoration-color: rgba(234, 179, 8, 0.8);
+            text-decoration-color: rgba(234, 179, 8, 1);
+            text-decoration-style: solid;
+            background: rgba(234, 179, 8, 0.08);
         }
         .sp-gloss-popup {
             position: absolute;
@@ -1651,14 +1654,14 @@
 
             <!-- Audio Player -->
             <div class="sp-player" role="region" aria-label="Ljudspelare">
-                <button class="sp-speed-btn" onclick="seekBack()" aria-label="Spola tillbaka 10s" style="font-size:0.85rem;padding:0.3rem 0.5rem;">⏪</button>
+                <button class="sp-speed-btn" onclick="seekBack()" aria-label="Spola tillbaka 10s" style="padding:0.35rem 0.55rem;display:flex;align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="11 17 6 12 11 7"></polyline><polyline points="18 17 13 12 18 7"></polyline></svg></button>
                 <button class="sp-player-btn" id="spPlayBtn"
                     onclick="toggleAudio()" role="button" tabindex="0"
                     aria-label="Spela/Pausa"
                     ${keyHandler('toggleAudio()')}>
                     ▶
                 </button>
-                <button class="sp-speed-btn" onclick="seekForward()" aria-label="Spola framåt 10s" style="font-size:0.85rem;padding:0.3rem 0.5rem;">⏩</button>
+                <button class="sp-speed-btn" onclick="seekForward()" aria-label="Spola framåt 10s" style="padding:0.35rem 0.55rem;display:flex;align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg></button>
                 <div class="sp-timeline-wrap">
                     <input type="range" class="sp-timeline" id="spTimeline" min="0" max="100" value="0"
                         oninput="seekAudio(this.value)" aria-label="Tidslinje">
