@@ -986,7 +986,7 @@
           "probability": 0.996
         },
         {
-          "word": "bot,",
+          "word": "boet,",
           "start": 99.88,
           "end": 100.16,
           "probability": 0.978
@@ -1124,7 +1124,7 @@
           "probability": 1
         },
         {
-          "word": "reporten",
+          "word": "reportern",
           "start": 111.72,
           "end": 112.36,
           "probability": 0.912
@@ -1148,7 +1148,7 @@
           "probability": 0.981
         },
         {
-          "word": "nedlagt.",
+          "word": "nerringda.",
           "start": 112.88,
           "end": 113.16,
           "probability": 0.277
@@ -2284,7 +2284,7 @@
           "probability": 0.997
         },
         {
-          "word": "Bergen.",
+          "word": "bergen.",
           "start": 201.74,
           "end": 201.98,
           "probability": 0.768
@@ -2918,7 +2918,7 @@
           "probability": 1
         },
         {
-          "word": "bot",
+          "word": "boet",
           "start": 236.76,
           "end": 237.12,
           "probability": 0.931
@@ -9566,7 +9566,7 @@
           "probability": 0.994
         },
         {
-          "word": "hornet",
+          "word": "sammetsgetingar",
           "start": 637.1,
           "end": 637.54,
           "probability": 0.41
@@ -9590,7 +9590,7 @@
           "probability": 0.999
         },
         {
-          "word": "fördjurar",
+          "word": "förstör",
           "start": 638.74,
           "end": 639.56,
           "probability": 0.503
@@ -9752,7 +9752,7 @@
           "probability": 0.995
         },
         {
-          "word": "frön.",
+          "word": "faran.",
           "start": 651.86,
           "end": 651.96,
           "probability": 0.564
@@ -9948,7 +9948,7 @@
           "probability": 0.968
         },
         {
-          "word": "kontinens",
+          "word": "container",
           "start": 661.92,
           "end": 662.34,
           "probability": 0.255
@@ -9960,7 +9960,7 @@
           "probability": 0.781
         },
         {
-          "word": "importade",
+          "word": "importerade",
           "start": 662.54,
           "end": 662.76,
           "probability": 0.119
@@ -10684,7 +10684,7 @@
           "probability": 1
         },
         {
-          "word": "arten",
+          "word": "orsakerna",
           "start": 705.54,
           "end": 706.7,
           "probability": 0.995
@@ -10750,13 +10750,13 @@
           "probability": 0.82
         },
         {
-          "word": "arten",
+          "word": "orsakerna",
           "start": 708.3,
           "end": 708.3,
           "probability": 0.317
         },
         {
-          "word": "som",
+          "word": "",
           "start": 708.3,
           "end": 708.3,
           "probability": 0.228
@@ -10780,7 +10780,7 @@
           "probability": 0.704
         },
         {
-          "word": "blommor.",
+          "word": "blommor..",
           "start": 708.3,
           "end": 708.3,
           "probability": 0.808
@@ -11654,7 +11654,7 @@
       "text": "Kalabroni asiatico Q2.",
       "words": [
         {
-          "word": "Kalabroni",
+          "word": "Calabrone",
           "start": 763.56,
           "end": 764.16,
           "probability": 0.76
@@ -11666,7 +11666,7 @@
           "probability": 0.462
         },
         {
-          "word": "Q2.",
+          "word": "",
           "start": 764.86,
           "end": 765.2,
           "probability": 0.128
@@ -11992,13 +11992,13 @@
           "probability": 0.646
         },
         {
-          "word": "en",
+          "word": "",
           "start": 778,
           "end": 778.24,
           "probability": 0.331
         },
         {
-          "word": "intrat",
+          "word": "entrata",
           "start": 778.24,
           "end": 778.68,
           "probability": 0.507
@@ -12190,7 +12190,7 @@
           "probability": 0.417
         },
         {
-          "word": "nidor?",
+          "word": "nidos?",
           "start": 787.26,
           "end": 787.54,
           "probability": 0.893
@@ -12452,7 +12452,7 @@
       "text": "I asiatische Hornisse.",
       "words": [
         {
-          "word": "I",
+          "word": "Die",
           "start": 806.48,
           "end": 806.78,
           "probability": 0.216
@@ -12504,13 +12504,13 @@
       "text": "Binen stegn ganz oben auf dem Speisezettel der Hornissenlarven.",
       "words": [
         {
-          "word": "Binen",
+          "word": "Bienen",
           "start": 809.42,
           "end": 809.66,
           "probability": 0.87
         },
         {
-          "word": "stegn",
+          "word": "stehen",
           "start": 809.66,
           "end": 810.06,
           "probability": 0.256
@@ -13679,7 +13679,7 @@
           "probability": 0.964
         },
         {
-          "word": "gedhams",
+          "word": "gedehams",
           "start": 874,
           "end": 874.5,
           "probability": 0.642
@@ -14111,7 +14111,7 @@
           "probability": 0.996
         },
         {
-          "word": "gedhams",
+          "word": "gedehams",
           "start": 899.5,
           "end": 900,
           "probability": 0.75
@@ -16779,7 +16779,7 @@
           "probability": 0.642
         },
         {
-          "word": "är.",
+          "word": "jobbar.",
           "start": 1055.44,
           "end": 1055.52,
           "probability": 0.025
@@ -18911,7 +18911,7 @@
           "probability": 0.941
         },
         {
-          "word": "Sellström.",
+          "word": "Sällström.",
           "start": 1173.34,
           "end": 1174.2,
           "probability": 0.802
