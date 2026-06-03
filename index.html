@@ -120,6 +120,7 @@
 
         /* === APP CONTAINER === */
         .sp-main {
+            max-width: 1400px; /* Split view */
             position: relative; z-index: var(--z-content);
             max-width: 900px; margin: 0 auto;
             padding: 2rem 1.5rem; min-height: 100vh;
@@ -380,6 +381,68 @@
         .sp-speed-btn:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
 
         /* === VISUAL CONTENT === */
+        .sp-split-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            position: relative;
+            min-height: 500px;
+        }
+        @media (min-width: 900px) {
+            .sp-split-layout {
+                grid-template-columns: 35% 1fr;
+            }
+        }
+        .sp-triptych {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            height: 100%;
+        }
+        .sp-triptych-top {
+            display: flex;
+            gap: 1rem;
+            height: 40%;
+        }
+        .sp-triptych-top img {
+            width: 50%;
+            object-fit: cover;
+            border-radius: var(--sp-radius);
+            border: 1px solid var(--sp-border);
+        }
+        .sp-triptych-bottom {
+            position: relative;
+            flex: 1;
+            border-radius: var(--sp-radius);
+            overflow: hidden;
+            border: 1px solid var(--sp-border);
+            background: #000;
+        }
+        .sp-visual-side {
+            position: relative;
+            border-radius: var(--sp-radius);
+            overflow: hidden;
+            background: #000;
+            border: 1px solid var(--sp-border);
+            aspect-ratio: 9/16;
+        }
+        .sp-bg-video {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+        }
+        .sp-dynamic-side {
+            position: relative;
+            display: flex; flex-direction: column;
+            background: var(--sp-bg-surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius);
+            padding: 1rem;
+            overflow: hidden;
+        }
+
         .sp-visual {
             background: var(--sp-bg-surface);
             backdrop-filter: blur(20px);
@@ -402,7 +465,7 @@
         /* === TRANSCRIPT === */
         .sp-transcript {
             padding: 2rem 0;
-            height: 450px;
+            flex: 1;
             overflow-y: auto;
             scroll-behavior: smooth;
             background: transparent;
@@ -410,6 +473,7 @@
             box-shadow: none;
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
             mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+            transition: opacity 0.3s;
         }
         .sp-line { margin-bottom: 2rem; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); transform-origin: left center; }
         .sp-line.active-line { transform: scale(1.03); }
@@ -431,13 +495,12 @@
 
         /* === QUESTION OVERLAY === */
         .sp-question-wrap {
-            position: fixed; inset: 0; z-index: var(--z-overlay);
+            position: absolute; inset: 0; z-index: var(--z-overlay);
             display: flex; align-items: center; justify-content: center;
-            background: rgba(5, 5, 8, 0.85);
-            backdrop-filter: blur(8px);
+            background: var(--sp-bg);
             opacity: 0; pointer-events: none;
             transition: opacity 0.3s ease;
-            padding: 1rem;
+            padding: 2rem;
         }
         .sp-question-wrap.show { opacity: 1; pointer-events: all; }
         .sp-question-card {
@@ -1512,24 +1575,36 @@
                 </button>
             </div>
 
-            <!-- Visual -->
-            <div class="sp-visual" id="spVisual" aria-label="Visuell illustration">
-                <img id="spVisualImg" src="" alt="Segment illustration" onerror="this.style.display='none'">
-                <div class="sp-segment-title" id="spSegTitle"></div>
+            <!-- Split Layout -->
+            <div class="sp-split-layout">
+                <div class="sp-visual-side">
+                    <div class="sp-triptych">
+                        <div class="sp-triptych-top">
+                            <img src="assets/honungsbi.jpg" alt="Honungsbi">
+                            <img src="assets/sammetsgeting.jpg" alt="Sammetsgeting">
+                        </div>
+                        <div class="sp-triptych-bottom" id="spVisual">
+                            <video class="sp-bg-video" src="assets/bikupa.mp4" autoplay loop muted playsinline></video>
+                            <img id="spVisualImg" src="" alt="Segment illustration" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; z-index:10; opacity:0; transition: opacity 0.5s;">
+                            <div class="sp-segment-title" id="spSegTitle" style="z-index:20; background: linear-gradient(transparent, rgba(0,0,0,0.9)); position:absolute; bottom:0; width:100%; padding:1rem;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sp-dynamic-side">
+                    <!-- Transcript Toggle (V6: mobile) -->
+                    <button class="sp-transcript-toggle" id="spTranscriptToggle" onclick="toggleTranscript()">📝 Visa transkript</button>
+
+                    <!-- Transcript -->
+                    <div class="sp-transcript collapsed" id="spTranscript" role="region" aria-label="Transkription" aria-live="polite">
+                    </div>
+
+                    <!-- Question Overlay -->
+                    <div class="sp-question-wrap" id="spQuestionWrap" role="dialog" aria-modal="true" aria-label="Fråga">
+                        <div class="sp-question-card" id="spQuestionCard"></div>
+                    </div>
+                </div>
             </div>
-
-            <!-- Transcript Toggle (V6: mobile) -->
-            <button class="sp-transcript-toggle" id="spTranscriptToggle" onclick="toggleTranscript()">📝 Visa transkript</button>
-
-            <!-- Transcript -->
-            <div class="sp-transcript collapsed" id="spTranscript" role="region" aria-label="Transkription" aria-live="polite">
-            </div>
-        </div>
-
-        <!-- Question Overlay -->
-        <div class="sp-question-wrap" id="spQuestionWrap" role="dialog" aria-modal="true" aria-label="Fråga">
-            <div class="sp-question-card" id="spQuestionCard"></div>
-        </div>
 
         <!-- Instruction Overlay (V1) -->
         <div class="sp-intro-overlay" id="spIntroOverlay">
