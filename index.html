@@ -1538,9 +1538,10 @@
 
 
                     <input type="text" id="spNameInput" class="sp-login-input"
-                        placeholder="${t('namePlaceholder')}"
-                        aria-label="${t('namePlaceholder')}"
+                        placeholder="Ditt namn"
+                        aria-label="Ditt namn"
                         autocomplete="name"
+                        required
                         onkeydown="if(event.key==='Enter'){event.preventDefault();joinSession('practice');}"
                     >
                     <button class="sp-btn-primary" id="spJoinBtn"
@@ -1560,7 +1561,17 @@
     function joinSession(mode) {
         const nameInput = document.getElementById('spNameInput');
         SP.studentName = nameInput ? nameInput.value.trim() : '';
-        if (!SP.studentName) SP.studentName = 'Gäst';
+        if (!SP.studentName) {
+            if (nameInput) {
+                nameInput.style.borderColor = 'var(--sp-incorrect)';
+                nameInput.style.animation = 'none';
+                nameInput.offsetHeight;
+                nameInput.style.animation = 'spCardEnter 0.3s';
+                nameInput.focus();
+                nameInput.placeholder = 'Du måste skriva ditt namn!';
+            }
+            return;
+        }
         SP.studentId = generateStudentId();
         SP.mode = mode === 'practice' ? 'practice' : 'live';
         renderStudentView();
