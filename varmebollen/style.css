@@ -1,0 +1,130 @@
+:root {
+    --vb-bg-deep: #050508;
+    --vb-bg-surface: rgba(15, 20, 30, 0.7);
+    --vb-bg-glass: rgba(255, 255, 255, 0.04);
+    --vb-border: rgba(255, 255, 255, 0.06);
+    --vb-accent: #f59e0b;
+    --vb-accent-glow: rgba(245, 158, 11, 0.35);
+    --vb-danger: #ef4444;
+    --vb-text: #f0f4f8;
+    --vb-text-muted: #94a3b8;
+    --vb-font: 'Inter', sans-serif;
+    --vb-font-display: 'Oswald', sans-serif;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+    font-family: var(--vb-font);
+    background: var(--vb-bg-deep);
+    color: var(--vb-text);
+    overflow: hidden;
+    min-height: 100vh;
+}
+
+/* === LOGIN SCREEN === */
+.vb-login-wrap {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    background: url('assets/hero.png') center/cover no-repeat;
+    transition: opacity 0.5s;
+}
+.vb-login-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(5,5,8,0.4), rgba(5,5,8,0.9));
+}
+.vb-login-card {
+    position: relative; z-index: 101;
+    background: var(--vb-bg-surface);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--vb-border);
+    border-radius: 24px;
+    padding: 3rem; text-align: center;
+    max-width: 450px; width: 90%;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    animation: slideUp 0.6s ease-out;
+}
+.vb-login-card h1 {
+    font-family: var(--vb-font-display);
+    font-size: 2.5rem; font-weight: 700;
+    margin-bottom: 0.5rem; color: var(--vb-accent);
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+.vb-login-card p {
+    color: var(--vb-text-muted);
+    font-size: 0.95rem; margin-bottom: 2rem;
+}
+.vb-input {
+    width: 100%; padding: 1rem 1.5rem;
+    background: var(--vb-bg-glass);
+    border: 1px solid var(--vb-border);
+    border-radius: 12px;
+    color: #fff; font-size: 1.1rem;
+    outline: none; margin-bottom: 1rem;
+    transition: border-color 0.2s;
+    text-align: center;
+}
+.vb-input:focus { border-color: var(--vb-accent); }
+.vb-btn {
+    width: 100%; padding: 1rem;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff; border: none; border-radius: 12px;
+    font-size: 1.1rem; font-weight: 700;
+    cursor: pointer; box-shadow: 0 4px 15px var(--vb-accent-glow);
+    transition: transform 0.2s; margin-bottom: 1rem;
+}
+.vb-btn:hover { transform: translateY(-2px); }
+.vb-btn-secondary {
+    background: var(--vb-bg-glass);
+    border: 1px solid var(--vb-border);
+    color: var(--vb-text-muted); box-shadow: none;
+}
+.vb-btn-secondary:hover { border-color: var(--vb-text-muted); color: #fff; }
+
+/* === GAME HUD === */
+.vb-game-canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+.vb-game-hud {
+    position: fixed; top: 1rem; left: 50%; transform: translateX(-50%);
+    z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    pointer-events: none;
+}
+.vb-game-title {
+    font-family: var(--vb-font-display); font-size: 1.3rem; font-weight: 700;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+.vb-temp-wrap {
+    width: 240px; height: 24px;
+    background: rgba(15, 20, 30, 0.8); border: 1px solid var(--vb-border);
+    border-radius: 12px; overflow: hidden; position: relative;
+}
+.vb-temp-fill {
+    height: 100%; width: 0%; border-radius: 12px;
+    background: linear-gradient(90deg, #3b82f6, #f59e0b, #ef4444, #dc2626);
+    transition: width 0.3s ease;
+}
+.vb-temp-text {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.vb-status { font-size: 0.8rem; color: var(--vb-text-muted); text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+
+/* === OVERLAYS === */
+.vb-instructions {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    z-index: 50; max-width: 450px; width: 90%;
+    background: rgba(15, 20, 30, 0.85); backdrop-filter: blur(20px);
+    border: 1px solid var(--vb-border); border-radius: 16px;
+    padding: 1.5rem; text-align: center;
+    animation: slideUp 0.5s ease-out;
+}
+.vb-victory, .vb-defeat {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: rgba(5, 5, 8, 0.95); backdrop-filter: blur(8px);
+    text-align: center; padding: 2rem; animation: slideUp 0.5s ease-out;
+}
+.vb-victory h1 { color: var(--vb-accent); font-family: var(--vb-font-display); font-size: 4rem; margin-bottom: 1rem; }
+.vb-defeat h1 { color: var(--vb-danger); font-family: var(--vb-font-display); font-size: 4rem; margin-bottom: 1rem; }
+.vb-victory p, .vb-defeat p { max-width: 500px; color: var(--vb-text-muted); margin-bottom: 2rem; line-height: 1.6; }
+
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
