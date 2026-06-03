@@ -55,7 +55,7 @@
     {
       "id": "q2",
       "type": "multiple-choice",
-      "triggerTime": 100,
+      "triggerTime": 200,
       "difficulty": "medium",
       "text": "Sammetsgetingen (Vespa velutina) är en invasiv art. Var kommer den ursprungligen ifrån?",
       "options": [
@@ -77,135 +77,14 @@
         }
       ],
       "correct": "B",
-      "feedbackOk": "Rätt! Vespa velutina kommer ursprungligen från Ost- och Sydostasien, bland annat Kina, Sydostasien och Indien.",
+      "feedbackOk": "Rätt! Vespa velutina kommer ursprungligen från Ost- och Sydostasien, bland annat södra Kina, Indonesien och Indien.",
       "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsgetingen (Vespa velutina) har sitt ursprung i Ost- och Sydostasien. Den har på senare år påträffats i Nordamerika och Europa."
     },
-    {
-      "id": "q4",
-      "type": "categorize",
-      "triggerTime": 290,
-      "difficulty": "medium",
-      "text": "Sortera faktorerna: vilka är biotiska (levande) och vilka är abiotiska (icke-levande)?",
-      "categories": [
-        "Biotiska faktorer",
-        "Abiotiska faktorer"
-      ],
-      "items": [
-        {
-          "word": "Pollinering av bin",
-          "cat": 0
-        },
-        {
-          "word": "Temperatur",
-          "cat": 1
-        },
-        {
-          "word": "Predation av fåglar",
-          "cat": 0
-        },
-        {
-          "word": "Nederbörd",
-          "cat": 1
-        },
-        {
-          "word": "Konkurrens om föda",
-          "cat": 0
-        },
-        {
-          "word": "Vindstyrka",
-          "cat": 1
-        },
-        {
-          "word": "Parasitism",
-          "cat": 0
-        },
-        {
-          "word": "Solljus",
-          "cat": 1
-        }
-      ],
-      "feedbackOk": "Helt rätt! Du kan skilja på biotiska (levande) och abiotiska (icke-levande) faktorer i ett ekosystem.",
-      "feedbackNok": "Inte helt rätt. Biotiska faktorer handlar om levande organismer (pollinering, predation, konkurrens, parasitism), medan abiotiska faktorer är icke-levande (temperatur, nederbörd, vind, solljus)."
-    },
-    {
-      "id": "q23",
-      "type": "multiple-choice",
-      "triggerTime": 180,
-      "difficulty": "hard",
-      "text": "Sammetsgetingens vetenskapliga namn är Vespa velutina. Vad syftar artnamnet 'velutina' troligen på?",
-      "options": [
-        {
-          "letter": "A",
-          "text": "Att den kommer från bergskedjan Veluti"
-        },
-        {
-          "letter": "B",
-          "text": "Att den har en sammetslen behåring (från latinets velutinus)"
-        },
-        {
-          "letter": "C",
-          "text": "Att den bygger bon av lera"
-        },
-        {
-          "letter": "D",
-          "text": "Att den flyger otroligt snabbt"
-        }
-      ],
-      "correct": "B",
-      "feedbackOk": "Rätt! 'Velutina' betyder sammetsliknande, därav namnet sammetsgeting.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. 'Velutina' kommer från latinet och betyder sammetsliknande, vilket syftar på dess fina behåring."
-    },
-    {
-      "id": "q22",
-      "type": "categorize",
-      "triggerTime": 230,
-      "difficulty": "medium",
-      "text": "Sortera dessa pollineringssätt: vilka sköts av djur (zoofili) och vilka sköts av vind (anemofili)?",
-      "categories": [
-        "Djurpollinering (zoofili)",
-        "Vindpollinering (anemofili)"
-      ],
-      "items": [
-        {
-          "word": "Äppelträd",
-          "cat": 0
-        },
-        {
-          "word": "Gran",
-          "cat": 1
-        },
-        {
-          "word": "Klöver",
-          "cat": 0
-        },
-        {
-          "word": "Björk",
-          "cat": 1
-        },
-        {
-          "word": "Raps",
-          "cat": 0
-        },
-        {
-          "word": "Gräs",
-          "cat": 1
-        },
-        {
-          "word": "Solros",
-          "cat": 0
-        },
-        {
-          "word": "Tall",
-          "cat": 1
-        }
-      ],
-      "feedbackOk": "Helt rätt! Färgglada blommande växter (äpple, klöver, raps, solros) är typiskt djurpollinerade, medan barrträd, björk och gräs pollineras av vinden.",
-      "feedbackNok": "Inte helt rätt. Tumregel: har växten färgglada kronblad och doft? Då är den djurpollinerad. Diskreta blommor utan kronblad (barrträd, björk, gräs) pollineras av vinden."
-    },
+
     {
       "id": "q1",
       "type": "multiple-choice",
-      "triggerTime": 120,
+      "triggerTime": 220,
       "difficulty": "easy",
       "text": "I inledningen nämns sammetsgetingen. Ungefär hur stor är den jämfört med en vanlig geting?",
       "options": [
@@ -230,20 +109,7 @@
       "feedbackOk": "Rätt! En arbetare av sammetsgetingen blir cirka 2,5 till 3 cm lång. Drottningen kan bli upp till 3,5 cm.",
       "feedbackNok": "Rätt svar: <strong>B</strong>. En arbetare av sammetsgetingen blir cirka 2,5 till 3 cm lång (arbetare), alltså något större än en vanlig geting. Drottningen kan bli upp till 3,5 cm."
     },
-    {
-      "id": "q17",
-      "type": "lucktext",
-      "triggerTime": 380,
-      "difficulty": "hard",
-      "text": "I en näringsväv kallas växter för ___. De äts av ___ som i sin tur kan ätas av ___.",
-      "correctAnswers": [
-        "producenter",
-        "konsumenter",
-        "predatorer"
-      ],
-      "feedbackOk": "Helt rätt! Producenter fångar solenergi, konsumenter (herbivorer) äter växter, och predatorer (rovdjur/karnivorer) äter andra djur.",
-      "feedbackNok": "Rätt svar: 'producenter', 'konsumenter', 'predatorer'. Producenterna (växterna) är basen i näringsväven. Konsumenter äter producenter, och predatorer äter andra djur."
-    },
+
     {
       "id": "q5",
       "type": "multiple-choice",
@@ -257,7 +123,7 @@
         },
         {
           "letter": "B",
-          "text": "Larverna och pupporna — proteinrik föda till sina egna larver"
+          "text": "Bina — de fångar vuxna bin som proteinrik föda till sina egna larver"
         },
         {
           "letter": "C",
@@ -269,8 +135,8 @@
         }
       ],
       "correct": "B",
-      "feedbackOk": "Rätt! Sammetsgetingar attackerar bikupor för att komma åt larverna och pupporna, som är proteinrika och matas till deras egna larver.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsgetingar angriper bisamhällen för att komma åt larverna och pupporna. En grupp getingar kan belägra och utplåna ett helt bisamhälle under veckor eller månader."
+      "feedbackOk": "Rätt! Sammetsgetingar hovrar utanför bikupan och fångar vuxna bin i luften. De biter av huvudet och tar med kroppen som proteinpaket till sina egna larver.",
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsgetingen (V. velutina) fångar vuxna bin i luften utanför kupan — ett beteende som kallas 'hawking'. En grupp getingar kan belägra en bikupa under veckor eller månader."
     },
     {
       "id": "q6",
@@ -331,63 +197,12 @@
       "feedbackOk": "Rätt! Sammetsgetingen är en predator som aktivt jagar och dödar honungsbin. Det är inte parasitism eftersom getingen inte lever på eller i biet.",
       "feedbackNok": "Rätt svar: <strong>C</strong>. Predation innebär att en organism (predatorn) dödar och äter en annan (bytet). Parasitism innebär att parasiten lever på värden utan att döda den direkt."
     },
-    {
-      "id": "q7",
-      "type": "categorize",
-      "triggerTime": 460,
-      "difficulty": "medium",
-      "text": "Ekosystemtjänster är nyttor som naturen ger oss gratis. Sortera dessa i rätt kategori.",
-      "categories": [
-        "Producerande tjänster",
-        "Reglerande tjänster",
-        "Kulturella tjänster"
-      ],
-      "items": [
-        {
-          "word": "Honungsproduktion",
-          "cat": 0
-        },
-        {
-          "word": "Pollinering av grödor",
-          "cat": 1
-        },
-        {
-          "word": "Friluftsliv och naturupplevelser",
-          "cat": 2
-        },
-        {
-          "word": "Timmer och ved",
-          "cat": 0
-        },
-        {
-          "word": "Vattenrening via våtmarker",
-          "cat": 1
-        },
-        {
-          "word": "Inspiration för konst och vetenskap",
-          "cat": 2
-        },
-        {
-          "word": "Medicinska växter",
-          "cat": 0
-        },
-        {
-          "word": "Skadedjursbekämpning via rovdjur",
-          "cat": 1
-        },
-        {
-          "word": "Rekreation och mental hälsa",
-          "cat": 2
-        }
-      ],
-      "feedbackOk": "Strålande! Du har koll på de tre kategorierna av ekosystemtjänster.",
-      "feedbackNok": "Inte helt rätt. Producerande = saker vi skördar (honung, timmer, medicin). Reglerande = processer som reglerar miljön (pollinering, vattenrening, skadedjurskontroll). Kulturella = upplevelser och inspiration."
-    },
+
     {
       "id": "q11",
       "type": "multiple-choice",
       "triggerTime": 485,
-      "difficulty": "easy",
+      "difficulty": "medium",
       "text": "Japanska honungsbin har utvecklat ett unikt försvar mot jättegetingar. Vad gör de?",
       "options": [
         {
@@ -437,7 +252,7 @@
       ],
       "correct": "B",
       "feedbackOk": "Rätt! Evolution kräver tid. Europeiska bin har inte haft jättegetingar som selektionstryck och har därför aldrig utvecklat värmebollsförsvaret.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska bin har samexisterat med jättegetingar i miljontals år. Europeiska bin har aldrig utsatts för det trycket — ett tydligt exempel på naturligt urval."
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska honungsbin (Apis cerana japonica) har samexisterat med den japanska jättegetingen (Vespa mandarinia) i miljontals år. Europeiska bin har aldrig utsatts för det trycket — ett tydligt exempel på naturligt urval."
     },
     {
       "id": "q3",
@@ -475,7 +290,7 @@
       "difficulty": "hard",
       "text": "Vilka av dessa arter är invasiva i Sverige och vilka är inhemska?",
       "categories": [
-        "Invasiva i Sverige",
+        "Invasiva eller riskbedömda i Sverige",
         "Inhemska i Sverige"
       ],
       "items": [
@@ -502,18 +317,10 @@
         {
           "word": "Flodkräfta",
           "cat": 1
-        },
-        {
-          "word": "Jätteloka",
-          "cat": 0
-        },
-        {
-          "word": "Älggräs",
-          "cat": 1
         }
       ],
       "feedbackOk": "Imponerande! Du har koll på vilka arter som hör hemma i Sverige och vilka som är invasiva.",
-      "feedbackNok": "Inte helt rätt. Invasiva: sammetsgeting, mördarsnigel, signalkräfta, jätteloka. Inhemska: bålgeting, honungsbi, flodkräfta, älggräs. Signalkräftan introducerades från Nordamerika och sprider kräftpest till vår inhemska flodkräfta."
+      "feedbackNok": "Inte helt rätt. Invasiva eller riskbedömda: sammetsgeting, mördarsnigel, signalkräfta. Inhemska: bålgeting, honungsbi, flodkräfta. Signalkräftan introducerades från Nordamerika och sprider kräftpest till vår inhemska flodkräfta."
     },
     {
       "id": "q10",
