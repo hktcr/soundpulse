@@ -397,18 +397,25 @@
 
         /* === TRANSCRIPT === */
         .sp-transcript {
-            background: var(--sp-bg-surface);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--sp-border);
-            border-radius: var(--sp-radius-lg);
-            padding: 2rem;
-            height: 400px;
+            padding: 2rem 0;
+            height: 450px;
             overflow-y: auto;
             scroll-behavior: smooth;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+            /* Apple Music style fade edges */
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
         }
-        .sp-word { transition: color 0.15s, background 0.15s; border-radius: 2px; padding: 0 1px; cursor: default; }
-        .sp-word.spoken { color: var(--sp-text-secondary); }
+        .sp-line { margin-bottom: 2rem; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); transform-origin: left center; }
+        .sp-line.active-line { transform: scale(1.03); }
+        .sp-word { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            border-radius: 4px; padding: 2px; cursor: default; 
+            font-size: 1.6rem; line-height: 1.8; font-weight: 500;
+            color: var(--sp-text-muted); opacity: 0.4;
+        }
+        .sp-word.spoken { 
+            color: var(--sp-text); opacity: 1; font-weight: 600;
+        }
         .sp-word.active { color: var(--sp-accent); background: var(--sp-accent-soft); font-weight: 600; }
         .sp-segment-break { display: block; height: 0.5rem; }
 
@@ -1003,18 +1010,18 @@
         /* Light Theme Support */
         @media (prefers-color-scheme: light) {
             :root {
-                --sp-bg-deep: #f7fceb;
+                --sp-bg-deep: #f8fafc;
                 --sp-bg-primary: #ffffff;
-                --sp-bg-surface: rgba(255, 255, 255, 0.85);
-                --sp-bg-surface-light: rgba(240, 245, 235, 0.7);
-                --sp-text: #1a2e05;
-                --sp-text-secondary: #3f6212;
-                --sp-text-muted: #65a30d;
-                --sp-border: rgba(0, 0, 0, 0.1);
-                --sp-border-hover: rgba(0, 0, 0, 0.2);
-                --sp-accent: #4d7c0f;
-                --sp-accent-glow: rgba(77, 124, 15, 0.35);
-                --sp-accent-soft: rgba(77, 124, 15, 0.12);
+                --sp-bg-surface: rgba(255, 255, 255, 0.95);
+                --sp-bg-surface-light: rgba(248, 250, 252, 0.8);
+                --sp-text: #0f172a;
+                --sp-text-secondary: #334155;
+                --sp-text-muted: #64748b;
+                --sp-border: rgba(0, 0, 0, 0.08);
+                --sp-border-hover: rgba(0, 0, 0, 0.15);
+                --sp-accent: #10b981;
+                --sp-accent-glow: rgba(16, 185, 129, 0.35);
+                --sp-accent-soft: rgba(16, 185, 129, 0.12);
                 --sp-accent-warm: #ca8a04;
                 --sp-bg-glass: rgba(0, 0, 0, 0.03);
                 --sp-correct: #059669;
