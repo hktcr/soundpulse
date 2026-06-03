@@ -1777,7 +1777,8 @@
 
     async function loadTranscript() {
         try {
-            const resp = await fetch(CONFIG_DATA ? CONFIG_DATA.transcriptionFile : 'assets/soundpulse_transcription.json');
+            const url = CONFIG_DATA ? CONFIG_DATA.transcriptionFile : 'assets/soundpulse_transcription.json';
+            const resp = await fetch(url + '?v=' + Date.now());
             TRANSCRIPTION = await resp.json();
             renderTranscriptWords();
         } catch(e) { console.warn('Transcript not loaded:', e); }
