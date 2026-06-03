@@ -1,8 +1,8 @@
 {
   "version": "2.0",
-  "title": "Sammetsgetingen som riskerar slå ut svenska bin",
+  "title": "Varning för sammetsgetingen",
   "subtitle": "Dagens Eko — Sammetsgetingen i Sverige",
-  "subject": "Biologi - Invasiva arter - Ekologi",
+  "subject": "En invasiv art hotar svenska bin. Biologi - Invasiva arter - Ekologi",
   "audioFile": "assets/soundpulse_sammetsjattingen.mp3",
   "transcriptionFile": "assets/soundpulse_transcription.json",
   "duration": 1187.6,
@@ -70,6 +70,34 @@
     }
   ],
   "questions": [
+    {
+      "id": "q0",
+      "type": "multiple-choice",
+      "triggerTime": 20,
+      "difficulty": "easy",
+      "text": "Vilken art kommer det här programmet handla om?",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Sammetsgeting"
+        },
+        {
+          "letter": "B",
+          "text": "Honungsbi"
+        },
+        {
+          "letter": "C",
+          "text": "Bålgeting"
+        },
+        {
+          "letter": "D",
+          "text": "Jordgeting"
+        }
+      ],
+      "correct": "A",
+      "feedbackOk": "Helt rätt! Sammetsgetingen (Vespa velutina) är fokus för det här programmet.",
+      "feedbackNok": "Nja, rubriken och introt avslöjar att det är Sammetsgetingen vi ska fördjupa oss i!"
+    },
     {
       "id": "q2",
       "type": "multiple-choice",
