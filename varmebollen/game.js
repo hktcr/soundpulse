@@ -506,12 +506,19 @@ function drawBee(ctx, x, y, size, name, isMe, heading) {
         ctx.arc(0, 0, size * 2.2 * pulse, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(239, 68, 68, 0.15)';
         ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = 'rgba(239, 68, 68, 0.8)';
+    }
+
+    ctx.beginPath();
+    ctx.arc(0, 0, size, 0, Math.PI*2);
+    ctx.fillStyle = '#eab308'; // Tailwind Yellow-500
+    ctx.fill();
+
+    if (isMe) {
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#ef4444'; // Red ring
         ctx.stroke();
     }
 
-    ctx.drawImage(GAME.beeImg, -size*1.5, -size*1.5, size*3, size*3);
     ctx.restore();
 
     if (name) {
@@ -541,7 +548,12 @@ function drawHornet(ctx, x, y, size) {
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(GAME.hornet.heading || 0);
-    ctx.drawImage(GAME.hornetImg, -size*1.5, -size*1.5, size*3, size*3);
+    
+    ctx.beginPath();
+    ctx.arc(0, 0, size, 0, Math.PI*2);
+    ctx.fillStyle = '#f97316'; // Tailwind Orange-500
+    ctx.fill();
+    
     ctx.restore();
 
     ctx.font = `bold ${Math.max(11, size * 0.45)}px Inter, sans-serif`;
