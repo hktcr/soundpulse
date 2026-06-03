@@ -148,39 +148,65 @@
         /* === LOGIN === */
         .sp-login {
             display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; padding: 2rem;
+            min-height: 100vh; padding: 1.5rem;
+            position: relative;
+            z-index: 10;
+        }
+        .sp-login::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at top right, rgba(20, 184, 166, 0.15), transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.15), transparent 40%);
+            z-index: -1; pointer-events: none;
         }
         .sp-login-card {
-            background: var(--sp-bg-surface);
-            backdrop-filter: blur(30px);
-            border: 1px solid var(--sp-border);
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.02);
             border-radius: var(--sp-radius-lg);
             padding: 3rem 2.5rem;
-            max-width: 420px; width: 100%;
+            max-width: 440px; width: 100%;
             text-align: center;
-            animation: spCardEnter 0.6s ease-out;
+            animation: spCardEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .sp-login-logo { font-size: 3.5rem; margin-bottom: 1rem; }
+        @media (max-width: 480px) {
+            .sp-login-card { padding: 2rem 1.5rem; border-radius: var(--sp-radius); }
+        }
+        .sp-login-logo { 
+            font-size: 3.5rem; margin-bottom: 1.5rem; 
+            color: var(--sp-accent);
+            filter: drop-shadow(0 0 12px rgba(20, 184, 166, 0.4));
+        }
         .sp-login-card h1 {
             font-family: var(--sp-font-display);
-            font-size: 2rem; font-weight: 700;
-            letter-spacing: 0.03em; margin-bottom: 0.5rem;
+            font-size: 2.2rem; font-weight: 700;
+            letter-spacing: 0.02em; margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         .sp-subtitle {
             color: var(--sp-text-secondary);
-            font-size: 0.95rem; margin-bottom: 0.3rem;
+            font-size: 1rem; margin-bottom: 0.3rem;
         }
         .sp-login-input {
-            width: 100%; padding: 0.9rem 1.2rem;
-            background: var(--sp-bg-glass);
-            border: 1px solid var(--sp-border);
+            width: 100%; padding: 1rem 1.2rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: var(--sp-radius-sm);
-            color: var(--sp-text); font-size: 1rem;
+            color: var(--sp-text); font-size: 1.05rem;
             font-family: var(--sp-font-body);
-            outline: none; transition: border-color 0.2s;
-            margin-bottom: 1rem;
+            outline: none; transition: all 0.2s;
+            margin-bottom: 1.2rem;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
-        .sp-login-input:focus { border-color: var(--sp-accent); }
+        .sp-login-input:focus { 
+            border-color: var(--sp-accent); 
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15), inset 0 2px 4px rgba(0,0,0,0.1); 
+        }
         .sp-login-input::placeholder { color: var(--sp-text-muted); }
 
         /* === BUTTONS === */
@@ -1250,12 +1276,12 @@
         root.innerHTML = `
         <div class="sp-login">
             <div class="sp-login-card">
-                <div class="sp-login-logo"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5z"/></svg></div>
+                <div class="sp-login-logo"><svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5z"/></svg></div>
                 <h1>${t('appName')}</h1>
-                <p class="sp-subtitle">${CONFIG_DATA ? CONFIG_DATA.title : 'Interaktiv Ljudupplevelse'}</p>
-                <p class="sp-subtitle" style="font-size:0.8rem;color:var(--sp-text-muted)">${CONFIG_DATA ? CONFIG_DATA.subject : ''}</p>
-                <div style="margin-top:0.5rem; margin-bottom: 1rem;">
-                    <select class="sp-login-input" style="width:auto; padding:0.4rem 1rem; display:inline-block;" onchange="window.switchLang(this.value)" aria-label="Språk">
+                <p class="sp-subtitle" style="font-weight: 500;">${CONFIG_DATA ? CONFIG_DATA.title : 'Interaktiv Ljudupplevelse'}</p>
+                <p class="sp-subtitle" style="font-size:0.85rem;color:var(--sp-text-muted); margin-bottom: 2rem;">${CONFIG_DATA ? CONFIG_DATA.subject : ''}</p>
+                <div style="margin-bottom: 1.5rem;">
+                    <select class="sp-login-input" style="width:100%; cursor: pointer;" onchange="window.switchLang(this.value)" aria-label="Språk">
                         <option value="sv" ${currentLang==='sv'?'selected':''}>Svenska</option>
                         <option value="en" ${currentLang==='en'?'selected':''}>English</option>
                         <option value="ar" ${currentLang==='ar'?'selected':''}>العربية</option>
@@ -1271,10 +1297,11 @@
                     onclick="joinSession('practice')"
                     ${keyHandler("joinSession('practice')")}
                     role="button" tabindex="0"
-                    aria-label="Starta övningen">
+                    aria-label="Starta övningen"
+                    style="margin-top: 0.5rem; padding: 1rem 1.5rem; font-size: 1.1rem;">
                     Starta övningen
                 </button>
-                <p class="sp-gdpr" style="margin-top:2rem;">${t('gdprText')}</p>
+                <p class="sp-gdpr" style="margin-top:2rem; font-size: 0.75rem; color: rgba(255,255,255,0.4);">${t('gdprText')}</p>
             </div>
         </div>`;
     }
