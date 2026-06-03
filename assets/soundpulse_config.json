@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "title": "Sammetsgetingen som riskerar sla ut svenska bin",
+  "title": "Sammetsgetingen som riskerar slå ut svenska bin",
   "subtitle": "Dagens Eko — Sammetsgetingen i Sverige",
   "subject": "Biologi - Invasiva arter - Ekologi",
   "audioFile": "assets/soundpulse_sammetsjattingen.mp3",
@@ -10,15 +10,21 @@
   "visualSegments": [
     {
       "start": 0,
+      "end": 44,
+      "image": "assets/soundpulse/seg0_eko.png",
+      "title": "Dagens Eko — Sammetsgetingen i Sverige"
+    },
+    {
+      "start": 44,
       "end": 200,
       "image": "assets/soundpulse/seg1_hero.png",
-      "title": "Sammetsgetingen — Varldens Storsta Geting"
+      "title": "Sammetsgetingen — Världens Största Geting"
     },
     {
       "start": 200,
       "end": 400,
       "image": "assets/soundpulse/seg2_hive_attack.png",
-      "title": "Hotet mot Bisamhallen"
+      "title": "Hotet mot Bisamhällen"
     },
     {
       "start": 400,
@@ -30,19 +36,19 @@
       "start": 600,
       "end": 800,
       "image": "assets/soundpulse/seg4_bee_defense.png",
-      "title": "Binas Forsvar"
+      "title": "Binas Försvar"
     },
     {
       "start": 800,
       "end": 1000,
       "image": "assets/soundpulse/seg5_ecosystem.png",
-      "title": "Konsekvenser for Ekosystemet"
+      "title": "Konsekvenser för Ekosystemet"
     },
     {
       "start": 1000,
       "end": 1188,
       "image": "assets/soundpulse/seg6_conservation.png",
-      "title": "Vad kan vi gora?"
+      "title": "Vad kan vi göra?"
     }
   ],
   "questions": [
