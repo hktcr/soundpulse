@@ -160,11 +160,11 @@
             z-index: -1; pointer-events: none;
         }
         .sp-login-card {
-            background: rgba(30, 41, 59, 0.7);
+            background: var(--sp-bg-surface);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.02);
+            border: 1px solid var(--sp-border);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), 0 0 0 1px var(--sp-border);
             border-radius: var(--sp-radius-lg);
             padding: 3rem 2.5rem;
             max-width: 440px; width: 100%;
@@ -183,7 +183,7 @@
             font-family: var(--sp-font-display);
             font-size: 2.2rem; font-weight: 700;
             letter-spacing: 0.02em; margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #fff, #94a3b8);
+            background: linear-gradient(135deg, var(--sp-text), var(--sp-text-secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -193,8 +193,8 @@
         }
         .sp-login-input {
             width: 100%; padding: 1rem 1.2rem;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--sp-bg-glass);
+            border: 1px solid var(--sp-border);
             border-radius: var(--sp-radius-sm);
             color: var(--sp-text); font-size: 1.05rem;
             font-family: var(--sp-font-body);
@@ -1375,6 +1375,7 @@
 
     function renderLogin() {
         root.innerHTML = `
+        <div class="sp-bg"></div>
         <div class="sp-login">
             <div class="sp-login-card">
                 <div class="sp-login-logo"><svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5z"/></svg></div>
@@ -1403,7 +1404,7 @@
                     style="margin-top: 0.5rem; padding: 1rem 1.5rem; font-size: 1.1rem;">
                     Starta övningen
                 </button>
-                <p class="sp-gdpr" style="margin-top:2rem; font-size: 0.75rem; color: rgba(255,255,255,0.4);">${t('gdprText')}</p>
+                <p class="sp-gdpr" style="margin-top:2rem; font-size: 0.75rem; color: var(--sp-text-muted);">${t('gdprText')}</p>
             </div>
         </div>`;
     }
