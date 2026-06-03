@@ -1536,14 +1536,7 @@
                     <h1>${CONFIG_DATA ? CONFIG_DATA.title : t('appName')}</h1>
                     <p class="sp-subtitle" style="font-weight: 500; font-size: 1.1rem; line-height: 1.4; margin-bottom: 0.5rem; color: var(--sp-text);">${CONFIG_DATA ? CONFIG_DATA.subject : 'Interaktiv Ljudupplevelse'}</p>
 
-                    <div style="margin-bottom: 1.5rem;">
-                        <select class="sp-login-input" style="width:100%; cursor: pointer;" onchange="window.switchLang(this.value)" aria-label="Språk">
-                            <option value="sv" ${currentLang==='sv'?'selected':''}>Svenska</option>
-                            <option value="en" ${currentLang==='en'?'selected':''}>English</option>
-                            <option value="ar" ${currentLang==='ar'?'selected':''}>العربية</option>
-                        </select>
-                        <p style="font-size:0.7rem;color:var(--sp-text-muted);margin-top:0.3rem;text-align:center;">Ändrar gränssnittsspråk (frågorna är på svenska)</p>
-                    </div>
+
                     <input type="text" id="spNameInput" class="sp-login-input"
                         placeholder="${t('namePlaceholder')}"
                         aria-label="${t('namePlaceholder')}"
@@ -1631,8 +1624,8 @@
                             <img src="assets/sammetsgeting.jpg" alt="Sammetsgeting" id="spImgHornet">
                         </div>
                         <div class="sp-triptych-bottom" id="spVisual">
-                            <img id="spVisualImg" src="" alt="Segment illustration" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; z-index:10; opacity:0; transition: opacity 0.5s;">
-                            <div class="sp-segment-title" id="spSegTitle" style="z-index:20; background: linear-gradient(transparent, rgba(0,0,0,0.9)); position:absolute; bottom:0; width:100%; padding:1rem;"></div>
+                            <img id="spVisualImg" src="${CONFIG_DATA && CONFIG_DATA.visualSegments ? CONFIG_DATA.visualSegments[0].image : ''}" alt="Segment illustration" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; z-index:10; opacity:1; transition: opacity 0.5s;">
+                            <div class="sp-segment-title" id="spSegTitle" style="z-index:20; background: linear-gradient(transparent, rgba(0,0,0,0.9)); position:absolute; bottom:0; width:100%; padding:1rem;">${CONFIG_DATA && CONFIG_DATA.visualSegments ? CONFIG_DATA.visualSegments[0].title : ''}</div>
                         </div>
                     </div>
                 </div>
@@ -1998,7 +1991,7 @@
             const seg = CONFIG_DATA.visualSegments[segIdx];
             const img = document.getElementById('spVisualImg');
             const title = document.getElementById('spSegTitle');
-            if (img) { img.src = seg.image; img.style.display = 'block'; }
+            if (img) { img.src = seg.image; img.style.opacity = '1'; }
             if (title) title.textContent = seg.title;
         }
         // Highlight triptych images based on content
