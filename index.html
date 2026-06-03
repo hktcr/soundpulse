@@ -568,6 +568,10 @@
             font-size: 0.85rem; cursor: pointer;
             transition: all 0.2s; text-align: center;
         }
+        @media (max-width: 640px) {
+            .sp-match-area { gap: 0.4rem; }
+            .sp-match-item { font-size: 0.75rem; padding: 0.4rem; }
+        }
         .sp-match-item:hover { border-color: var(--sp-accent); }
         .sp-match-item:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
         .sp-match-item.selected { border-color: var(--sp-accent); background: var(--sp-accent-soft); box-shadow: 0 0 10px var(--sp-accent-glow); }
@@ -1706,6 +1710,36 @@
     }
     window.toggleTranscript = toggleTranscript;
 
+    // F4: Audio feedback
+    const spAudioCtx = window.AudioContext ? new AudioContext() : (window.webkitAudioContext ? new webkitAudioContext() : null);
+    function playBeep(isCorrect) {
+        if (!spAudioCtx) return;
+        if (spAudioCtx.state === 'suspended') spAudioCtx.resume();
+        try {
+            const osc = spAudioCtx.createOscillator();
+            const gain = spAudioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(spAudioCtx.destination);
+            
+            const now = spAudioCtx.currentTime;
+            if (isCorrect) {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now); osc.stop(now + 0.15);
+            } else {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(150, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
+            }
+        } catch(e) {}
+    }
+
     function updatePlayBtn() {
         const btn = document.getElementById('spPlayBtn') || document.getElementById('spTeacherPlayBtn');
         if (btn) btn.textContent = SP.isPlaying ? '⏸' : '▶';
@@ -1935,7 +1969,8 @@
         });
 
         showFeedback(correct, correct ? q.feedbackOk : q.feedbackNok);
-        if (correct && navigator.vibrate) navigator.vibrate(50); // F3
+        if (correct && navigator.vibrate) navigator.vibrate(50);
+        playBeep(correct);
         if (SP.mode === 'live') submitAnswer(q.id, letter);
     }
 
@@ -2023,6 +2058,7 @@
         SP.answers[q.id] = allCorrect ? 'correct' : 'incorrect';
         showFeedback(allCorrect, allCorrect ? q.feedbackOk : q.feedbackNok);
         if (allCorrect && navigator.vibrate) navigator.vibrate(50);
+        playBeep(allCorrect);
         if (SP.mode === 'live') submitAnswer(q.id, SP.answers[q.id]);
     }
 
@@ -2116,6 +2152,7 @@
         SP.answers[q.id] = allCorrect ? 'correct' : 'incorrect';
         showFeedback(allCorrect, allCorrect ? q.feedbackOk : q.feedbackNok);
         if (allCorrect && navigator.vibrate) navigator.vibrate(50);
+        playBeep(allCorrect);
         if (SP.mode === 'live') submitAnswer(q.id, SP.answers[q.id]);
     }
 
@@ -2168,6 +2205,7 @@
         SP.answers[q.id] = allCorrect ? 'correct' : 'incorrect';
         showFeedback(allCorrect, allCorrect ? q.feedbackOk : q.feedbackNok);
         if (allCorrect && navigator.vibrate) navigator.vibrate(50);
+        playBeep(allCorrect);
         if (SP.mode === 'live') submitAnswer(q.id, SP.answers[q.id]);
     }
 
@@ -2193,6 +2231,7 @@
         textarea.readOnly = true;
         SP.answers[q.id] = textarea.value.trim();
         showFeedback(true, q.feedbackMsg || 'Tack för ditt svar!');
+        playBeep(true);
         if (SP.mode === 'live') submitAnswer(q.id, strToHex(textarea.value.trim().substring(0, 100)));
     }
 

@@ -16,21 +16,39 @@
     },
     {
       "start": 44,
-      "end": 200,
+      "end": 120,
       "image": "assets/soundpulse/seg1_hero.png",
       "title": "Sammetsgetingen — En invasiv geting från Asien"
     },
     {
+      "start": 120,
+      "end": 200,
+      "image": "assets/soundpulse/seg1_hero.png",
+      "title": "Spridningen i Europa"
+    },
+    {
       "start": 200,
-      "end": 400,
+      "end": 300,
       "image": "assets/soundpulse/seg2_hive_attack.png",
       "title": "Hotet mot Bisamhällen"
     },
     {
+      "start": 300,
+      "end": 400,
+      "image": "assets/soundpulse/seg2_hive_attack.png",
+      "title": "Jakten på Byten"
+    },
+    {
       "start": 400,
-      "end": 600,
+      "end": 500,
       "image": "assets/soundpulse/seg3_invasive_map.png",
       "title": "Invasiva Arter i Sverige"
+    },
+    {
+      "start": 500,
+      "end": 600,
+      "image": "assets/soundpulse/seg3_invasive_map.png",
+      "title": "Ekologiska Konsekvenser"
     },
     {
       "start": 600,
@@ -42,7 +60,7 @@
       "start": 800,
       "end": 1000,
       "image": "assets/soundpulse/seg5_ecosystem.png",
-      "title": "Konsekvenser för Ekosystemet"
+      "title": "Kaskadeffekter"
     },
     {
       "start": 1000,
@@ -55,7 +73,7 @@
     {
       "id": "q2",
       "type": "multiple-choice",
-      "triggerTime": 200,
+      "triggerTime": 190,
       "difficulty": "medium",
       "text": "Sammetsgetingen (Vespa velutina) är en invasiv art. Var kommer den ursprungligen ifrån?",
       "options": [
@@ -80,11 +98,38 @@
       "feedbackOk": "Rätt! Vespa velutina kommer ursprungligen från Ost- och Sydostasien, bland annat södra Kina, Indonesien och Indien.",
       "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsgetingen (Vespa velutina) har sitt ursprung i Ost- och Sydostasien. Den har på senare år påträffats i Nordamerika och Europa."
     },
-
+    {
+      "id": "q25",
+      "type": "multiple-choice",
+      "triggerTime": 220,
+      "difficulty": "easy",
+      "text": "Enligt programmet, var hittades sammetsgetingen först i Europa?",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Bordeaux, Frankrike"
+        },
+        {
+          "letter": "B",
+          "text": "Rom, Italien"
+        },
+        {
+          "letter": "C",
+          "text": "Madrid, Spanien"
+        },
+        {
+          "letter": "D",
+          "text": "Berlin, Tyskland"
+        }
+      ],
+      "correct": "A",
+      "feedbackOk": "Rätt! Den hittades först i en sändning keramik till Bordeaux, Frankrike.",
+      "feedbackNok": "Rätt svar: A. Enligt programmet upptäcktes den först i en sändning keramik till Bordeaux i Frankrike."
+    },
     {
       "id": "q1",
       "type": "multiple-choice",
-      "triggerTime": 220,
+      "triggerTime": 250,
       "difficulty": "easy",
       "text": "I inledningen nämns sammetsgetingen. Ungefär hur stor är den jämfört med en vanlig geting?",
       "options": [
@@ -109,11 +154,10 @@
       "feedbackOk": "Rätt! En arbetare av sammetsgetingen blir cirka 2,5 till 3 cm lång. Drottningen kan bli upp till 3,5 cm.",
       "feedbackNok": "Rätt svar: <strong>B</strong>. En arbetare av sammetsgetingen blir cirka 2,5 till 3 cm lång (arbetare), alltså något större än en vanlig geting. Drottningen kan bli upp till 3,5 cm."
     },
-
     {
       "id": "q5",
       "type": "multiple-choice",
-      "triggerTime": 350,
+      "triggerTime": 310,
       "difficulty": "easy",
       "text": "I programmet nämns att sammetsgetingen angriper bisamhällen. Vad är det den främst är ute efter?",
       "options": [
@@ -141,7 +185,7 @@
     {
       "id": "q6",
       "type": "match",
-      "triggerTime": 430,
+      "triggerTime": 370,
       "difficulty": "medium",
       "text": "Para ihop varje ekologiskt begrepp med rätt definition.",
       "pairs": [
@@ -172,7 +216,7 @@
     {
       "id": "q16",
       "type": "multiple-choice",
-      "triggerTime": 450,
+      "triggerTime": 430,
       "difficulty": "medium",
       "text": "Vilken typ av samspel beskriver förhållandet mellan sammetsgetingen och honungsbina bäst?",
       "options": [
@@ -197,11 +241,10 @@
       "feedbackOk": "Rätt! Sammetsgetingen är en predator som aktivt jagar och dödar honungsbin. Det är inte parasitism eftersom getingen inte lever på eller i biet.",
       "feedbackNok": "Rätt svar: <strong>C</strong>. Predation innebär att en organism (predatorn) dödar och äter en annan (bytet). Parasitism innebär att parasiten lever på värden utan att döda den direkt."
     },
-
     {
       "id": "q11",
       "type": "multiple-choice",
-      "triggerTime": 485,
+      "triggerTime": 490,
       "difficulty": "medium",
       "text": "Japanska honungsbin har utvecklat ett unikt försvar mot jättegetingar. Vad gör de?",
       "options": [
@@ -223,13 +266,13 @@
         }
       ],
       "correct": "B",
-      "feedbackOk": "Rätt! Det kallas 'hot defensive bee ball' (dödsbiboll) — hundratals bin omringar getingen och vibrerar sina flygmuskler tills temperaturen når ca 47 °C. Detta beteende är främst dokumenterat hos japanska honungsbin (Apis cerana japonica) som försvar mot den japanska jättegetingen (Vespa mandarinia), inte mot sammetsgetingen (V. velutina).",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska honungsbin (Apis cerana japonica) bildar en 'värmeboll' runt inkräktaren och höjer temperaturen till ca 47 °C — dödligt för getingen men inte för bina. Denna försvarsstrategi är främst dokumenterad mot den japanska jättegetingen (Vespa mandarinia)."
+      "feedbackOk": "Rätt! Detta 'dödsbiboll'-beteende är dock främst ett försvar mot japanska jättegetingar, inte sammetsgetingar.",
+      "feedbackNok": "Rätt svar: B. Japanska honungsbin bildar en 'värmeboll' (ca 47 °C) runt den japanska jättegetingen."
     },
     {
       "id": "q12",
       "type": "multiple-choice",
-      "triggerTime": 635,
+      "triggerTime": 550,
       "difficulty": "hard",
       "text": "Europeiska honungsbin (Apis mellifera) har inte samma försvarsstrategi som de japanska. Varför?",
       "options": [
@@ -257,7 +300,7 @@
     {
       "id": "q3",
       "type": "multiple-choice",
-      "triggerTime": 660,
+      "triggerTime": 610,
       "difficulty": "easy",
       "text": "Vad kallas det när en art sprids till ett nytt område där den inte naturligt hör hemma och orsakar skada?",
       "options": [
@@ -282,11 +325,10 @@
       "feedbackOk": "Rätt! En invasiv art är en organism som sprids till nya områden och orsakar ekologisk eller ekonomisk skada.",
       "feedbackNok": "Rätt svar: <strong>C</strong>. Invasiv art är termen. Migration är naturlig förflyttning, mutation är en DNA-förändring, och utrotning betyder att arten försvinner helt."
     },
-
     {
       "id": "q15",
       "type": "categorize",
-      "triggerTime": 675,
+      "triggerTime": 670,
       "difficulty": "hard",
       "text": "Vilka av dessa arter är invasiva i Sverige och vilka är inhemska?",
       "categories": [
@@ -325,7 +367,7 @@
     {
       "id": "q10",
       "type": "multiple-choice",
-      "triggerTime": 700,
+      "triggerTime": 730,
       "difficulty": "medium",
       "text": "Bin är inte de enda pollinatörerna. Vilka andra djurgrupper bidrar till pollinering?",
       "options": [
@@ -353,7 +395,7 @@
     {
       "id": "q13",
       "type": "match",
-      "triggerTime": 750,
+      "triggerTime": 790,
       "difficulty": "hard",
       "text": "Para ihop varje organism med dess roll i näringsväven.",
       "pairs": [
@@ -384,7 +426,7 @@
     {
       "id": "q24",
       "type": "freetext",
-      "triggerTime": 810,
+      "triggerTime": 850,
       "difficulty": "hard",
       "text": "I programmet nämns flera åtgärder mot invasiva arter. Om du var ansvarig för att skydda svenska bin mot sammetsgetingen, vilka tre åtgärder skulle du prioritera och varför?",
       "placeholder": "Skriv dina tre åtgärder här...",
@@ -393,7 +435,7 @@
     {
       "id": "q20",
       "type": "multiple-choice",
-      "triggerTime": 845,
+      "triggerTime": 910,
       "difficulty": "medium",
       "text": "Klimatförändringarna gör att sammetsgetingen kan sprida sig norrut. Vad är den ekologiska förklaringen?",
       "options": [
@@ -421,7 +463,7 @@
     {
       "id": "q8",
       "type": "multiple-choice",
-      "triggerTime": 990,
+      "triggerTime": 970,
       "difficulty": "hard",
       "text": "I programmet diskuteras hur sammetsgetingen kan påverka ekosystemet om den etablerar sig i Sverige. Vilken ekosystemtjänst hotas mest direkt?",
       "options": [
@@ -449,7 +491,7 @@
     {
       "id": "q19",
       "type": "match",
-      "triggerTime": 1005,
+      "triggerTime": 1030,
       "difficulty": "medium",
       "text": "Para ihop varje ekosystemtjänst med ett konkret exempel kopplat till bin.",
       "pairs": [
@@ -476,7 +518,7 @@
     {
       "id": "q14",
       "type": "multiple-choice",
-      "triggerTime": 1020,
+      "triggerTime": 1090,
       "difficulty": "medium",
       "text": "Om sammetsgetingen slår ut honungsbina i ett område, vad händer med växterna som är beroende av pollinering?",
       "options": [
@@ -499,12 +541,12 @@
       ],
       "correct": "C",
       "feedbackOk": "Rätt! Utan pollinatörer kan många blommande växter inte producera frön. Kaskadeffekten sprider sig genom hela ekosystemet.",
-      "feedbackNok": "Rätt svar: <strong>C</strong>. Många växter (t.ex. äppelträd, klöver, raps) är helt beroende av insektspollinering. Utan bin sätter de inte frukt — en kaskadeffekt som påverkar allt från fåglar till däggdjur."
+      "feedbackNok": "Rätt svar: C. Många växter är helt beroende av insektspollinering och sätter inte frukt eller frön utan bin."
     },
     {
       "id": "q18",
       "type": "multiple-choice",
-      "triggerTime": 1040,
+      "triggerTime": 1140,
       "difficulty": "hard",
       "text": "Begreppet 'kaskadeffekt' används i ekologin. Vad innebär det i sammanhanget med sammetsgetingen?",
       "options": [
@@ -527,12 +569,12 @@
       ],
       "correct": "B",
       "feedbackOk": "Rätt! En kaskadeffekt innebär att t.ex. minskade bipopulationer leder till minskad pollinering, som leder till färre frön, som leder till färre växter, som påverkar alla andra arter.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Kaskadeffekten: getingen minskar bipopulationen, brist på bin minskar pollineringen, färre frön och frukter bildas, växtätande djur får mindre mat, deras predatorer påverkas — hela ekosystemet förändras."
+      "feedbackNok": "Rätt svar: B. Kaskadeffekten innebär att minskade bipopulationer ger sämre pollinering, vilket påverkar frukt och bär, och i förlängningen alla djur i näringsväven."
     },
     {
       "id": "q21",
       "type": "freetext",
-      "triggerTime": 1060,
+      "triggerTime": 1180,
       "difficulty": "medium",
       "text": "Beskriv med egna ord vad en kaskadeffekt är och ge ett exempel på vad som kan hända i ett svenskt ekosystem om honungsbina minskar kraftigt.",
       "placeholder": "Skriv ditt svar här...",
