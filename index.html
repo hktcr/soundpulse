@@ -498,6 +498,39 @@
             text-shadow: 0 0 10px rgba(253, 224, 71, 0.3);
         }
         .sp-segment-break { display: block; height: 0.5rem; }
+        .sp-word.has-gloss {
+            text-decoration: underline;
+            text-decoration-color: rgba(234, 179, 8, 0.45);
+            text-decoration-style: dotted;
+            text-underline-offset: 3px;
+            cursor: help;
+            position: relative;
+        }
+        .sp-word.has-gloss:hover, .sp-word.has-gloss:focus {
+            text-decoration-color: rgba(234, 179, 8, 0.8);
+        }
+        .sp-gloss-popup {
+            position: absolute;
+            bottom: calc(100% + 6px); left: 50%;
+            transform: translateX(-50%);
+            background: var(--sp-bg-deep);
+            border: 1px solid var(--sp-accent-warm);
+            border-radius: 8px;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.75rem;
+            color: var(--sp-text);
+            line-height: 1.4;
+            white-space: normal;
+            width: max-content; max-width: 250px;
+            z-index: 100;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .sp-word.has-gloss.gloss-open .sp-gloss-popup {
+            opacity: 1; pointer-events: auto;
+        }
 
         /* === QUESTION OVERLAY (3D FLIP) === */
         .sp-dynamic-side {
@@ -1755,7 +1788,6 @@
                             audioEl.removeEventListener('canplaythrough', retry);
                             audioEl.play().then(() => {
                                 SP.isPlaying = true;
-                                updatePlayBtn();
                             }).catch(() => {});
                         }, { once: true });
                     }
@@ -1767,7 +1799,6 @@
         } else {
             audioEl.pause();
             SP.isPlaying = false;
-            // Student manually paused — set flag to prevent sync override
             if (SP.mode === 'live') SP.studentPaused = true;
             updatePlayBtn();
             if (isTeacher) broadcastTeacherState();
@@ -1787,7 +1818,6 @@
         if (btn) btn.textContent = speeds[speedIdx] + 'x';
     }
 
-    // ─── V1: DISMISS INTRO (F3: unblocks audio) ───
     let introActive = true;
     function dismissIntro() {
         introActive = false;
@@ -1800,7 +1830,6 @@
     }
     window.dismissIntro = dismissIntro;
 
-    // ─── F3: REWIND FROM QUESTION ───
     function rewindFromQuestion() {
         if (SP.currentQ !== undefined) {
             SP.rewoundQuestions.add(SP.currentQ);
@@ -1824,9 +1853,14 @@
         'invasiva': 'Arter som spridit sig till nya områden och orsakar skada',
         'ekosystemtjänst': 'Nytta som naturen ger oss gratis (t.ex. pollinering)',
         'ekosystemtjänster': 'Nyttor som naturen ger oss gratis (t.ex. pollinering, vattenrening)',
+        'ekosystemtjänsterna': 'Alla de nyttor naturen ger oss gratis',
         'kaskadeffekt': 'När en förändring i ekosystemet utlöser en kedja av följdeffekter',
         'pollinering': 'Överföring av pollen mellan blommor, ofta via insekter som bin',
         'pollinatörer': 'Djur som sprider pollen mellan blommor (bin, fjärilar, flugor)',
+        'pollinatörerna': 'Djur som sprider pollen mellan blommor (bin, fjärilar, flugor)',
+        'pollinera': 'Föra över pollen från en blomma till en annan',
+        'pollinerar': 'För över pollen från en blomma till en annan',
+        'pollinkornen': 'Små korn som innehåller växtens manliga könsceller',
         'zoofili': 'Pollinering med hjälp av djur (bin, fjärilar, fåglar)',
         'anemofili': 'Pollinering med hjälp av vind (t.ex. gräs, barrträd)',
         'biodiversitet': 'Mångfalden av arter i ett ekosystem',
@@ -1838,7 +1872,41 @@
         'näringskedja': 'Visar hur energi överförs från en organism till nästa',
         'mutualism': 'Samspel där båda arter har nytta av varandra',
         'kommensalism': 'Samspel där en art gynnas utan att den andra påverkas',
-        'parasitism': 'Samspel där en art lever på en annan och skadar den'
+        'parasitism': 'Samspel där en art lever på en annan och skadar den',
+        'velutina': 'Vetenskapligt artnamn — betyder "sammetslen" på latin',
+        'bisamhälle': 'Ett organiserat bi-samhälle med drottning, arbetare och drönare',
+        'bisamhällen': 'Organiserade bi-samhällen med drottning, arbetare och drönare',
+        'fripassagerare': 'En organism som "åker snålskjuts" med transporter utan att vara inbjuden',
+        'dödsbiboll': 'Japanska bins försvar: de bildar en klunga runt fienden och övervärmer den till döds',
+        'dödsbibollens': 'Japanska bins försvar: de bildar en klunga runt fienden och övervärmer den till döds',
+        'överhettning': 'När temperaturen blir farligt hög — bina använder detta som vapen',
+        'bekämpningsmedel': 'Kemikalier som används för att döda skadedjur eller ogräs',
+        'proteinpaket': 'Här: getingen tuggar sönder bytet till en köttboll att mata sina larver med',
+        'proteinkällor': 'Mat som innehåller mycket protein (äggviteämne)',
+        'livsmedelssystem': 'Hela kedjan från odling till att maten hamnar på tallriken',
+        'livsmiljöer': 'De naturliga platser där djur och växter lever',
+        'blomremsor': 'Remsor av vildblommor som planteras för att hjälpa pollinatörer',
+        'fraktfartyg': 'Stort lastfartyg som transporterar varor mellan länder',
+        'jordbrukslandskapet': 'Det landskap som formas av jordbruk — åkrar, betesmark, diken',
+        'naturvårdsverket': 'Svensk myndighet som ansvarar för miljö- och naturvård',
+        'handlingsplan': 'En plan med konkreta steg för att lösa ett problem',
+        'förebyggande': 'Åtgärder som görs i förväg för att förhindra att något dåligt händer',
+        'klimatförändringar': 'Långsiktiga förändringar i jordens klimat, ofta p.g.a. ökade växthusgaser',
+        'fortplanta': 'Föröka sig — skaffa avkomma (ungar, frön)',
+        'konstaterade': 'Fastslog, bekräftade att något stämmer',
+        'etablera': 'Slå sig ner och börja leva permanent på en ny plats',
+        'etablerat': 'Har slagit sig ner och lever permanent på en ny plats',
+        'kapplöpning': 'Tävling om att vara snabbast — här: kampen mot tiden',
+        'kartlägga': 'Undersöka och dokumentera noggrant',
+        'insektssaliv': 'Saliv (spott) från insekter — getingar bygger bo av tuggat trä blandat med saliv',
+        'värstinggeting': 'Vardagligt uttryck för en extra farlig och aggressiv geting',
+        'sammetslen': 'Mjuk som sammet — det är här sammetsgetingen fått sitt namn',
+        'bollgetingar': 'Getingar av släktet Vespa som bygger stora, runda bon',
+        'bålgetingbo': 'Bo byggt av bålgetingar — kan bli stort som en fotboll',
+        'skrymslen': 'Trånga, undangömda utrymmen',
+        'vrår': 'Undangömda hörn och platser',
+        'uppmärksamma': 'Lägga märke till, vara observant på',
+        'utraderad': 'Helt utplånad, borttagen'
     };
 
     function addGlossary(text) {
@@ -1959,15 +2027,36 @@
     function renderTranscriptWords() {
         const container = document.getElementById('spTranscript');
         if (!container || !TRANSCRIPTION.segments) return;
+        // Build glossary lookup (lowercase)
+        const glossKeys = Object.keys(GLOSSARY).sort((a, b) => b.length - a.length);
         let html = '';
         TRANSCRIPTION.segments.forEach((seg, sIdx) => {
             if (sIdx > 0) html += '<span class="sp-segment-break"></span>';
             (seg.words || []).forEach((w, wIdx) => {
-                html += `<span class="sp-word" data-start="${w.start}" data-end="${w.end}" id="w_${sIdx}_${wIdx}">${w.word} </span>`;
+                const clean = w.word.toLowerCase().replace(/[.,!?:;"'()]/g, '');
+                const glossDef = GLOSSARY[clean];
+                if (glossDef) {
+                    html += `<span class="sp-word has-gloss" data-start="${w.start}" data-end="${w.end}" id="w_${sIdx}_${wIdx}" tabindex="0" onclick="toggleWordGloss(this)" data-def="${glossDef.replace(/"/g, '&quot;')}">${w.word}<span class="sp-gloss-popup">${glossDef}</span> </span>`;
+                } else {
+                    html += `<span class="sp-word" data-start="${w.start}" data-end="${w.end}" id="w_${sIdx}_${wIdx}">${w.word} </span>`;
+                }
             });
         });
         container.innerHTML = html;
     }
+
+    function toggleWordGloss(el) {
+        // Close any other open glosses
+        document.querySelectorAll('.sp-word.gloss-open').forEach(w => {
+            if (w !== el) w.classList.remove('gloss-open');
+        });
+        el.classList.toggle('gloss-open');
+        // Auto-close after 4s
+        if (el.classList.contains('gloss-open')) {
+            setTimeout(() => el.classList.remove('gloss-open'), 4000);
+        }
+    }
+    window.toggleWordGloss = toggleWordGloss;
 
     function updateTranscriptHighlight(time) {
         const words = document.querySelectorAll('.sp-word');
