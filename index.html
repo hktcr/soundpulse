@@ -499,16 +499,25 @@
         }
         .sp-segment-break { display: block; height: 0.5rem; }
 
-        /* === QUESTION OVERLAY === */
+        /* === QUESTION OVERLAY (3D FLIP) === */
+        .sp-dynamic-side {
+            perspective: 1200px;
+        }
         .sp-question-wrap {
             position: absolute; inset: 0; z-index: var(--z-overlay);
             display: flex; align-items: center; justify-content: center;
-            background: var(--sp-bg);
+            background: var(--sp-bg-deep);
             opacity: 0; pointer-events: none;
-            transition: opacity 0.3s ease;
-            padding: 2rem;
+            padding: 1.5rem;
+            backface-visibility: hidden;
+            transform: rotateY(180deg);
+            transition: opacity 0.15s ease, transform 0.5s ease;
+            border-radius: var(--sp-radius);
         }
-        .sp-question-wrap.show { opacity: 1; pointer-events: all; }
+        .sp-question-wrap.show {
+            opacity: 1; pointer-events: all;
+            transform: rotateY(0deg);
+        }
         .sp-question-card {
             background: var(--sp-bg-surface);
             backdrop-filter: blur(30px);
@@ -516,8 +525,7 @@
             border-radius: var(--sp-radius-lg);
             padding: 2rem;
             max-width: 600px; width: 100%;
-            max-height: 90vh; overflow-y: auto;
-            animation: spCardEnter 0.4s ease-out;
+            max-height: 85vh; overflow-y: auto;
         }
         .sp-q-badge {
             font-size: 0.7rem; font-weight: 600;
@@ -1575,8 +1583,9 @@
         SP.studentId = generateStudentId();
         SP.mode = mode === 'practice' ? 'practice' : 'live';
         renderStudentView();
+        // Always register so teacher dashboard can see all students
+        registerStudent();
         if (SP.mode === 'live') {
-            registerStudent();
             startLiveSync();
         }
     }
