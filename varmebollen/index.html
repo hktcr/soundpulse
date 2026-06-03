@@ -60,7 +60,11 @@
             </div>
         </div>
 
-        <button class="vb-btn" onclick="startGamePlay()" style="width: 100%;">Börja spela!</button>
+        <div id="studentWaitMsg" style="display:none; font-size:1.1rem; color:var(--vb-accent); margin-bottom: 1rem; font-weight: bold; animation: pulse 1.5s infinite;">
+            Väntar på att läraren ska starta spelet...
+        </div>
+
+        <button class="vb-btn" id="teacherStartBtn" onclick="startGamePlay()" style="width: 100%; display:none;">Börja spela!</button>
     </div>
 
     <script src="game.js"></script>

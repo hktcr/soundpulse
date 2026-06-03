@@ -116,6 +116,15 @@ function joinGame(isTeacher) {
         document.getElementById('gameCanvas').style.display = 'block';
         document.getElementById('gameHud').style.display = 'flex';
         document.getElementById('instructions').style.display = 'block';
+        
+        if (isTeacher) {
+            document.getElementById('teacherStartBtn').style.display = 'block';
+            document.getElementById('studentWaitMsg').style.display = 'none';
+        } else {
+            document.getElementById('teacherStartBtn').style.display = 'none';
+            document.getElementById('studentWaitMsg').style.display = 'block';
+        }
+
         startBeeGame();
     }, 500);
 }
@@ -182,6 +191,9 @@ function startBeeGame() {
                     } else {
                         GAME.deadBees = new Set();
                     }
+                    if (header.length > 6 && header[6] === '1' && !GAME.playing) {
+                        startGamePlay();
+                    }
                 }
                 GAME.allBees.clear();
                 for (let i = 1; i < sections.length; i++) {
@@ -218,7 +230,7 @@ function startBeeGame() {
                 });
             }
             const deadStr = Array.from(GAME.deadBees).join(':');
-            let stateStr = `${GAME.hornet.x.toFixed(3)},${GAME.hornet.y.toFixed(3)},${GAME.temperature.toFixed(1)},${GAME.victory ? '1' : '0'},${GAME.defeat ? '1' : '0'},${deadStr}`;
+            let stateStr = `${GAME.hornet.x.toFixed(3)},${GAME.hornet.y.toFixed(3)},${GAME.temperature.toFixed(1)},${GAME.victory ? '1' : '0'},${GAME.defeat ? '1' : '0'},${deadStr},${GAME.playing ? '1' : '0'}`;
             stateStr += `|${GAME.studentId},${GAME.myBee.x.toFixed(3)},${GAME.myBee.y.toFixed(3)},${encodeURIComponent(GAME.studentName)},${(GAME.myBee.heading || 0).toFixed(2)}`;
             GAME.allBees.forEach((bee, sid) => {
                 stateStr += `|${sid},${bee.x.toFixed(3)},${bee.y.toFixed(3)},${encodeURIComponent(bee.name)},${(bee.heading || 0).toFixed(2)}`;
