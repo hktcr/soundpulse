@@ -5,6 +5,7 @@ const CONFIG = {
 
 const GAME = {
     active: false,
+    playing: false,
     isTeacher: false, // In this context: isHost (controls hornet AI and temperature)
     studentId: '',
     studentName: '',
@@ -131,6 +132,7 @@ async function registerInLobby() {
 
 function startBeeGame() {
     GAME.active = true;
+    GAME.playing = false;
     GAME.lastTime = performance.now();
     GAME.victory = false;
     GAME.defeat = false;
@@ -250,14 +252,22 @@ function onGameKeyDown(e) {
 }
 function onGameKeyUp(e) { GAME.keysDown.delete(e.key); }
 
+function startGamePlay() {
+    const el = document.getElementById('instructions');
+    if (el) el.style.display = 'none';
+    GAME.playing = true;
+}
+
 function gameLoop() {
     if (!GAME.active) return;
     const now = performance.now();
     const dt = Math.min((now - GAME.lastTime) / 1000, 0.1);
     GAME.lastTime = now;
 
-    updateBeeMovement(dt);
-    if (GAME.isTeacher) { updateHornetAI(dt); updateTemperature(dt); }
+    if (GAME.playing) {
+        updateBeeMovement(dt);
+        if (GAME.isTeacher) { updateHornetAI(dt); updateTemperature(dt); }
+    }
     renderGame();
     GAME.animFrame = requestAnimationFrame(gameLoop);
 }

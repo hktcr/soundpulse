@@ -2771,6 +2771,7 @@
 
     const GAME = {
         active: false,
+        playing: false,
         canvas: null,
         ctx: null,
         animFrame: null,
@@ -2857,6 +2858,7 @@
 
     function startBeeGame(isTeacher, isDemo = false) {
         GAME.active = true;
+        GAME.playing = false;
         GAME.lastTime = performance.now();
         GAME.isDemo = isDemo;
         GAME.demoBees = [];
@@ -3043,6 +3045,7 @@
     function dismissGameInstructions() {
         const el = document.getElementById('spGameInstructions');
         if (el) el.style.display = 'none';
+        GAME.playing = true;
     }
 
     // ─── Input ───
@@ -3080,12 +3083,14 @@
         const dt = Math.min((now - GAME.lastTime) / 1000, 0.1);
         GAME.lastTime = now;
 
-        updateBeeMovement(dt);
+        if (GAME.playing) {
+            updateBeeMovement(dt);
 
-        // Only teacher runs the hornet AI and temperature logic
-        if (SP.mode === 'teacher') {
-            updateHornetAI(dt);
-            updateTemperature(dt);
+            // Only teacher runs the hornet AI and temperature logic
+            if (SP.mode === 'teacher') {
+                updateHornetAI(dt);
+                updateTemperature(dt);
+            }
         }
 
         renderGame();
