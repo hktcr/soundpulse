@@ -157,8 +157,7 @@
             }
             .sp-login-video-area video {
                 position: absolute; inset: 0;
-                width: 100%; height: 100%; object-fit: contain;
-                background: var(--sp-bg-deep);
+                width: 100%; height: 100%; object-fit: cover;
                 opacity: 0.9;
             }
             .sp-login-video-overlay {
@@ -411,6 +410,10 @@
             filter: brightness(1);
             transform: scale(1.03);
         }
+        .sp-triptych-top img.dimmed {
+            filter: brightness(0.3);
+            transform: scale(0.97);
+        }
         .sp-triptych-bottom {
             position: relative;
             flex: 1;
@@ -529,8 +532,9 @@
             opacity: 0;
             transition: opacity 0.2s;
         }
-        .sp-word.has-gloss.gloss-open .sp-gloss-popup {
-            opacity: 1; pointer-events: auto;
+        .sp-word.has-gloss:hover .sp-gloss-popup,
+        .sp-word.has-gloss:focus .sp-gloss-popup {
+            opacity: 1;
         }
 
         /* === QUESTION OVERLAY (3D FLIP) === */
@@ -1352,7 +1356,8 @@
         currentSegmentIdx: -1,
         knownStudents: new Map(),
         studentAnswers: new Map(),
-        offlineCount: 0
+        offlineCount: 0,
+        maxListenedTime: 0
     };
 
     let CONFIG_DATA = null;
@@ -1646,12 +1651,14 @@
 
             <!-- Audio Player -->
             <div class="sp-player" role="region" aria-label="Ljudspelare">
+                <button class="sp-speed-btn" onclick="seekBack()" aria-label="Spola tillbaka 10s" style="font-size:0.85rem;padding:0.3rem 0.5rem;">⏪</button>
                 <button class="sp-player-btn" id="spPlayBtn"
                     onclick="toggleAudio()" role="button" tabindex="0"
                     aria-label="Spela/Pausa"
                     ${keyHandler('toggleAudio()')}>
                     ▶
                 </button>
+                <button class="sp-speed-btn" onclick="seekForward()" aria-label="Spola framåt 10s" style="font-size:0.85rem;padding:0.3rem 0.5rem;">⏩</button>
                 <div class="sp-timeline-wrap">
                     <input type="range" class="sp-timeline" id="spTimeline" min="0" max="100" value="0"
                         oninput="seekAudio(this.value)" aria-label="Tidslinje">
@@ -1806,10 +1813,58 @@
         }
     }
 
+    function getNextUnansweredQuestionTime() {
+        if (!CONFIG_DATA || !CONFIG_DATA.questions) return Infinity;
+        const current = audioEl.currentTime;
+        let earliest = Infinity;
+        CONFIG_DATA.questions.forEach((q, idx) => {
+            if (q.triggerTime > current && !SP.activatedQuestions.has(idx)) {
+                earliest = Math.min(earliest, q.triggerTime);
+            }
+        });
+        return earliest;
+    }
+
+    function getMaxSeekTime() {
+        const maxListened = SP.maxListenedTime || 0;
+        const nextQ = getNextUnansweredQuestionTime();
+        // Can't go past where you've listened, and can't skip unanswered questions
+        return Math.min(maxListened + 2, nextQ);
+    }
+
     function seekAudio(val) {
-        audioEl.currentTime = parseFloat(val);
+        let target = parseFloat(val);
+        // Teachers have unrestricted seek
+        if (SP.mode !== 'teacher') {
+            const maxTime = getMaxSeekTime();
+            if (target > maxTime) {
+                target = maxTime;
+                // Flash timeline to signal restriction
+                const tl = document.getElementById('spTimeline');
+                if (tl) { tl.style.outline = '2px solid var(--sp-accent-warm)'; setTimeout(() => tl.style.outline = '', 400); }
+            }
+        }
+        audioEl.currentTime = target;
         if (SP.mode === 'teacher') broadcastTeacherState();
     }
+
+    function seekBack() {
+        audioEl.currentTime = Math.max(0, audioEl.currentTime - 10);
+    }
+    window.seekBack = seekBack;
+
+    function seekForward() {
+        const target = audioEl.currentTime + 10;
+        const maxTime = SP.mode === 'teacher' ? Infinity : getMaxSeekTime();
+        if (target <= maxTime) {
+            audioEl.currentTime = target;
+        } else {
+            audioEl.currentTime = maxTime;
+            const tl = document.getElementById('spTimeline');
+            if (tl) { tl.style.outline = '2px solid var(--sp-accent-warm)'; setTimeout(() => tl.style.outline = '', 400); }
+        }
+    }
+    window.seekForward = seekForward;
 
     function cycleSpeed(event) {
         if (event) event.stopPropagation();
@@ -2037,7 +2092,7 @@
                 const clean = w.word.toLowerCase().replace(/[.,!?:;"'()]/g, '');
                 const glossDef = GLOSSARY[clean];
                 if (glossDef) {
-                    html += `<span class="sp-word has-gloss" data-start="${w.start}" data-end="${w.end}" id="w_${sIdx}_${wIdx}" tabindex="0" onclick="toggleWordGloss(this)" data-def="${glossDef.replace(/"/g, '&quot;')}">${w.word}<span class="sp-gloss-popup">${glossDef}</span> </span>`;
+                    html += `<span class="sp-word has-gloss" data-start="${w.start}" data-end="${w.end}" id="w_${sIdx}_${wIdx}" tabindex="0">${w.word}<span class="sp-gloss-popup">${glossDef}</span> </span>`;
                 } else {
                     html += `<span class="sp-word" data-start="${w.start}" data-end="${w.end}" id="w_${sIdx}_${wIdx}">${w.word} </span>`;
                 }
@@ -2046,18 +2101,7 @@
         container.innerHTML = html;
     }
 
-    function toggleWordGloss(el) {
-        // Close any other open glosses
-        document.querySelectorAll('.sp-word.gloss-open').forEach(w => {
-            if (w !== el) w.classList.remove('gloss-open');
-        });
-        el.classList.toggle('gloss-open');
-        // Auto-close after 4s
-        if (el.classList.contains('gloss-open')) {
-            setTimeout(() => el.classList.remove('gloss-open'), 4000);
-        }
-    }
-    window.toggleWordGloss = toggleWordGloss;
+
 
     function updateTranscriptHighlight(time) {
         const words = document.querySelectorAll('.sp-word');
@@ -2104,17 +2148,19 @@
             if (img) { img.src = seg.image; img.style.opacity = '1'; }
             if (title) title.textContent = seg.title;
         }
-        // Highlight triptych images based on content
+        // Highlight + dim triptych images based on content
         const beeImg = document.getElementById('spImgBee');
         const hornetImg = document.getElementById('spImgHornet');
         if (beeImg && hornetImg) {
-            // Hornet segments: 44-500 (intro, spread, hive attack, invasive)
             const hornetActive = t >= 44 && t < 500;
-            // Bee segments: 500-800 (bee defense, ecosystem) 
             const beeActive = t >= 500 && t < 1000;
             hornetImg.classList.toggle('highlight', hornetActive);
+            hornetImg.classList.toggle('dimmed', beeActive);
             beeImg.classList.toggle('highlight', beeActive);
+            beeImg.classList.toggle('dimmed', hornetActive);
         }
+        // Track max listened position
+        if (t > (SP.maxListenedTime || 0)) SP.maxListenedTime = t;
     }
 
     // ═══════════════════════════════════════════
