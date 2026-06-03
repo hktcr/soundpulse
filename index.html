@@ -144,6 +144,39 @@
             color: var(--sp-accent);
             text-transform: uppercase; letter-spacing: 0.08em;
         }
+        .sp-login-wrapper {
+            display: flex;
+            min-height: 100vh; width: 100%;
+            position: relative; z-index: 10;
+        }
+        .sp-login-video-area { display: none; }
+        .sp-login-form-area {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            padding: 1.5rem; position: relative;
+        }
+        @media (min-width: 800px) {
+            .sp-login-video-area {
+                display: block; flex: 0 0 25%;
+                position: relative; overflow: hidden;
+                border-right: 1px solid var(--sp-border);
+            }
+            .sp-login-video-area video {
+                position: absolute; inset: 0;
+                width: 100%; height: 100%; object-fit: cover;
+                opacity: 0.9;
+            }
+            .sp-login-video-overlay {
+                position: absolute; inset: 0;
+                background: linear-gradient(to right, transparent 50%, var(--sp-bg) 100%);
+            }
+        }
+        .sp-login-wrapper::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at top right, rgba(20, 184, 166, 0.15), transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.15), transparent 40%);
+            z-index: -1; pointer-events: none;
+        }
 
         /* === LOGIN === */
         .sp-login {
@@ -151,13 +184,6 @@
             min-height: 100vh; padding: 1.5rem;
             position: relative;
             z-index: 10;
-        }
-        .sp-login::before {
-            content: '';
-            position: absolute; inset: 0;
-            background: radial-gradient(circle at top right, rgba(20, 184, 166, 0.15), transparent 40%),
-                        radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.15), transparent 40%);
-            z-index: -1; pointer-events: none;
         }
         .sp-login-card {
             background: var(--sp-bg-surface);
@@ -1376,35 +1402,41 @@
     function renderLogin() {
         root.innerHTML = `
         <div class="sp-bg"></div>
-        <div class="sp-login">
-            <div class="sp-login-card">
-                <div class="sp-login-logo"><svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5z"/></svg></div>
-                <h1>${t('appName')}</h1>
-                <p class="sp-subtitle" style="font-weight: 500;">${CONFIG_DATA ? CONFIG_DATA.title : 'Interaktiv Ljudupplevelse'}</p>
-                <p class="sp-subtitle" style="font-size:0.85rem;color:var(--sp-text-muted); margin-bottom: 2rem;">${CONFIG_DATA ? CONFIG_DATA.subject : ''}</p>
-                <div style="margin-bottom: 1.5rem;">
-                    <select class="sp-login-input" style="width:100%; cursor: pointer;" onchange="window.switchLang(this.value)" aria-label="Språk">
-                        <option value="sv" ${currentLang==='sv'?'selected':''}>Svenska</option>
-                        <option value="en" ${currentLang==='en'?'selected':''}>English</option>
-                        <option value="ar" ${currentLang==='ar'?'selected':''}>العربية</option>
-                    </select>
-                    <p style="font-size:0.7rem;color:var(--sp-text-muted);margin-top:0.3rem;text-align:center;">Ändrar gränssnittsspråk (frågorna är på svenska)</p>
+        <div class="sp-login-wrapper">
+            <div class="sp-login-video-area">
+                <video src="assets/bikupa_login.mp4" autoplay loop muted playsinline></video>
+                <div class="sp-login-video-overlay"></div>
+            </div>
+            <div class="sp-login-form-area">
+                <div class="sp-login-card">
+                    <div class="sp-login-logo"><svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5z"/></svg></div>
+                    <h1>${t('appName')}</h1>
+                    <p class="sp-subtitle" style="font-weight: 500;">${CONFIG_DATA ? CONFIG_DATA.title : 'Interaktiv Ljudupplevelse'}</p>
+                    <p class="sp-subtitle" style="font-size:0.85rem;color:var(--sp-text-muted); margin-bottom: 2rem;">${CONFIG_DATA ? CONFIG_DATA.subject : ''}</p>
+                    <div style="margin-bottom: 1.5rem;">
+                        <select class="sp-login-input" style="width:100%; cursor: pointer;" onchange="window.switchLang(this.value)" aria-label="Språk">
+                            <option value="sv" ${currentLang==='sv'?'selected':''}>Svenska</option>
+                            <option value="en" ${currentLang==='en'?'selected':''}>English</option>
+                            <option value="ar" ${currentLang==='ar'?'selected':''}>العربية</option>
+                        </select>
+                        <p style="font-size:0.7rem;color:var(--sp-text-muted);margin-top:0.3rem;text-align:center;">Ändrar gränssnittsspråk (frågorna är på svenska)</p>
+                    </div>
+                    <input type="text" id="spNameInput" class="sp-login-input"
+                        placeholder="${t('namePlaceholder')}"
+                        aria-label="${t('namePlaceholder')}"
+                        autocomplete="name"
+                        onkeydown="if(event.key==='Enter'){event.preventDefault();joinSession('practice');}"
+                    >
+                    <button class="sp-btn-primary" id="spJoinBtn"
+                        onclick="joinSession('practice')"
+                        ${keyHandler("joinSession('practice')")}
+                        role="button" tabindex="0"
+                        aria-label="Starta övningen"
+                        style="margin-top: 0.5rem; padding: 1rem 1.5rem; font-size: 1.1rem;">
+                        Starta övningen
+                    </button>
+                    <p class="sp-gdpr" style="margin-top:2rem; font-size: 0.75rem; color: var(--sp-text-muted);">${t('gdprText')}</p>
                 </div>
-                <input type="text" id="spNameInput" class="sp-login-input"
-                    placeholder="${t('namePlaceholder')}"
-                    aria-label="${t('namePlaceholder')}"
-                    autocomplete="name"
-                    onkeydown="if(event.key==='Enter'){event.preventDefault();joinSession('practice');}"
-                >
-                <button class="sp-btn-primary" id="spJoinBtn"
-                    onclick="joinSession('practice')"
-                    ${keyHandler("joinSession('practice')")}
-                    role="button" tabindex="0"
-                    aria-label="Starta övningen"
-                    style="margin-top: 0.5rem; padding: 1rem 1.5rem; font-size: 1.1rem;">
-                    Starta övningen
-                </button>
-                <p class="sp-gdpr" style="margin-top:2rem; font-size: 0.75rem; color: var(--sp-text-muted);">${t('gdprText')}</p>
             </div>
         </div>`;
     }
