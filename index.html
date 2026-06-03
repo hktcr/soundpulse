@@ -2448,7 +2448,7 @@
         teacherMsgText = '';
         // Clear remote state
         apiSet('state', '0_-1_0_none_none');
-        apiSet('student_list', strToHex(''));
+        apiSet('student_list', strToHex('RESET'));
         // Update dashboard
         const dash = document.getElementById('spTeacherDashboard');
         if (dash) dash.innerHTML = `<div class="sp-dash-header">${t('noStudents')}</div>`;
@@ -2486,7 +2486,15 @@
             if (!listRaw) return;
             const decoded = hexToStr(listRaw);
             if (!decoded) return;
-            const ids = decoded.split(',').filter(id => id.trim());
+            if (decoded === 'RESET') {
+                if (SP.knownStudents.size > 0) {
+                    SP.knownStudents.clear();
+                    SP.studentAnswers.clear();
+                    pollStudentResponses();
+                }
+                return;
+            }
+            const ids = decoded.split(',').filter(id => id.trim() && id !== 'RESET');
             // Parallel fetch for all unknown students
             const unknownIds = ids.filter(sid => !SP.knownStudents.has(sid));
             if (unknownIds.length > 0) {
