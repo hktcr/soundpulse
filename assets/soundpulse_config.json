@@ -73,7 +73,7 @@
     {
       "id": "q0",
       "type": "multiple-choice",
-      "triggerTime": 18.1,
+      "triggerTime": 33,
       "difficulty": "easy",
       "text": "Vilken art kommer det här programmet handla om?",
       "options": [
@@ -129,7 +129,7 @@
     {
       "id": "q25",
       "type": "multiple-choice",
-      "triggerTime": 220.4,
+      "triggerTime": 90,
       "difficulty": "easy",
       "text": "Enligt programmet, var hittades sammetsgetingen först i Europa?",
       "options": [
@@ -185,7 +185,7 @@
     {
       "id": "q5",
       "type": "multiple-choice",
-      "triggerTime": 311.1,
+      "triggerTime": 316,
       "difficulty": "easy",
       "text": "I programmet nämns att sammetsgetingen angriper bisamhällen. Vad är det den främst är ute efter?",
       "options": [
@@ -491,7 +491,7 @@
     {
       "id": "q8",
       "type": "multiple-choice",
-      "triggerTime": 968.4,
+      "triggerTime": 1015,
       "difficulty": "hard",
       "text": "I programmet diskuteras hur sammetsgetingen kan påverka ekosystemet om den etablerar sig i Sverige. Vilken ekosystemtjänst hotas mest direkt?",
       "options": [
