@@ -18,7 +18,7 @@
       "start": 44,
       "end": 200,
       "image": "assets/soundpulse/seg1_hero.png",
-      "title": "Sammetsgetingen — Världens Största Geting"
+      "title": "Sammetsgetingen — En invasiv geting från Asien"
     },
     {
       "start": 200,
@@ -77,13 +77,13 @@
         }
       ],
       "correct": "B",
-      "feedbackOk": "Rätt! Vespa velutina kommer ursprungligen från Ost- och Sydostasien, bland annat Japan, Kina och Korea.",
+      "feedbackOk": "Rätt! Vespa velutina kommer ursprungligen från Ost- och Sydostasien, bland annat Kina, Sydostasien och Indien.",
       "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsgetingen (Vespa velutina) har sitt ursprung i Ost- och Sydostasien. Den har på senare år påträffats i Nordamerika och Europa."
     },
     {
       "id": "q4",
       "type": "categorize",
-      "triggerTime": 120,
+      "triggerTime": 290,
       "difficulty": "medium",
       "text": "Sortera faktorerna: vilka är biotiska (levande) och vilka är abiotiska (icke-levande)?",
       "categories": [
@@ -205,7 +205,7 @@
     {
       "id": "q1",
       "type": "multiple-choice",
-      "triggerTime": 290,
+      "triggerTime": 120,
       "difficulty": "easy",
       "text": "I inledningen nämns sammetsgetingen. Ungefär hur stor är den jämfört med en vanlig geting?",
       "options": [
@@ -215,7 +215,7 @@
         },
         {
           "letter": "B",
-          "text": "Något större — cirka 2,5 till 3 cm"
+          "text": "Något större — cirka 2,5 till 3 cm (arbetare)"
         },
         {
           "letter": "C",
@@ -227,13 +227,13 @@
         }
       ],
       "correct": "B",
-      "feedbackOk": "Rätt! Sammetsgetingen blir cirka 2,5 till 3 cm lång.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsgetingen blir cirka 2,5 till 3 cm lång, alltså något större än en vanlig geting."
+      "feedbackOk": "Rätt! En arbetare av sammetsgetingen blir cirka 2,5 till 3 cm lång. Drottningen kan bli upp till 3,5 cm.",
+      "feedbackNok": "Rätt svar: <strong>B</strong>. En arbetare av sammetsgetingen blir cirka 2,5 till 3 cm lång (arbetare), alltså något större än en vanlig geting. Drottningen kan bli upp till 3,5 cm."
     },
     {
       "id": "q17",
       "type": "lucktext",
-      "triggerTime": 350,
+      "triggerTime": 380,
       "difficulty": "hard",
       "text": "I en näringsväv kallas växter för ___. De äts av ___ som i sin tur kan ätas av ___.",
       "correctAnswers": [
@@ -247,7 +247,7 @@
     {
       "id": "q5",
       "type": "multiple-choice",
-      "triggerTime": 380,
+      "triggerTime": 350,
       "difficulty": "easy",
       "text": "I programmet nämns att sammetsgetingen angriper bisamhällen. Vad är det den främst är ute efter?",
       "options": [
@@ -270,7 +270,7 @@
       ],
       "correct": "B",
       "feedbackOk": "Rätt! Sammetsgetingar attackerar bikupor för att komma åt larverna och pupporna, som är proteinrika och matas till deras egna larver.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsgetingar angriper bisamhällen för att komma åt larverna och pupporna. En grupp getingar kan utplåna ett helt bisamhälle på några timmar."
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsgetingar angriper bisamhällen för att komma åt larverna och pupporna. En grupp getingar kan belägra och utplåna ett helt bisamhälle under veckor eller månader."
     },
     {
       "id": "q6",
@@ -408,8 +408,8 @@
         }
       ],
       "correct": "B",
-      "feedbackOk": "Rätt! Det kallas 'hot defensive bee ball' — hundratals bin omringar getingen och vibrerar sina flygmuskler tills temperaturen når ca 47 grader C.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska bin bildar en 'värmeboll' runt inkräktaren och höjer temperaturen till ca 47 grader C — dödligt för getingen men inte för bina som tål upp till 50 grader."
+      "feedbackOk": "Rätt! Det kallas 'hot defensive bee ball' (dödsbiboll) — hundratals bin omringar getingen och vibrerar sina flygmuskler tills temperaturen når ca 47 °C. Detta beteende är främst dokumenterat hos japanska honungsbin (Apis cerana japonica) som försvar mot den japanska jättegetingen (Vespa mandarinia), inte mot sammetsgetingen (V. velutina).",
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska honungsbin (Apis cerana japonica) bildar en 'värmeboll' runt inkräktaren och höjer temperaturen till ca 47 °C — dödligt för getingen men inte för bina. Denna försvarsstrategi är främst dokumenterad mot den japanska jättegetingen (Vespa mandarinia)."
     },
     {
       "id": "q12",
@@ -467,20 +467,7 @@
       "feedbackOk": "Rätt! En invasiv art är en organism som sprids till nya områden och orsakar ekologisk eller ekonomisk skada.",
       "feedbackNok": "Rätt svar: <strong>C</strong>. Invasiv art är termen. Migration är naturlig förflyttning, mutation är en DNA-förändring, och utrotning betyder att arten försvinner helt."
     },
-    {
-      "id": "q9",
-      "type": "lucktext",
-      "triggerTime": 665,
-      "difficulty": "medium",
-      "text": "En ___ art är en organism som har spridit sig till ett nytt ___ med hjälp av människan och som hotar den lokala ___.",
-      "correctAnswers": [
-        "invasiv",
-        "område",
-        "biodiversiteten"
-      ],
-      "feedbackOk": "Helt rätt! En invasiv art sprids till nya områden och hotar biodiversiteten.",
-      "feedbackNok": "Rätt svar: 'invasiv', 'område', 'biodiversiteten'. En invasiv art har spridit sig utanför sitt naturliga utbredningsområde och påverkar den lokala mångfalden negativt."
-    },
+
     {
       "id": "q15",
       "type": "categorize",

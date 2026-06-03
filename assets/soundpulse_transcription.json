@@ -3631,7 +3631,7 @@
       "id": 55,
       "start": 281.4,
       "end": 285.58,
-      "text": "Det är för att behåringen, pälsen, den ska vara så här len och samhällsmjuk.",
+      "text": "Det är för att behåringen, pälsen, den ska vara så här len och sammetslen.",
       "words": [
         {
           "word": "Det",
@@ -3712,7 +3712,7 @@
           "probability": 0.999
         },
         {
-          "word": "samhällsmjuk.",
+          "word": "sammetslen.",
           "start": 284.92,
           "end": 285.58,
           "probability": 0.988
@@ -4553,7 +4553,7 @@
       "id": 75,
       "start": 343.9,
       "end": 351.98,
-      "text": "Och det skulle ju jag säkert också ha gjort om jag plötsligt hittade det här smörgåtsbordet av jättemånga proteinkällor.",
+      "text": "Och det skulle ju jag säkert också ha gjort om jag plötsligt hittade det här smörgåsbordet av jättemånga proteinkällor.",
       "words": [
         {
           "word": "Och",
@@ -4646,7 +4646,7 @@
           "probability": 1.0
         },
         {
-          "word": "smörgåtsbordet",
+          "word": "smörgåsbordet",
           "start": 348.84,
           "end": 350.0,
           "probability": 0.98
@@ -5021,7 +5021,7 @@
       "id": 81,
       "start": 373.56,
       "end": 380.1,
-      "text": "Och sen när bina flyger ut på uppdrag till någon väldoftande ploma.",
+      "text": "Och sen när bina flyger ut på uppdrag till någon väldoftande blomma.",
       "words": [
         {
           "word": "Och",
@@ -5090,7 +5090,7 @@
           "probability": 0.85
         },
         {
-          "word": "ploma.",
+          "word": "blomma.",
           "start": 379.72,
           "end": 380.1,
           "probability": 0.63

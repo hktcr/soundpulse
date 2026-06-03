@@ -33,7 +33,7 @@
             --sp-warning: #f59e0b;
             --sp-text: #f0f4f8;
             --sp-text-secondary: #94a3b8;
-            --sp-text-muted: #64748b;
+            --sp-text-muted: #8b9ab5;
             --sp-font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             --sp-font-display: 'Oswald', sans-serif;
             --sp-radius: 16px;
@@ -414,6 +414,83 @@
             display: inline-block; margin-bottom: 1rem;
             text-transform: uppercase; letter-spacing: 0.06em;
         }
+
+        /* === GLOSSARY TOOLTIP === */
+        .sp-glossary {
+            position: relative;
+            border-bottom: 1px dashed var(--sp-accent);
+            cursor: help;
+            color: var(--sp-accent);
+        }
+        .sp-glossary::after {
+            content: attr(data-def);
+            position: absolute;
+            bottom: 100%; left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 0.6rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            width: max(200px, 60vw);
+            max-width: 300px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 1000;
+            white-space: normal;
+        }
+        .sp-glossary:hover::after,
+        .sp-glossary:focus::after { opacity: 1; pointer-events: auto; }
+
+        /* === INSTRUCTION OVERLAY === */
+        .sp-intro-overlay {
+            position: fixed; inset: 0; z-index: var(--z-overlay);
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(5, 5, 8, 0.92);
+            backdrop-filter: blur(12px);
+            padding: 1.5rem;
+        }
+        .sp-intro-card {
+            background: var(--sp-bg-surface);
+            border: 1px solid var(--sp-border);
+            border-radius: var(--sp-radius-lg);
+            padding: 2.5rem 2rem;
+            max-width: 480px; width: 100%;
+            text-align: center;
+            animation: spCardEnter 0.5s ease-out;
+        }
+        .sp-intro-card h2 {
+            font-family: var(--sp-font-display);
+            font-size: 1.6rem; margin-bottom: 1.5rem;
+        }
+        .sp-intro-steps {
+            text-align: left;
+            margin: 1.5rem 0;
+        }
+        .sp-intro-step {
+            display: flex; align-items: flex-start; gap: 0.8rem;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: var(--sp-text-secondary);
+        }
+        .sp-intro-step-icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        /* === REWIND BUTTON === */
+        .sp-rewind-btn {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            background: transparent; border: 1px solid var(--sp-border);
+            color: var(--sp-text-secondary); border-radius: var(--sp-radius-sm);
+            padding: 0.4rem 0.8rem; font-size: 0.75rem;
+            cursor: pointer; transition: all 0.2s;
+            margin-top: 0.5rem;
+        }
+        .sp-rewind-btn:hover { border-color: var(--sp-accent); color: var(--sp-accent); }
         .sp-q-text {
             font-size: 1.1rem; font-weight: 500;
             line-height: 1.5; margin-bottom: 1.5rem;
@@ -741,6 +818,17 @@
             .sp-mode-selector { flex-direction: column; }
             .sp-login-card { padding: 2rem 1.5rem; }
             .sp-match-area { grid-template-columns: 1fr; }
+            .sp-visual { max-height: 30vh; }
+            .sp-visual img { max-height: 25vh; object-fit: contain; }
+            .sp-segment-title { font-size: 0.85rem; }
+            .sp-question-card { padding: 1.5rem 1rem; }
+            .sp-q-text { font-size: 1rem; }
+        }
+        @media (max-width: 420px) {
+            .sp-main { padding: 0.5rem; }
+            .sp-header-title { font-size: 0.9rem; }
+            .sp-player-btn { width: 36px; height: 36px; font-size: 0.9rem; }
+            .sp-transcript { max-height: 120px; font-size: 0.85rem; }
         }
 
         /* === BEE DEFENSE GAME === */
@@ -1286,6 +1374,7 @@
                         <option value="en" ${currentLang==='en'?'selected':''}>English</option>
                         <option value="ar" ${currentLang==='ar'?'selected':''}>العربية</option>
                     </select>
+                    <p style="font-size:0.7rem;color:var(--sp-text-muted);margin-top:0.3rem;text-align:center;">Ändrar gränssnittsspråk (frågorna är på svenska)</p>
                 </div>
                 <input type="text" id="spNameInput" class="sp-login-input"
                     placeholder="${t('namePlaceholder')}"
@@ -1389,6 +1478,36 @@
         <!-- Question Overlay -->
         <div class="sp-question-wrap" id="spQuestionWrap" role="dialog" aria-modal="true" aria-label="Fråga">
             <div class="sp-question-card" id="spQuestionCard"></div>
+        </div>
+
+        <!-- Instruction Overlay (V1) -->
+        <div class="sp-intro-overlay" id="spIntroOverlay">
+            <div class="sp-intro-card">
+                <div style="font-size:2.5rem;margin-bottom:0.5rem">🎧</div>
+                <h2>Så här fungerar övningen</h2>
+                <div class="sp-intro-steps">
+                    <div class="sp-intro-step">
+                        <span class="sp-intro-step-icon">🔊</span>
+                        <span>Lyssna på ett avsnitt av <strong>Dagens Eko</strong> om sammetsgetingen.</span>
+                    </div>
+                    <div class="sp-intro-step">
+                        <span class="sp-intro-step-icon">❓</span>
+                        <span>Under lyssningen dyker <strong>frågor</strong> upp automatiskt. Ljudet pausas medan du svarar.</span>
+                    </div>
+                    <div class="sp-intro-step">
+                        <span class="sp-intro-step-icon">⏸️</span>
+                        <span>Du kan <strong>pausa</strong> och <strong>spola tillbaka</strong> när som helst. Ta den tid du behöver.</span>
+                    </div>
+                    <div class="sp-intro-step">
+                        <span class="sp-intro-step-icon">💡</span>
+                        <span>Håll musen över <strong style="color:var(--sp-accent);border-bottom:1px dashed var(--sp-accent)">markerade ord</strong> i frågorna för att se förklaringar.</span>
+                    </div>
+                </div>
+                <button class="sp-btn-primary" onclick="dismissIntro()" role="button" tabindex="0" ${keyHandler('dismissIntro()')}
+                    style="margin-top:0.5rem;padding:1rem 2rem;font-size:1.1rem;">
+                    Jag förstår — starta! ▶
+                </button>
+            </div>
         </div>`;
 
         // Guard against duplicate event listeners (Bug 6)
@@ -1478,6 +1597,71 @@
         audioEl.playbackRate = speeds[speedIdx];
         const btn = document.getElementById('spSpeedBtn') || document.getElementById('spTeacherSpeedBtn');
         if (btn) btn.textContent = speeds[speedIdx] + 'x';
+    }
+
+    // ─── V1: DISMISS INTRO ───
+    function dismissIntro() {
+        const overlay = document.getElementById('spIntroOverlay');
+        if (overlay) {
+            overlay.style.opacity = '0';
+            overlay.style.pointerEvents = 'none';
+            setTimeout(() => overlay.remove(), 300);
+        }
+    }
+    window.dismissIntro = dismissIntro;
+
+    // ─── F3: REWIND FROM QUESTION ───
+    function rewindFromQuestion() {
+        audioEl.currentTime = Math.max(0, audioEl.currentTime - 30);
+        audioEl.play().catch(() => {});
+        SP.isPlaying = true;
+        updatePlayBtn();
+        closeQuestion();
+    }
+    window.rewindFromQuestion = rewindFromQuestion;
+
+    // ─── V3: GLOSSARY TOOLTIPS ───
+    const GLOSSARY = {
+        'biotisk': 'Har med levande organismer att göra (djur, växter, svampar)',
+        'biotiska': 'Har med levande organismer att göra (djur, växter, svampar)',
+        'abiotisk': 'Icke-levande delar av ekosystemet (temperatur, vatten, ljus)',
+        'abiotiska': 'Icke-levande delar av ekosystemet (temperatur, vatten, ljus)',
+        'invasiv': 'En art som spridit sig till nya områden och orsakar skada',
+        'invasiva': 'Arter som spridit sig till nya områden och orsakar skada',
+        'ekosystemtjänst': 'Nytta som naturen ger oss gratis (t.ex. pollinering)',
+        'ekosystemtjänster': 'Nyttor som naturen ger oss gratis (t.ex. pollinering, vattenrening)',
+        'kaskadeffekt': 'När en förändring i ekosystemet utlöser en kedja av följdeffekter',
+        'pollinering': 'Överföring av pollen mellan blommor, ofta via insekter som bin',
+        'pollinatörer': 'Djur som sprider pollen mellan blommor (bin, fjärilar, flugor)',
+        'zoofili': 'Pollinering med hjälp av djur (bin, fjärilar, fåglar)',
+        'anemofili': 'Pollinering med hjälp av vind (t.ex. gräs, barrträd)',
+        'biodiversitet': 'Mångfalden av arter i ett ekosystem',
+        'predation': 'Ett rovdjur jagar och äter ett bytesdjur',
+        'predatorer': 'Rovdjur som jagar och äter andra djur',
+        'producenter': 'Organismer (oftast växter) som skapar energi via fotosyntes',
+        'konsumenter': 'Organismer som äter andra organismer för att få energi',
+        'näringsväv': 'Visar hur energi och näring flödar mellan organismer',
+        'näringskedja': 'Visar hur energi överförs från en organism till nästa',
+        'mutualism': 'Samspel där båda arter har nytta av varandra',
+        'kommensalism': 'Samspel där en art gynnas utan att den andra påverkas',
+        'parasitism': 'Samspel där en art lever på en annan och skadar den'
+    };
+
+    function addGlossary(text) {
+        const sortedKeys = Object.keys(GLOSSARY).sort((a, b) => b.length - a.length);
+        let result = text;
+        const used = new Set();
+        for (const term of sortedKeys) {
+            const regex = new RegExp(`\\b(${term})\\b`, 'gi');
+            if (regex.test(result) && !used.has(term.toLowerCase())) {
+                used.add(term.toLowerCase());
+                // Only replace first occurrence
+                result = result.replace(regex, (match) => {
+                    return `<span class="sp-glossary" tabindex="0" data-def="${GLOSSARY[term.toLowerCase()]}">${match}</span>`;
+                });
+            }
+        }
+        return result;
     }
 
     function updatePlayBtn() {
@@ -1611,9 +1795,11 @@
         const qNum = idx + 1;
         const qText = (q.translations && q.translations[currentLang]) || q.text;
 
+        const qTextGlossary = addGlossary(qText);
         let html = `
             <div class="sp-q-badge">${t('questionOf').replace('{n}', qNum).replace('{total}', totalQ)}</div>
-            <p class="sp-q-text">${qText}</p>`;
+            <p class="sp-q-text">${qTextGlossary}</p>
+            <button class="sp-rewind-btn" onclick="rewindFromQuestion()" role="button" tabindex="0" ${keyHandler('rewindFromQuestion()')}>⏪ Lyssna igen (−30s)</button>`;
 
         switch (q.type) {
             case 'multiple-choice':
@@ -1910,6 +2096,16 @@
         return html;
     }
 
+    function fuzzyMatch(input, expected) {
+        const a = input.trim().toLowerCase().replace(/[\s.,-]+/g, '');
+        const b = expected.trim().toLowerCase().replace(/[\s.,-]+/g, '');
+        if (a === b) return true;
+        // Accept singular/plural (Swedish: drop trailing 'n', 'en', 'er', 'na', 'erna')
+        const stems = [a, a.replace(/(erna|arna|erna|na|en|er|n|s)$/,'')];
+        const targets = [b, b.replace(/(erna|arna|erna|na|en|er|n|s)$/,'')];
+        return stems.some(s => targets.some(t => s === t || (s.length > 3 && t.length > 3 && (s.startsWith(t) || t.startsWith(s)))));
+    }
+
     function checkLucktext(qIdx) {
         const q = CONFIG_DATA.questions[qIdx];
         let allCorrect = true;
@@ -1917,9 +2113,8 @@
         q.correctAnswers.forEach((correct, i) => {
             const input = document.getElementById(`luck_${qIdx}_${i}`);
             if (!input) return;
-            const val = input.value.trim().toLowerCase();
-            const expected = correct.toLowerCase();
-            const isCorrect = val === expected;
+            const val = input.value.trim();
+            const isCorrect = fuzzyMatch(val, correct);
             input.classList.add(isCorrect ? 'correct-input' : 'wrong-input');
             input.readOnly = true;
             if (!isCorrect) {
@@ -2378,7 +2573,7 @@
 
     // ═══════════════════════════════════════════
     // 🐝 BEE DEFENSE GAME — "Hot Defensive Bee Ball"
-    // Multiplayer: students = bees, AI = hornet (Vespa mandarinia / sammetsgeting)
+    // Multiplayer: students = bees, AI = hornet (Vespa velutina / sammetsgeting)
     // Real science: bees surround hornet, raise temp to ~47°C
     // ═══════════════════════════════════════════
 
