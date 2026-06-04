@@ -99,7 +99,7 @@
       "options": [
         {
           "letter": "A",
-          "text": "Sydamerika — tropiska regnskogar"
+          "text": "Sydamerika, t.ex. tropiska regnskogar"
         },
         {
           "letter": "B",
@@ -107,11 +107,11 @@
         },
         {
           "letter": "C",
-          "text": "Nordafrika — medelhavsområdet"
+          "text": "Nordafrika (medelhavsområdet)"
         },
         {
           "letter": "D",
-          "text": "Australien — eukalyptusskogar"
+          "text": "Australien, t.ex. eukalyptusskogar"
         }
       ],
       "correct": "B",
@@ -131,15 +131,15 @@
         },
         {
           "letter": "B",
-          "text": "Något större — cirka 2,5 till 3 cm (arbetare)"
+          "text": "Något större, cirka 2,5 till 3 cm (arbetare)"
         },
         {
           "letter": "C",
-          "text": "Tre gånger större — upp till 5 cm"
+          "text": "Tre gånger större, upp till 5 cm"
         },
         {
           "letter": "D",
-          "text": "Stor som en kolibri — ca 8 cm"
+          "text": "Stor som en kolibri, ca 8 cm"
         }
       ],
       "correct": "B",
@@ -155,47 +155,47 @@
       "options": [
         {
           "letter": "A",
-          "text": "Honungen — den äter honung i stora mängder"
+          "text": "Honungen: den äter honung i stora mängder"
         },
         {
           "letter": "B",
-          "text": "Bina — de fångar vuxna bin som proteinrik föda till sina egna larver"
+          "text": "Bina: de fångar vuxna bin som proteinrik föda till sina egna larver"
         },
         {
           "letter": "C",
-          "text": "Bivaxet — som byggmaterial till sitt eget bo"
+          "text": "Bivaxet, som byggmaterial till sitt eget bo"
         },
         {
           "letter": "D",
-          "text": "Pollenet — som den samlar för egen pollinering"
+          "text": "Pollenet, som den samlar för egen pollinering"
         }
       ],
       "correct": "B",
       "feedbackOk": "Rätt! Sammetsgetingar hovrar utanför bikupan och fångar vuxna bin i luften. De biter av huvudet och tar med kroppen som proteinpaket till sina egna larver.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsgetingen (V. velutina) fångar vuxna bin i luften utanför kupan — ett beteende som kallas 'hawking'. En grupp getingar kan belägra en bikupa under veckor eller månader."
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsgetingen (*Vespa velutina*) fångar vuxna bin i luften utanför kupan, ett beteende som kallas 'hawking'. En grupp getingar kan belägra en bikupa under veckor eller månader."
     },
     {
       "id": "q16",
       "type": "multiple-choice",
       "triggerTime": 430,
       "difficulty": "medium",
-      "text": "Sammetsgetingen jagar och dödar honungsbin. Vad kallas denna typ av ekologiskt samspel?",
+      "text": "Sammetsgetingen jagar och dödar honungsbin för att mata sina larver. Vilket ekologiskt begrepp beskriver bäst detta förhållande?",
       "options": [
         {
           "letter": "A",
-          "text": "Mutualism — båda arterna gynnas"
+          "text": "Mutualism (båda arterna gynnas)"
         },
         {
           "letter": "B",
-          "text": "Kommensalism — en gynnas, den andra påverkas inte"
+          "text": "Kommensalism (en gynnas, den andra påverkas inte)"
         },
         {
           "letter": "C",
-          "text": "Predation — en art jagar och äter en annan"
+          "text": "Predation (en art jagar och äter en annan)"
         },
         {
           "letter": "D",
-          "text": "Parasitism — en art lever på bekostnad av en annan utan att döda den"
+          "text": "Parasitism (en art lever på bekostnad av en annan utan att döda den)"
         }
       ],
       "correct": "C",
@@ -219,7 +219,7 @@
         },
         {
           "letter": "C",
-          "text": "De blockerar kupans ingång med propolis (bivax)"
+          "text": "De blockerar kupans ingång med propolis (ett slags kittvax)"
         },
         {
           "letter": "D",
@@ -259,7 +259,7 @@
         }
       ],
       "feedbackOk": "Perfekt! Du har koll på de ekologiska begreppen.",
-      "feedbackNok": "Inte alla rätt. Läs igenom begreppen — de är viktiga för att förstå hur invasiva arter påverkar naturen."
+      "feedbackNok": "Inte alla rätt. Läs igenom begreppen, de är viktiga för att förstå hur invasiva arter påverkar naturen."
     },
     {
       "id": "q12",
@@ -287,7 +287,7 @@
       ],
       "correct": "B",
       "feedbackOk": "Rätt! Evolution kräver tid. Europeiska bin har inte haft jättegetingar som selektionstryck och har därför aldrig utvecklat värmebollsförsvaret.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska honungsbin (Apis cerana japonica) har samexisterat med den japanska jättegetingen (Vespa mandarinia) i miljontals år. Europeiska bin har aldrig utsatts för det trycket — ett tydligt exempel på naturligt urval."
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska honungsbin (*Apis cerana japonica*) har samexisterat med den japanska jättegetingen (*Vespa mandarinia*) i miljontals år. Europeiska bin har aldrig utsatts för det trycket, ett tydligt exempel på naturligt urval."
     },
     {
       "id": "q3",
@@ -306,7 +306,7 @@
         },
         {
           "letter": "C",
-          "text": "Invasion — arten kallas invasiv"
+          "text": "Invasion (arten kallas invasiv)"
         },
         {
           "letter": "D",
@@ -319,42 +319,31 @@
     },
     {
       "id": "q15",
-      "type": "categorize",
+      "type": "multiple-choice",
       "triggerTime": 670.4,
-      "difficulty": "hard",
-      "text": "Vilka av dessa arter är invasiva i Sverige och vilka är inhemska?",
-      "categories": [
-        "Invasiva eller riskbedömda i Sverige",
-        "Inhemska i Sverige"
-      ],
-      "items": [
+      "difficulty": "medium",
+      "text": "I programmet nämns att sammetsgetingen är en invasiv art. Vilken av dessa arter är OCKSÅ invasiv i Sverige?",
+      "options": [
         {
-          "word": "Sammetsgeting",
-          "cat": 0
+          "letter": "A",
+          "text": "Bålgetingen, en stor geting som lever i Sverige naturligt"
         },
         {
-          "word": "Bålgeting",
-          "cat": 1
+          "letter": "B",
+          "text": "Signalkräftan, införd från Nordamerika och sprider kräftpest"
         },
         {
-          "word": "Mördarsnigel (spansk skogssnigel)",
-          "cat": 0
+          "letter": "C",
+          "text": "Flodkräftan, den svenska kräftan som vi fiskar på kräftskivan"
         },
         {
-          "word": "Honungsbi",
-          "cat": 1
-        },
-        {
-          "word": "Signalkräfta",
-          "cat": 0
-        },
-        {
-          "word": "Flodkräfta",
-          "cat": 1
+          "letter": "D",
+          "text": "Honungsbiet, som lever i bikupor och producerar honung"
         }
       ],
-      "feedbackOk": "Imponerande! Du har koll på vilka arter som hör hemma i Sverige och vilka som är invasiva.",
-      "feedbackNok": "Inte helt rätt. Invasiva eller riskbedömda: sammetsgeting, mördarsnigel, signalkräfta. Inhemska: bålgeting, honungsbi, flodkräfta. Signalkräftan introducerades från Nordamerika och sprider kräftpest till vår inhemska flodkräfta."
+      "correct": "B",
+      "feedbackOk": "Rätt! Signalkräftan introducerades från Nordamerika på 1960-talet och sprider kräftpest till vår inhemska flodkräfta, ett klassiskt exempel på en invasiv art.",
+      "feedbackNok": "Rätt svar: <strong>B</strong>. Signalkräftan infördes från Nordamerika och sprider kräftpest till den inhemska flodkräftan. Bålgetingen och honungsbiet är inhemska arter i Sverige."
     },
     {
       "id": "q10",
@@ -393,26 +382,26 @@
       "pairs": [
         {
           "left": "Klöver (växt)",
-          "right": "Producent — skapar energi via fotosyntes"
+          "right": "Producent: skapar energi via fotosyntes"
         },
         {
           "left": "Honungsbi",
-          "right": "Primärkonsument — äter nektar och pollen"
+          "right": "Primärkonsument: äter nektar och pollen"
         },
         {
           "left": "Sammetsgeting",
-          "right": "Sekundärkonsument — predator som äter bin"
+          "right": "Sekundärkonsument: predator som äter bin"
         },
         {
           "left": "Bivråk (fågel)",
-          "right": "Tertiärkonsument — toppredator som äter getingar"
+          "right": "Tertiärkonsument: toppredator som äter getingar"
         },
         {
           "left": "Svampar i marken",
-          "right": "Nedbrytare — bryter ner dött organiskt material"
+          "right": "Nedbrytare: bryter ner dött organiskt material"
         }
       ],
-      "feedbackOk": "Perfekt! Du förstår energiflödet i en näringsväv — från producent genom konsumentnivåerna till nedbrytare.",
+      "feedbackOk": "Perfekt! Du förstår energiflödet i en näringsväv, från producent genom konsumentnivåerna till nedbrytare.",
       "feedbackNok": "Inte alla rätt. Producenter (växter) fångar solenergi. Primärkonsumenter äter växter. Sekundärkonsumenter äter primärkonsumenter. Tertiärkonsumenter är toppredatorer. Nedbrytare återför näring."
     },
     {
@@ -436,7 +425,7 @@
         },
         {
           "letter": "D",
-          "text": "Den säljs i djuraffärer"
+          "text": "Den gynnas av klimatförändringen som ger varmare vintrar"
         }
       ],
       "correct": "A",
@@ -448,23 +437,23 @@
       "type": "multiple-choice",
       "triggerTime": 1015,
       "difficulty": "hard",
-      "text": "Om sammetsgetingen etablerar sig i Sverige och minskar antalet honungsbin kraftigt — vad kallas en sådan spridande följdeffekt i ekosystemet?",
+      "text": "Pollinering är en tjänst som ekosystemet ger oss. Vilken typ av ekosystemtjänst är pollinering?",
       "options": [
         {
           "letter": "A",
-          "text": "Pollinering — en reglerande ekosystemtjänst värd miljarder kronor årligen"
+          "text": "En reglerande ekosystemtjänst"
         },
         {
           "letter": "B",
-          "text": "Nedbrytning — en stödjande ekosystemtjänst"
+          "text": "En producerande ekosystemtjänst"
         },
         {
           "letter": "C",
-          "text": "Vattenrening — en reglerande ekosystemtjänst"
+          "text": "En kulturell ekosystemtjänst"
         },
         {
           "letter": "D",
-          "text": "Koldioxidupptag — en reglerande ekosystemtjänst"
+          "text": "En stödjande ekosystemtjänst"
         }
       ],
       "correct": "A",
@@ -480,19 +469,19 @@
       "pairs": [
         {
           "left": "Producerande tjänst",
-          "right": "Honungsproduktion — bin ger oss honung och bivax"
+          "right": "Honungsproduktion: bin ger oss honung och bivax"
         },
         {
           "left": "Reglerande tjänst",
-          "right": "Pollinering — bin pollinerar grödor och vilda växter"
+          "right": "Pollinering: bin pollinerar grödor och vilda växter"
         },
         {
           "left": "Stödjande tjänst",
-          "right": "Biologisk mångfald — bin upprätthåller växtsamhällen"
+          "right": "Biologisk mångfald: bin upprätthåller växtsamhällen"
         },
         {
           "left": "Kulturell tjänst",
-          "right": "Biodling som tradition — kunskap som förts vidare i generationer"
+          "right": "Biodling som tradition: kunskap som förts vidare i generationer"
         }
       ],
       "feedbackOk": "Perfekt! Bin bidrar till alla fyra kategorier av ekosystemtjänster.",
@@ -524,7 +513,7 @@
       ],
       "correct": "C",
       "feedbackOk": "Rätt! Pollinering av grödor är den viktigaste ekosystemtjänsten bin ger oss. Utan pollinering får vi mindre mat.",
-      "feedbackNok": "Rätt svar: C. Pollineringstjänsten är binas viktigaste bidrag — ungefär en tredjedel av vår mat beror på insektspollinering."
+      "feedbackNok": "Rätt svar: C. Pollineringstjänsten är binas viktigaste bidrag. Ungefär en tredjedel av vår mat beror på insektspollinering."
     },
     {
       "id": "q18",
@@ -535,7 +524,7 @@
       "options": [
         {
           "letter": "A",
-          "text": "Inget — växterna pollineras av vinden istället"
+          "text": "Inget, växterna pollineras av vinden istället"
         },
         {
           "letter": "B",

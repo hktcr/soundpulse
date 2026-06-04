@@ -2788,7 +2788,7 @@
           "probability": 0.998
         },
         {
-          "word": "Hanna.",
+          "word": "hannar.",
           "start": 230.84,
           "end": 231.2,
           "probability": 0.666
@@ -10651,7 +10651,7 @@
       "id": 149,
       "start": 703.64,
       "end": 708.3,
-      "text": "I Frankrike uppskattar man att arten på 2020-talet, det är ju en av de största arten som har blivit mindre blommor.",
+      "text": "I Frankrike uppskattar man att arten på 2020-talet ligger bakom att 20% av alla bisamhällen har dött.",
       "words": [
         {
           "word": "I",
@@ -10684,7 +10684,7 @@
           "probability": 1
         },
         {
-          "word": "orsakerna",
+          "word": "arten",
           "start": 705.54,
           "end": 706.7,
           "probability": 0.995
@@ -10708,82 +10708,58 @@
           "probability": 1
         },
         {
-          "word": "det",
+          "word": "ligger",
           "start": 708.22,
           "end": 708.3,
-          "probability": 0.074
+          "probability": 0.5
         },
         {
-          "word": "är",
+          "word": "bakom",
           "start": 708.3,
           "end": 708.3,
-          "probability": 0.594
+          "probability": 0.5
         },
         {
-          "word": "ju",
+          "word": "att",
           "start": 708.3,
           "end": 708.3,
-          "probability": 0.436
+          "probability": 0.5
         },
         {
-          "word": "en",
+          "word": "20%",
           "start": 708.3,
           "end": 708.3,
-          "probability": 0.184
+          "probability": 0.5
         },
         {
           "word": "av",
           "start": 708.3,
           "end": 708.3,
-          "probability": 0.319
+          "probability": 0.5
         },
         {
-          "word": "de",
+          "word": "alla",
           "start": 708.3,
           "end": 708.3,
-          "probability": 0.905
+          "probability": 0.5
         },
         {
-          "word": "största",
+          "word": "bisamhällen",
           "start": 708.3,
           "end": 708.3,
-          "probability": 0.82
-        },
-        {
-          "word": "orsakerna",
-          "start": 708.3,
-          "end": 708.3,
-          "probability": 0.317
-        },
-        {
-          "word": "",
-          "start": 708.3,
-          "end": 708.3,
-          "probability": 0.228
+          "probability": 0.5
         },
         {
           "word": "har",
           "start": 708.3,
           "end": 708.3,
-          "probability": 0.287
+          "probability": 0.5
         },
         {
-          "word": "blivit",
+          "word": "dött.",
           "start": 708.3,
           "end": 708.3,
-          "probability": 0.819
-        },
-        {
-          "word": "mindre",
-          "start": 708.3,
-          "end": 708.3,
-          "probability": 0.704
-        },
-        {
-          "word": "blommor..",
-          "start": 708.3,
-          "end": 708.3,
-          "probability": 0.808
+          "probability": 0.5
         }
       ]
     },
@@ -11517,7 +11493,7 @@
       "id": 159,
       "start": 755.32,
       "end": 763.26,
-      "text": "Det är ju ingenting som vi verkar ha lyckats med så jättebra hittills eftersom sammetsgetingen har ju fortsatt att spridas dig.",
+      "text": "Det är ju ingenting som vi verkar ha lyckats med så jättebra hittills eftersom sammetsgetingen har ju fortsatt att spridas.",
       "words": [
         {
           "word": "Det",
@@ -11634,16 +11610,10 @@
           "probability": 0.995
         },
         {
-          "word": "spridas",
+          "word": "spridas.",
           "start": 762.7,
-          "end": 763.08,
-          "probability": 0.992
-        },
-        {
-          "word": "dig.",
-          "start": 763.08,
           "end": 763.26,
-          "probability": 0.156
+          "probability": 0.992
         }
       ]
     },
@@ -11677,97 +11647,85 @@
       "id": 161,
       "start": 765.2,
       "end": 767.22,
-      "text": "Det är ju en av de största problemen som har skadat api och riskerat biodiversitet.",
+      "text": "Den har spritt sig med en takt på ungefär 100 kilometer per år.",
       "words": [
         {
-          "word": "Det",
+          "word": "Den",
           "start": 765.2,
-          "end": 765.2,
-          "probability": 0.002
-        },
-        {
-          "word": "är",
-          "start": 765.2,
-          "end": 765.2,
-          "probability": 0.085
-        },
-        {
-          "word": "ju",
-          "start": 765.2,
-          "end": 765.2,
-          "probability": 0.022
-        },
-        {
-          "word": "en",
-          "start": 765.2,
-          "end": 765.56,
-          "probability": 0.076
-        },
-        {
-          "word": "av",
-          "start": 765.56,
-          "end": 765.56,
-          "probability": 0.195
-        },
-        {
-          "word": "de",
-          "start": 765.56,
-          "end": 765.56,
-          "probability": 0.605
-        },
-        {
-          "word": "största",
-          "start": 765.56,
-          "end": 765.68,
-          "probability": 0.847
-        },
-        {
-          "word": "problemen",
-          "start": 765.68,
-          "end": 765.68,
-          "probability": 0.666
-        },
-        {
-          "word": "som",
-          "start": 765.68,
-          "end": 765.68,
-          "probability": 0.109
+          "end": 765.4,
+          "probability": 0.5
         },
         {
           "word": "har",
-          "start": 765.68,
-          "end": 765.68,
-          "probability": 0.094
+          "start": 765.4,
+          "end": 765.56,
+          "probability": 0.5
         },
         {
-          "word": "skadat",
-          "start": 765.68,
-          "end": 765.68,
-          "probability": 0.623
+          "word": "spritt",
+          "start": 765.56,
+          "end": 765.8,
+          "probability": 0.5
         },
         {
-          "word": "api",
-          "start": 765.68,
-          "end": 765.88,
-          "probability": 0.123
+          "word": "sig",
+          "start": 765.8,
+          "end": 765.96,
+          "probability": 0.5
         },
         {
-          "word": "och",
-          "start": 765.88,
-          "end": 766.08,
-          "probability": 0.422
+          "word": "med",
+          "start": 765.96,
+          "end": 766.1,
+          "probability": 0.5
         },
         {
-          "word": "riskerat",
-          "start": 766.08,
+          "word": "en",
+          "start": 766.1,
+          "end": 766.2,
+          "probability": 0.5
+        },
+        {
+          "word": "takt",
+          "start": 766.2,
+          "end": 766.4,
+          "probability": 0.5
+        },
+        {
+          "word": "på",
+          "start": 766.4,
           "end": 766.54,
-          "probability": 0.833
+          "probability": 0.5
         },
         {
-          "word": "biodiversitet.",
+          "word": "ungefär",
           "start": 766.54,
+          "end": 766.8,
+          "probability": 0.5
+        },
+        {
+          "word": "100",
+          "start": 766.8,
+          "end": 767.0,
+          "probability": 0.5
+        },
+        {
+          "word": "kilometer",
+          "start": 767.0,
+          "end": 767.1,
+          "probability": 0.5
+        },
+        {
+          "word": "per",
+          "start": 767.1,
+          "end": 767.16,
+          "probability": 0.5
+        },
+        {
+          "word": "år.",
+          "start": 767.16,
           "end": 767.22,
-          "probability": 0.967
+          "probability": 0.5
         }
       ]
     },
@@ -11965,55 +11923,115 @@
       "id": 164,
       "start": 775.8,
       "end": 779.38,
-      "text": "I Italien är Vespavellutina en intrat av Frankrike.",
+      "text": "I varje land blir det väldigt uppmärksammat när den här kommer, så att det görs tv-inslag och intervjuer.",
       "words": [
         {
           "word": "I",
           "start": 775.8,
-          "end": 776.06,
-          "probability": 0.546
+          "end": 776.0,
+          "probability": 0.5
         },
         {
-          "word": "Italien",
-          "start": 776.06,
+          "word": "varje",
+          "start": 776.0,
+          "end": 776.3,
+          "probability": 0.5
+        },
+        {
+          "word": "land",
+          "start": 776.3,
           "end": 776.6,
-          "probability": 0.556
+          "probability": 0.5
         },
         {
-          "word": "är",
+          "word": "blir",
           "start": 776.6,
+          "end": 776.8,
+          "probability": 0.5
+        },
+        {
+          "word": "det",
+          "start": 776.8,
           "end": 776.96,
-          "probability": 0.471
+          "probability": 0.5
         },
         {
-          "word": "Vespavellutina",
+          "word": "väldigt",
           "start": 776.96,
-          "end": 778,
-          "probability": 0.646
+          "end": 777.2,
+          "probability": 0.5
         },
         {
-          "word": "",
-          "start": 778,
+          "word": "uppmärksammat",
+          "start": 777.2,
+          "end": 777.8,
+          "probability": 0.5
+        },
+        {
+          "word": "när",
+          "start": 777.8,
+          "end": 778.0,
+          "probability": 0.5
+        },
+        {
+          "word": "den",
+          "start": 778.0,
+          "end": 778.1,
+          "probability": 0.5
+        },
+        {
+          "word": "här",
+          "start": 778.1,
           "end": 778.24,
-          "probability": 0.331
+          "probability": 0.5
         },
         {
-          "word": "entrata",
+          "word": "kommer,",
           "start": 778.24,
-          "end": 778.68,
-          "probability": 0.507
+          "end": 778.5,
+          "probability": 0.5
         },
         {
-          "word": "av",
-          "start": 778.68,
+          "word": "så",
+          "start": 778.5,
+          "end": 778.6,
+          "probability": 0.5
+        },
+        {
+          "word": "att",
+          "start": 778.6,
+          "end": 778.7,
+          "probability": 0.5
+        },
+        {
+          "word": "det",
+          "start": 778.7,
           "end": 778.84,
-          "probability": 0.34
+          "probability": 0.5
         },
         {
-          "word": "Frankrike.",
+          "word": "görs",
           "start": 778.84,
+          "end": 779.0,
+          "probability": 0.5
+        },
+        {
+          "word": "tv-inslag",
+          "start": 779.0,
+          "end": 779.2,
+          "probability": 0.5
+        },
+        {
+          "word": "och",
+          "start": 779.2,
+          "end": 779.3,
+          "probability": 0.5
+        },
+        {
+          "word": "intervjuer.",
+          "start": 779.3,
           "end": 779.38,
-          "probability": 0.653
+          "probability": 0.5
         }
       ]
     },
@@ -13826,7 +13844,7 @@
       "id": 192,
       "start": 883.1,
       "end": 887.08,
-      "text": "Det är lite en problemart, en stor problem för biavlere (biodlare).",
+      "text": "Det är lite en problemart, en stor problem för biodlare.",
       "words": [
         {
           "word": "Det",
@@ -13883,16 +13901,10 @@
           "probability": 0.848
         },
         {
-          "word": "vi",
+          "word": "biodlare.",
           "start": 886.26,
-          "end": 886.78,
-          "probability": 0.738
-        },
-        {
-          "word": "jävlar.",
-          "start": 886.78,
           "end": 887.08,
-          "probability": 0.771
+          "probability": 0.5
         }
       ]
     },
@@ -16728,7 +16740,7 @@
       "id": 227,
       "start": 1053.7,
       "end": 1055.52,
-      "text": "Det är då man förstår hur hårt bina är.",
+      "text": "Det är då man förstår hur hårt bina arbetar.",
       "words": [
         {
           "word": "Det",
@@ -16779,7 +16791,7 @@
           "probability": 0.642
         },
         {
-          "word": "jobbar.",
+          "word": "arbetar.",
           "start": 1055.44,
           "end": 1055.52,
           "probability": 0.025

@@ -1578,12 +1578,12 @@
                 decoded.split(',').filter(Boolean).forEach(pair => {
                     const colonIdx = pair.indexOf(':');
                     if (colonIdx > 0) {
-                        ansMap[pair.substring(0, colonIdx)] = pair.substring(colonIdx + 1);
+                        ansMap[pair.substring(0, colonIdx)] = pair.substring(colonIdx + 1).replace(/\\c/g, ',');
                     }
                 });
-                // Merge batch
+                // Merge batch (escape commas in values to prevent delimiter collision)
                 batch.forEach(({ questionId, answer }) => {
-                    ansMap[questionId] = answer;
+                    ansMap[questionId] = answer.replace(/,/g, '\\c');
                 });
                 const updated = Object.entries(ansMap).map(([k, v]) => k + ':' + v).join(',');
                 await apiSet(key, strToHex(updated));
@@ -2642,7 +2642,7 @@
         SP.answers[q.id] = textarea.value.trim();
         showFeedback(true, q.feedbackMsg || 'Tack för ditt svar!');
         playBeep(true);
-        submitAnswer(q.id, strToHex(textarea.value.trim().substring(0, 100)));
+        submitAnswer(q.id, textarea.value.trim().substring(0, 100));
     }
 
     // ─── FEEDBACK (star rating + comment) ───
@@ -2691,7 +2691,7 @@
         document.querySelectorAll('.sp-star').forEach(s => s.disabled = true);
         showFeedback(true, q.feedbackMsg || 'Tack!');
         playBeep(true);
-        submitAnswer(q.id, strToHex(answer.substring(0, 200)));
+        submitAnswer(q.id, answer.substring(0, 200));
     }
     window.submitFeedback = submitFeedback;
 
@@ -2902,8 +2902,10 @@
                 const decoded = hexToStr(raw);
                 const ansMap = {};
                 decoded.split(',').forEach(pair => {
-                    const [qid, answer] = pair.split(':');
-                    if (qid && answer) ansMap[qid] = answer;
+                    const colonIdx = pair.indexOf(':');
+                    if (colonIdx > 0) {
+                        ansMap[pair.substring(0, colonIdx)] = pair.substring(colonIdx + 1).replace(/\\c/g, ',');
+                    }
                 });
                 SP.studentAnswers.set(sids[i], ansMap);
             } catch(e) { /* skip */ }
@@ -2975,16 +2977,20 @@
         const fbQ = CONFIG_DATA.questions.find(q => q.type === 'feedback');
         if (fbQ) {
             let fbHtml = '<div style="margin-top:1.2rem;padding:0.8rem;background:rgba(255,255,255,0.03);border-radius:0.6rem;border:1px solid var(--sp-border);">';
-            fbHtml += '<div style="font-size:0.8rem;font-weight:600;color:var(--sp-accent);margin-bottom:0.5rem;">📊 Elevfeedback</div>';
+            fbHtml += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">';
+            fbHtml += '<div style="font-size:0.8rem;font-weight:600;color:var(--sp-accent);">📊 Elevfeedback</div>';
+            fbHtml += '<button onclick="copyFeedback()" style="font-size:0.65rem;padding:0.25rem 0.6rem;background:var(--sp-accent-soft);color:var(--sp-accent);border:1px solid var(--sp-accent);border-radius:0.4rem;cursor:pointer;" id="spCopyFbBtn">📋 Kopiera</button>';
+            fbHtml += '</div>';
             const feedbacks = [];
             SP.knownStudents.forEach((name, sid) => {
                 const ansMap = SP.studentAnswers.get(sid) || {};
                 const raw = ansMap[fbQ.id];
                 if (raw) {
                     try {
-                        const decoded = hexToStr(raw);
-                        const [stars, ...commentParts] = decoded.split('|');
-                        feedbacks.push({ name, stars: parseInt(stars) || 0, comment: commentParts.join('|') });
+                        // raw is already decoded plain text (e.g. "4|Bra övning")
+                        const [stars, ...commentParts] = raw.split('|');
+                        const comment = commentParts.join('|');
+                        feedbacks.push({ name, stars: parseInt(stars) || 0, comment });
                     } catch(e) { /* skip */ }
                 }
             });
@@ -2992,16 +2998,48 @@
                 const avg = (feedbacks.reduce((s,f) => s + f.stars, 0) / feedbacks.length).toFixed(1);
                 fbHtml += `<div style="font-size:1.1rem;margin-bottom:0.4rem;">Snitt: ${'★'.repeat(Math.round(avg))}${'☆'.repeat(5 - Math.round(avg))} (${avg}/5, ${feedbacks.length} svar)</div>`;
                 feedbacks.forEach(f => {
+                    const safeComment = f.comment.replace(/</g, '&lt;').replace(/>/g, '&gt;');
                     fbHtml += `<div style="font-size:0.75rem;padding:0.3rem 0;border-top:1px solid var(--sp-border);">`;
-                    fbHtml += `<strong>${f.name}</strong> ${'★'.repeat(f.stars)}${'☆'.repeat(5-f.stars)}: ${f.comment}</div>`;
+                    fbHtml += `<strong>${f.name}</strong> ${'★'.repeat(f.stars)}${'☆'.repeat(5-f.stars)}: ${safeComment}</div>`;
                 });
             } else {
                 fbHtml += '<div style="font-size:0.75rem;color:var(--sp-text-muted);">Ingen feedback ännu</div>';
             }
             fbHtml += '</div>';
             dashboard.innerHTML += fbHtml;
+
+            // Store feedbacks for copy function
+            window._spFeedbacks = feedbacks;
         }
     }
+    // Copy feedback to clipboard
+    function copyFeedback() {
+        const feedbacks = window._spFeedbacks || [];
+        if (feedbacks.length === 0) {
+            const btn = document.getElementById('spCopyFbBtn');
+            if (btn) { btn.textContent = '❌ Ingen data'; setTimeout(() => btn.textContent = '📋 Kopiera', 2000); }
+            return;
+        }
+        const avg = (feedbacks.reduce((s,f) => s + f.stars, 0) / feedbacks.length).toFixed(1);
+        let text = `SoundPulse Elevfeedback (${new Date().toLocaleDateString('sv-SE')})\n`;
+        text += `Snitt: ${avg}/5 (${feedbacks.length} svar)\n`;
+        text += `${'─'.repeat(40)}\n`;
+        feedbacks.forEach(f => {
+            text += `${f.name}: ${'★'.repeat(f.stars)}${'☆'.repeat(5-f.stars)} (${f.stars}/5)\n`;
+            if (f.comment) text += `  "${f.comment}"\n`;
+        });
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.getElementById('spCopyFbBtn');
+            if (btn) { btn.textContent = '✅ Kopierat!'; setTimeout(() => btn.textContent = '📋 Kopiera', 2000); }
+        }).catch(() => {
+            // Fallback for older browsers
+            const ta = document.createElement('textarea');
+            ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+            const btn = document.getElementById('spCopyFbBtn');
+            if (btn) { btn.textContent = '✅ Kopierat!'; setTimeout(() => btn.textContent = '📋 Kopiera', 2000); }
+        });
+    }
+    window.copyFeedback = copyFeedback;
 
     // ═══════════════════════════════════════════
     // RESULTS SCREEN
