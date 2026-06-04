@@ -384,6 +384,9 @@
             .sp-split-layout {
                 grid-template-columns: 35% 1fr;
             }
+            .sp-split-layout.no-visual {
+                grid-template-columns: 1fr;
+            }
         }
         .sp-triptych {
             display: flex;
@@ -971,7 +974,8 @@
         }
         .sp-q-square.correct { background: var(--sp-correct); border-color: var(--sp-correct); }
         .sp-q-square.incorrect { background: var(--sp-incorrect); border-color: var(--sp-incorrect); }
-        .sp-q-square.rewound { background: var(--sp-warning); border-color: var(--sp-warning); }
+        .sp-q-square.rewound-correct { background: var(--sp-warning); border-color: var(--sp-warning); }
+        .sp-q-square.rewound-incorrect { background: #f97316; border-color: #f97316; }
         .sp-q-square::after {
             content: attr(data-q);
             position: absolute; inset: 0;
@@ -1693,12 +1697,8 @@
             <!-- Split Layout -->
             <div class="sp-split-layout">
                 <div class="sp-visual-side">
-                    <div class="sp-triptych">
-                        <div class="sp-triptych-top">
-                            <img src="assets/honungsbi.jpg" alt="Honungsbi" id="spImgBee">
-                            <img src="assets/sammetsgeting.jpg" alt="Sammetsgeting" id="spImgHornet">
-                        </div>
-                        <div class="sp-triptych-bottom" id="spVisual">
+                    <div class="sp-triptych" style="height: 100%;">
+                        <div class="sp-triptych-bottom" id="spVisual" style="height: 100%; border: none; border-radius: var(--sp-radius);">
                             <img id="spVisualImg" src="${CONFIG_DATA && CONFIG_DATA.visualSegments ? CONFIG_DATA.visualSegments[0].image : ''}" alt="Segment illustration" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; z-index:10; opacity:1; transition: opacity 0.5s;">
                             <div class="sp-segment-title" id="spSegTitle" style="z-index:20; background: linear-gradient(transparent, rgba(0,0,0,0.9)); position:absolute; bottom:0; width:100%; padding:1rem;">${CONFIG_DATA && CONFIG_DATA.visualSegments ? CONFIG_DATA.visualSegments[0].title : ''}</div>
                         </div>
@@ -2181,19 +2181,18 @@
             const seg = CONFIG_DATA.visualSegments[segIdx];
             const img = document.getElementById('spVisualImg');
             const title = document.getElementById('spSegTitle');
-            if (img) { img.src = seg.image; img.style.opacity = '1'; }
-            if (title) title.textContent = seg.title;
-        }
-        // Highlight + dim triptych images based on content
-        const beeImg = document.getElementById('spImgBee');
-        const hornetImg = document.getElementById('spImgHornet');
-        if (beeImg && hornetImg) {
-            const hornetActive = t >= 44 && t < 500;
-            const beeActive = t >= 500 && t < 1000;
-            hornetImg.classList.toggle('highlight', hornetActive);
-            hornetImg.classList.toggle('dimmed', beeActive);
-            beeImg.classList.toggle('highlight', beeActive);
-            beeImg.classList.toggle('dimmed', hornetActive);
+            const visualSide = document.querySelector('.sp-visual-side');
+            const splitLayout = document.querySelector('.sp-split-layout');
+            
+            if (seg.image) {
+                if (img) { img.src = seg.image; img.style.opacity = '1'; }
+                if (title) { title.textContent = seg.title; title.style.display = 'block'; }
+                if (visualSide) visualSide.style.display = 'block';
+                if (splitLayout) splitLayout.classList.remove('no-visual');
+            } else {
+                if (visualSide) visualSide.style.display = 'none';
+                if (splitLayout) splitLayout.classList.add('no-visual');
+            }
         }
         // Track max listened position
         if (t > (SP.maxListenedTime || 0)) SP.maxListenedTime = t;
@@ -2955,7 +2954,7 @@
                         isCorrect = actualAns === 'correct';
                     }
                     if (wasRewound) {
-                        cls = 'rewound'; // yellow — rewound (stays yellow even if correct)
+                        cls = isCorrect ? 'rewound-correct' : 'rewound-incorrect';
                     } else if (isCorrect) {
                         cls = 'correct'; // green
                     } else {
