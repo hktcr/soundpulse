@@ -1552,15 +1552,51 @@
         };
     }
 
+    // Answer queue to prevent concurrent read-modify-write
+    let _answerQueue = [];
+    let _answerWriting = false;
+
     async function submitAnswer(questionId, answer) {
-        const key = `ans_${SP.studentId}`;
-        const existing = await apiGet(key) || '';
-        const decoded = existing ? hexToStr(existing) : '';
         // Prefix with R if this question was rewound
         const qIdx = CONFIG_DATA ? CONFIG_DATA.questions.findIndex(q => q.id === questionId) : -1;
         const prefix = SP.rewoundQuestions.has(qIdx) ? 'R' : '';
-        const updated = decoded ? `${decoded},${questionId}:${prefix}${answer}` : `${questionId}:${prefix}${answer}`;
-        await apiSet(key, strToHex(updated));
+        _answerQueue.push({ questionId, answer: prefix + answer });
+        if (!_answerWriting) _flushAnswers();
+    }
+
+    async function _flushAnswers() {
+        _answerWriting = true;
+        while (_answerQueue.length > 0) {
+            const batch = [..._answerQueue];
+            _answerQueue = [];
+            try {
+                const key = `ans_${SP.studentId}`;
+                const existing = await apiGet(key) || '';
+                const decoded = existing ? hexToStr(existing) : '';
+                // Parse existing answers into map
+                const ansMap = {};
+                decoded.split(',').filter(Boolean).forEach(pair => {
+                    const colonIdx = pair.indexOf(':');
+                    if (colonIdx > 0) {
+                        ansMap[pair.substring(0, colonIdx)] = pair.substring(colonIdx + 1);
+                    }
+                });
+                // Merge batch
+                batch.forEach(({ questionId, answer }) => {
+                    ansMap[questionId] = answer;
+                });
+                const updated = Object.entries(ansMap).map(([k, v]) => k + ':' + v).join(',');
+                await apiSet(key, strToHex(updated));
+                // Small delay between flushes to avoid hammering the API
+                await new Promise(r => setTimeout(r, 300));
+            } catch(e) {
+                console.warn('Answer flush failed:', e);
+                // Re-queue failed batch
+                _answerQueue.unshift(...batch);
+                await new Promise(r => setTimeout(r, 1000));
+            }
+        }
+        _answerWriting = false;
     }
 
     async function registerStudent() {
@@ -1568,19 +1604,34 @@
         await apiSet(`stu_${SP.studentId}`, nameHex);
         // Send initial heartbeat
         await apiSet(`hb_${SP.studentId}`, String(Date.now()));
-        // Register in student list with retry to mitigate race conditions
-        for (let attempt = 0; attempt < 2; attempt++) {
-            const list = await apiGet('student_list') || '';
-            const decoded = list ? hexToStr(list) : '';
-            if (decoded.includes(SP.studentId)) break; // already registered
-            const updated = decoded ? `${decoded},${SP.studentId}` : SP.studentId;
-            await apiSet('student_list', strToHex(updated));
-            // Verify write succeeded
-            const verify = await apiGet('student_list') || '';
-            const verifyDecoded = verify ? hexToStr(verify) : '';
-            if (verifyDecoded.includes(SP.studentId)) break;
-            // If failed, retry after short delay
-            await new Promise(r => setTimeout(r, 200 + Math.random() * 300));
+        // Register in a slot (race-condition-free: each slot holds ONE student)
+        const MAX_SLOTS = 40;
+        let registered = false;
+        for (let i = 0; i < MAX_SLOTS && !registered; i++) {
+            const slotVal = await apiGet(`slot_${i}`);
+            if (!slotVal) {
+                // Empty slot — claim it
+                await apiSet(`slot_${i}`, strToHex(SP.studentId));
+                // Verify we got it
+                await new Promise(r => setTimeout(r, 100 + Math.random() * 200));
+                const verify = await apiGet(`slot_${i}`);
+                if (verify && hexToStr(verify) === SP.studentId) {
+                    registered = true;
+                    console.log('Registered in slot', i);
+                }
+                // If someone else claimed it, continue to next slot
+            } else {
+                try {
+                    const existing = hexToStr(slotVal);
+                    if (existing === SP.studentId) {
+                        registered = true; // Already registered
+                    }
+                } catch(e) { /* skip corrupt slot */ }
+            }
+        }
+        if (!registered) {
+            // Fallback: overwrite last slot
+            await apiSet(`slot_${MAX_SLOTS - 1}`, strToHex(SP.studentId));
         }
         // Start heartbeat interval (every 15s)
         setInterval(() => {
@@ -1644,6 +1695,12 @@
         }
         SP.studentId = generateStudentId();
         SP.mode = 'live';
+        // Kill login video to prevent audio bleed (Safari/iOS)
+        document.querySelectorAll('video').forEach(v => {
+            v.pause();
+            v.removeAttribute('src');
+            v.load();
+        });
         renderStudentView();
         // Always register so teacher dashboard can see all students
         registerStudent();
@@ -2797,7 +2854,11 @@
         teacherMsgText = '';
         // Clear remote state
         apiSet('state', '0_-1_0_none_none');
-        apiSet('student_list', strToHex('RESET'));
+        // Clear all 40 slots
+        const MAX_SLOTS = 40;
+        for (let i = 0; i < MAX_SLOTS; i++) {
+            apiSet(`slot_${i}`, '');
+        }
         // Update dashboard
         const dash = document.getElementById('spTeacherDashboard');
         if (dash) dash.innerHTML = `<div class="sp-dash-header">${t('noStudents')}</div>`;
@@ -2831,41 +2892,39 @@
 
     async function discoverStudents() {
         try {
-            const listRaw = await apiGet('student_list');
-            if (!listRaw) return;
-            const decoded = hexToStr(listRaw);
-            if (!decoded) return;
-            if (decoded === 'RESET') {
-                if (SP.knownStudents.size > 0) {
-                    SP.knownStudents.clear();
-                    SP.studentAnswers.clear();
-                    pollStudentResponses();
-                }
-                return;
+            // Slot-based discovery: read all 40 slots in parallel
+            const MAX_SLOTS = 40;
+            const slotPromises = [];
+            for (let i = 0; i < MAX_SLOTS; i++) {
+                slotPromises.push(apiGet(`slot_${i}`).catch(() => null));
             }
-            const ids = decoded.split(',').filter(id => id.trim() && id !== 'RESET');
+            const slots = await Promise.all(slotPromises);
 
-            // Filter by heartbeat — only show students active in last 2 minutes
-            const HB_TIMEOUT = 2 * 60 * 1000; // 2 minutes
+            const discoveredIds = [];
+            for (const raw of slots) {
+                if (!raw) continue;
+                try {
+                    const sid = hexToStr(raw);
+                    if (sid && sid.startsWith('sp_')) discoveredIds.push(sid);
+                } catch(e) { /* skip corrupt */ }
+            }
+
+            // Check heartbeats — 15 minute timeout, but NEVER remove students
+            const HB_TIMEOUT = 15 * 60 * 1000;
             const now = Date.now();
             const heartbeats = await Promise.all(
-                ids.map(sid => apiGet(`hb_${sid}`).catch(() => null))
+                discoveredIds.map(sid => apiGet(`hb_${sid}`).catch(() => null))
             );
-            const activeIds = ids.filter((sid, i) => {
-                const hb = heartbeats[i] ? parseInt(heartbeats[i], 10) : now; // assume just joined
-                return (now - hb) < HB_TIMEOUT;
+
+            // Track active vs inactive (but keep all)
+            const studentStatus = {};
+            discoveredIds.forEach((sid, i) => {
+                const hb = heartbeats[i] ? parseInt(heartbeats[i], 10) : now;
+                studentStatus[sid] = (now - hb) < HB_TIMEOUT ? 'active' : 'inactive';
             });
 
-            // Remove inactive students from knownStudents
-            for (const [sid] of SP.knownStudents) {
-                if (!activeIds.includes(sid)) {
-                    SP.knownStudents.delete(sid);
-                    SP.studentAnswers.delete(sid);
-                }
-            }
-
-            // Parallel fetch for all unknown active students
-            const unknownIds = activeIds.filter(sid => !SP.knownStudents.has(sid));
+            // Add new students (never remove existing ones)
+            const unknownIds = discoveredIds.filter(sid => !SP.knownStudents.has(sid));
             if (unknownIds.length > 0) {
                 const names = await Promise.all(
                     unknownIds.map(sid => apiGet(`stu_${sid}`).catch(() => null))
@@ -2875,6 +2934,10 @@
                     SP.knownStudents.set(sid, name);
                 });
             }
+
+            // Store status for UI dimming
+            SP.studentStatus = studentStatus;
+
             await pollStudentResponses();
         } catch(e) {
             console.warn('Student discovery failed:', e);
@@ -2912,13 +2975,21 @@
         // Build grid dashboard
         const pl = totalStudents !== 1 ? 'er' : '';
         let html = `<div class="sp-dash-header"><span class="sp-live-dot"></span> ${t('studentsConnected').replace('{n}', totalStudents).replace('{pl}', pl)}</div>`;
+        html += '<div style="display:flex;gap:0.8rem;flex-wrap:wrap;margin:0.4rem 0 0.6rem;font-size:0.65rem;color:var(--sp-text-muted);">';
+        html += '<span style="display:flex;align-items:center;gap:0.25rem;"><span style="width:10px;height:10px;border-radius:2px;background:#10b981;"></span> Rätt</span>';
+        html += '<span style="display:flex;align-items:center;gap:0.25rem;"><span style="width:10px;height:10px;border-radius:2px;background:#eab308;"></span> Rätt (spol)</span>';
+        html += '<span style="display:flex;align-items:center;gap:0.25rem;"><span style="width:10px;height:10px;border-radius:2px;background:#f97316;"></span> Fel (spol)</span>';
+        html += '<span style="display:flex;align-items:center;gap:0.25rem;"><span style="width:10px;height:10px;border-radius:2px;background:#ef4444;"></span> Fel</span>';
+        html += '<span style="display:flex;align-items:center;gap:0.25rem;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);"></span> Ej besvarad</span>';
+        html += '</div>';
 
         // Question header row
         html += '<div class="sp-student-row" style="border-bottom:1px solid var(--sp-border);padding-bottom:0.4rem;margin-bottom:0.4rem;">';
         html += '<div class="sp-student-name" style="color:var(--sp-text-muted);font-size:0.7rem;">ELEV</div>';
         html += '<div class="sp-q-squares">';
         CONFIG_DATA.questions.forEach((q, idx) => {
-            html += `<div class="sp-q-square" style="background:transparent;border-color:var(--sp-border);" data-q="${idx+1}"></div>`;
+            const qTitle = q.question ? q.question.substring(0, 80) : `Fråga ${idx+1}`;
+            html += `<div class="sp-q-square" style="background:transparent;border-color:var(--sp-border);" data-q="${idx+1}" title="F${idx+1}: ${qTitle}"></div>`;
         });
         html += '</div></div>';
 
@@ -2953,7 +3024,9 @@
                         cls = 'incorrect'; // red
                     }
                 }
-                html += `<div class="sp-q-square ${cls}" data-q="${idx+1}"></div>`;
+                const qLabel = q.question ? q.question.substring(0, 80) : `Fråga ${idx+1}`;
+                const ansLabel = rawAns ? (cls.includes('correct') ? '✓' : cls.includes('incorrect') ? '✗' : '—') : '—';
+                html += `<div class="sp-q-square ${cls}" data-q="${idx+1}" title="F${idx+1}: ${qLabel}\nSvar: ${ansLabel}"></div>`;
             });
             
             html += '</div></div>';
