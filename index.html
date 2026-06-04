@@ -1721,9 +1721,7 @@
                 <div>
                     <div class="sp-header-title">${CONFIG_DATA ? CONFIG_DATA.title : t('appName')}</div>
                 </div>
-                <div style="display:flex;align-items:center;gap:0.5rem;">
-                    ${SP.mode === 'live' ? '<span class="sp-live-dot"></span><span style="font-size:0.75rem;color:var(--sp-text-secondary)">LIVE</span>' : ''}
-                </div>
+                <div style="display:flex;align-items:center;gap:0.5rem;"></div>
             </div>
 
             <!-- Audio Player -->
@@ -2060,8 +2058,9 @@
                 used.add(term.toLowerCase());
                 // Only replace first occurrence — tap-to-toggle instead of hover
                 const def = GLOSSARY[term.toLowerCase()];
+                const defAttr = def.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 result = result.replace(regex, (match) => {
-                    return `<span class="sp-glossary" tabindex="0" onclick="toggleGlossaryDef(this)" data-def="${def}">${match}</span>`;
+                    return `<span class="sp-glossary" tabindex="0" onclick="toggleGlossaryDef(this)" data-def="${defAttr}">${match}</span>`;
                 });
             }
         }
@@ -2725,25 +2724,12 @@
             </div>
 
             <div class="sp-teacher-layout">
-                <!-- Top Bar: Audio Player -->
-                <div class="sp-panel sp-panel-top">
-                    <button class="sp-player-btn" id="spTeacherPlayBtn" onclick="toggleAudio()" role="button" tabindex="0" ${keyHandler('toggleAudio()')}>▶</button>
-                    <div class="sp-timeline-wrap" style="flex:1;">
-                        <input type="range" class="sp-timeline" id="spTeacherTimeline" min="0" max="${CONFIG_DATA ? CONFIG_DATA.duration : 1200}" value="0" oninput="seekAudio(this.value)" aria-label="Tidslinje">
-                        <div class="sp-time-row">
-                            <span id="spTimeNow">0:00</span>
-                            <span id="spTimeDur">${CONFIG_DATA ? formatTime(CONFIG_DATA.duration) : '0:00'}</span>
-                        </div>
-                    </div>
-                    <button class="sp-speed-btn" id="spTeacherSpeedBtn" onclick="cycleSpeed(event)" role="button" tabindex="0" ${keyHandler('cycleSpeed(event)')}>1x</button>
-                </div>
-
-                <!-- Main Left: Questions -->
+                <!-- Main Left: Question reference -->
                 <div class="sp-panel sp-panel-main">
-                    <div class="sp-panel-title">Frågebank (${totalQ})</div>
+                    <div class="sp-panel-title">Frågor i ordning (${totalQ})</div>
                     <div class="sp-q-list" id="spTeacherQList">
                         ${CONFIG_DATA ? CONFIG_DATA.questions.map((q, i) => `
-                            <div class="sp-q-list-item" role="button" tabindex="0" id="tq_${i}" onclick="teacherPushQuestion(${i})" ${keyHandler(`teacherPushQuestion(${i})`)}>
+                            <div class="sp-q-list-item" id="tq_${i}" style="cursor:default;">
                                 <span style="font-weight:600;color:var(--sp-accent);width:2rem;">${i + 1}.</span>
                                 <span style="flex:1;font-size:0.85rem;">${q.text.substring(0, 70)}${q.text.length > 70 ? '...' : ''}</span>
                                 <span style="font-size:0.7rem;color:var(--sp-text-muted)">${formatTime(q.triggerTime)}</span>
@@ -2756,7 +2742,7 @@
                 <!-- Sidebar Right: Student Dashboard -->
                 <div class="sp-panel sp-panel-sidebar">
                     <div class="sp-panel-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-                        <span>Elevöversikt</span>
+                        <span>Elevöversikt (live)</span>
                         <button class="sp-btn-sm" onclick="pollStudentResponses()" role="button" tabindex="0" style="padding:0.2rem 0.5rem;font-size:0.7rem;" ${keyHandler('pollStudentResponses()')}>Uppdatera</button>
                     </div>
                     <div id="spTeacherDashboard" aria-live="polite">
@@ -2764,68 +2750,19 @@
                     </div>
                 </div>
 
-                <!-- Bottom: Session Tools & Messaging -->
+                <!-- Bottom: Session Tools -->
                 <div class="sp-panel sp-panel-bottom">
-                    <div style="display:flex; gap: 0.5rem; align-items: center; flex: 1; min-width:300px;">
-                        <input type="text" class="sp-msg-input" id="spTeacherMsgInput" placeholder="Skriv ett meddelande till klassen..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendTeacherMsg();}" aria-label="Meddelande">
-                        <button class="sp-btn-sm" onclick="sendTeacherMsg()" role="button" tabindex="0" style="background:var(--sp-accent-soft);color:var(--sp-accent);white-space:nowrap;" ${keyHandler('sendTeacherMsg()')}>Skicka</button>
-                        <button class="sp-btn-sm" onclick="clearTeacherMsg()" role="button" tabindex="0" style="white-space:nowrap;" ${keyHandler('clearTeacherMsg()')}>Rensa</button>
-                    </div>
+                    <div style="font-size:0.8rem;color:var(--sp-text-muted);flex:1;min-width:200px;">Eleverna lyssnar i egen takt — deras svar dyker upp här automatiskt.</div>
                     <div style="display:flex; gap: 0.5rem; flex-wrap:wrap; justify-content:flex-end;">
                         <button class="sp-copy-btn" id="spCopyBtn" onclick="copyStudentLink()" role="button" tabindex="0" style="margin-bottom:0;" ${keyHandler('copyStudentLink()')}>${t('copyLink')}</button>
-                        </button>
-                        </button>
                         <button class="sp-btn-sm" onclick="resetSession()" role="button" tabindex="0" style="color:var(--sp-incorrect);" ${keyHandler('resetSession()')}>${t('resetBtn')}</button>
                     </div>
                 </div>
             </div>
         </div>`;
 
-        // Guard against duplicate event listeners (Bug 6)
-        audioEl.removeEventListener('timeupdate', onAudioTimeUpdate);
-        if (audioEl._spTeacherLoadedMeta) audioEl.removeEventListener('loadedmetadata', audioEl._spTeacherLoadedMeta);
-
-        audioEl._spTeacherLoadedMeta = () => {
-            const dur = document.getElementById('spTimeDur');
-            if (dur) dur.textContent = formatTime(audioEl.duration);
-            const tl = document.getElementById('spTeacherTimeline');
-            if (tl) tl.max = Math.floor(audioEl.duration);
-        };
-        audioEl.addEventListener('loadedmetadata', audioEl._spTeacherLoadedMeta);
-        audioEl.addEventListener('timeupdate', onAudioTimeUpdate);
-
-        // Start polling (K1)
+        // Start polling for student responses (no audio/broadcast in teacher view)
         startTeacherPolling();
-        // Start state broadcast
-        startTeacherBroadcast();
-    }
-
-    function teacherPushQuestion(idx) {
-        SP.teacherPushedQ = idx;
-        // Pause audio when pushing question
-        audioEl.pause();
-        SP.isPlaying = false;
-        updatePlayBtn();
-        // Highlight in list
-        document.querySelectorAll('[id^="tq_"]').forEach(el => el.classList.remove('active', 'pushed'));
-        const el = document.getElementById(`tq_${idx}`);
-        if (el) { el.classList.add('active', 'pushed'); }
-        broadcastTeacherState();
-    }
-
-    function sendTeacherMsg() {
-        const input = document.getElementById('spTeacherMsgInput');
-        if (!input || !input.value.trim()) return;
-        teacherMsgColor = '#1f2937';
-        teacherMsgText = input.value.trim();
-        broadcastTeacherState();
-    }
-
-    function clearTeacherMsg() {
-        teacherMsgColor = 'none';
-        teacherMsgText = '';
-        document.getElementById('spTeacherMsgInput').value = '';
-        broadcastTeacherState();
     }
 
     // V5: Copy student link
@@ -2988,7 +2925,7 @@
         html += '<div class="sp-student-name" style="color:var(--sp-text-muted);font-size:0.7rem;">ELEV</div>';
         html += '<div class="sp-q-squares">';
         CONFIG_DATA.questions.forEach((q, idx) => {
-            const qTitle = q.question ? q.question.substring(0, 80) : `Fråga ${idx+1}`;
+            const qTitle = q.text ? q.text.substring(0, 80) : `Fråga ${idx+1}`;
             html += `<div class="sp-q-square" style="background:transparent;border-color:var(--sp-border);" data-q="${idx+1}" title="F${idx+1}: ${qTitle}"></div>`;
         });
         html += '</div></div>';
@@ -3024,7 +2961,7 @@
                         cls = 'incorrect'; // red
                     }
                 }
-                const qLabel = q.question ? q.question.substring(0, 80) : `Fråga ${idx+1}`;
+                const qLabel = q.text ? q.text.substring(0, 80) : `Fråga ${idx+1}`;
                 const ansLabel = rawAns ? (cls.includes('correct') ? '✓' : cls.includes('incorrect') ? '✗' : '—') : '—';
                 html += `<div class="sp-q-square ${cls}" data-q="${idx+1}" title="F${idx+1}: ${qLabel}\nSvar: ${ansLabel}"></div>`;
             });
@@ -3064,70 +3001,6 @@
             fbHtml += '</div>';
             dashboard.innerHTML += fbHtml;
         }
-    }
-
-    // ═══════════════════════════════════════════
-    // LIVE SYNC — STUDENT (V1: jitter)
-    // ═══════════════════════════════════════════
-
-    function startLiveSync() {
-        SP.syncInterval = setInterval(async () => {
-            // V1: Jitter
-            await new Promise(r => setTimeout(r, Math.random() * 800));
-            try {
-                const state = await getTeacherState();
-                if (!state) return;
-                handleOnline();
-                
-                SP.teacherIsPlaying = state.isPlaying;
-
-                // Handle fullscreen message
-                if (state.msgColor && state.msgColor !== 'none' && state.msgText) {
-                    fullscreenMsg.style.backgroundColor = state.msgColor;
-                    fullscreenMsgText.textContent = state.msgText;
-                    fullscreenMsg.classList.add('show');
-                } else {
-                    fullscreenMsg.classList.remove('show');
-                }
-
-                // Handle question push
-                if (state.questionIdx >= 0 && state.questionIdx !== SP.teacherPushedQ) {
-                    SP.teacherPushedQ = state.questionIdx;
-                    if (!SP.answers[CONFIG_DATA.questions[state.questionIdx]?.id]) {
-                        audioEl.pause();
-                        SP.isPlaying = false;
-                        updatePlayBtn();
-                        showQuestion(state.questionIdx);
-                    }
-                }
-
-                // Sync audio (only if not answering a question)
-                if (SP.currentQ === -1) {
-                    // If teacher paused, always pause student
-                    if (!state.isPlaying && !audioEl.paused) {
-                        audioEl.pause();
-                        SP.isPlaying = false;
-                        SP.studentPaused = false; // Reset local pause since teacher paused
-                        updatePlayBtn();
-                    }
-                    // If teacher is playing, only resume if student hasn't locally paused
-                    else if (state.isPlaying && audioEl.paused && !SP.studentPaused) {
-                        const diff = Math.abs(audioEl.currentTime - state.audioTime);
-                        if (diff > 3) audioEl.currentTime = state.audioTime;
-                        audioEl.play().catch(() => {});
-                        SP.isPlaying = true;
-                        updatePlayBtn();
-                    }
-                    // Time sync (only when playing)
-                    else if (state.isPlaying && !audioEl.paused) {
-                        const diff = Math.abs(audioEl.currentTime - state.audioTime);
-                        if (diff > 3) audioEl.currentTime = state.audioTime;
-                    }
-                }
-            } catch(e) {
-                handleOffline();
-            }
-        }, SP_CONFIG.SYNC_INTERVAL);
     }
 
     // ═══════════════════════════════════════════

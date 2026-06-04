@@ -63,6 +63,34 @@
       "feedbackNok": "Nja, rubriken och introt avslöjar att det är Sammetsgetingen vi ska fördjupa oss i!"
     },
     {
+      "id": "q25",
+      "type": "multiple-choice",
+      "triggerTime": 90,
+      "difficulty": "easy",
+      "text": "Var hittades sammetsgetingen först i Europa?",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Bordeaux, Frankrike"
+        },
+        {
+          "letter": "B",
+          "text": "Rom, Italien"
+        },
+        {
+          "letter": "C",
+          "text": "Madrid, Spanien"
+        },
+        {
+          "letter": "D",
+          "text": "Berlin, Tyskland"
+        }
+      ],
+      "correct": "A",
+      "feedbackOk": "Rätt! Den hittades först i en sändning keramik till Bordeaux, Frankrike.",
+      "feedbackNok": "Rätt svar: A. Enligt programmet upptäcktes den först i en sändning keramik till Bordeaux i Frankrike."
+    },
+    {
       "id": "q2",
       "type": "multiple-choice",
       "triggerTime": 195,
@@ -89,34 +117,6 @@
       "correct": "B",
       "feedbackOk": "Rätt! Vespa velutina kommer ursprungligen från Ost- och Sydostasien, bland annat södra Kina, Indonesien och Indien.",
       "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsgetingen (Vespa velutina) har sitt ursprung i Ost- och Sydostasien. Den har på senare år påträffats i Nordamerika och Europa."
-    },
-    {
-      "id": "q25",
-      "type": "multiple-choice",
-      "triggerTime": 90,
-      "difficulty": "easy",
-      "text": "var hittades sammetsgetingen först i Europa?",
-      "options": [
-        {
-          "letter": "A",
-          "text": "Bordeaux, Frankrike"
-        },
-        {
-          "letter": "B",
-          "text": "Rom, Italien"
-        },
-        {
-          "letter": "C",
-          "text": "Madrid, Spanien"
-        },
-        {
-          "letter": "D",
-          "text": "Berlin, Tyskland"
-        }
-      ],
-      "correct": "A",
-      "feedbackOk": "Rätt! Den hittades först i en sändning keramik till Bordeaux, Frankrike.",
-      "feedbackNok": "Rätt svar: A. Enligt programmet upptäcktes den först i en sändning keramik till Bordeaux i Frankrike."
     },
     {
       "id": "q1",
@@ -175,37 +175,6 @@
       "feedbackNok": "Rätt svar: <strong>B</strong>. Sammetsgetingen (V. velutina) fångar vuxna bin i luften utanför kupan — ett beteende som kallas 'hawking'. En grupp getingar kan belägra en bikupa under veckor eller månader."
     },
     {
-      "id": "q6",
-      "type": "match",
-      "triggerTime": 507.5,
-      "difficulty": "medium",
-      "text": "Para ihop varje ekologiskt begrepp med rätt definition.",
-      "pairs": [
-        {
-          "left": "Invasiv art",
-          "right": "En art som sprider sig utanför sitt naturliga område och skadar ekosystemet"
-        },
-        {
-          "left": "Biodiversitet",
-          "right": "Mångfalden av arter och ekosystem i ett område"
-        },
-        {
-          "left": "Pollinering",
-          "right": "Överföring av pollen mellan blommor, ofta via insekter"
-        },
-        {
-          "left": "Ekologisk nisch",
-          "right": "En arts roll och plats i ett ekosystem"
-        },
-        {
-          "left": "Näringskedja",
-          "right": "Visar hur energi överförs från en organism till nästa"
-        }
-      ],
-      "feedbackOk": "Perfekt! Du har koll på de ekologiska begreppen.",
-      "feedbackNok": "Inte alla rätt. Läs igenom begreppen — de är viktiga för att förstå hur invasiva arter påverkar naturen."
-    },
-    {
       "id": "q16",
       "type": "multiple-choice",
       "triggerTime": 430,
@@ -260,6 +229,37 @@
       "correct": "B",
       "feedbackOk": "Rätt! Detta 'dödsbiboll'-beteende är dock främst ett försvar mot japanska jättegetingar, inte sammetsgetingar.",
       "feedbackNok": "Rätt svar: B. Japanska honungsbin bildar en 'värmeboll' (ca 47 °C) runt den japanska jättegetingen."
+    },
+    {
+      "id": "q6",
+      "type": "match",
+      "triggerTime": 507.5,
+      "difficulty": "medium",
+      "text": "Para ihop varje ekologiskt begrepp med rätt definition.",
+      "pairs": [
+        {
+          "left": "Invasiv art",
+          "right": "En art som sprider sig utanför sitt naturliga område och skadar ekosystemet"
+        },
+        {
+          "left": "Biodiversitet",
+          "right": "Mångfalden av arter och ekosystem i ett område"
+        },
+        {
+          "left": "Pollinering",
+          "right": "Överföring av pollen mellan blommor, ofta via insekter"
+        },
+        {
+          "left": "Ekologisk nisch",
+          "right": "En arts roll och plats i ett ekosystem"
+        },
+        {
+          "left": "Näringskedja",
+          "right": "Visar hur energi överförs från en organism till nästa"
+        }
+      ],
+      "feedbackOk": "Perfekt! Du har koll på de ekologiska begreppen.",
+      "feedbackNok": "Inte alla rätt. Läs igenom begreppen — de är viktiga för att förstå hur invasiva arter påverkar naturen."
     },
     {
       "id": "q12",
@@ -557,7 +557,7 @@
     {
       "id": "q_feedback",
       "type": "feedback",
-      "triggerTime": 1188,
+      "triggerTime": 1180,
       "difficulty": "easy",
       "text": "Övningen är klar! Betygsätt hur den fungerade.",
       "ratingLabel": "Hur bra fungerade övningen?",
