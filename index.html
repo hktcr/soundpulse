@@ -820,6 +820,22 @@
         .sp-submit-btn:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
         .sp-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
+        .sp-star {
+            font-size: 2rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.2rem;
+            opacity: 0.5;
+            color: var(--sp-text-muted);
+            transition: transform 0.2s, opacity 0.2s, color 0.2s;
+            display: inline-block;
+        }
+        .sp-star:hover {
+            transform: scale(1.2);
+            opacity: 0.9;
+        }
+
         /* === RESULTS === */
         .sp-results { text-align: center; }
         .sp-results-emoji { font-size: 4rem; margin-bottom: 0.5rem; }
@@ -841,24 +857,50 @@
             padding: 1.5rem; min-height: 100vh;
         }
         .sp-teacher-layout {
-            display: grid;
-            grid-template-columns: 3fr 2fr;
-            grid-template-areas:
-                "top top"
-                "main sidebar"
-                "bottom bottom";
+            display: flex;
+            flex-direction: column;
             gap: 1.5rem;
         }
-        @media (max-width: 900px) {
-            .sp-teacher-layout {
-                grid-template-columns: 1fr;
-                grid-template-areas: "top" "main" "sidebar" "bottom";
-            }
+        .sp-panel-bottom { display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+
+        /* Custom Premium Tooltips */
+        .sp-q-square .sp-tooltip {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 135%;
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            background: rgba(17, 24, 39, 0.98);
+            color: #f3f4f6;
+            padding: 0.6rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            width: 240px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5), 0 4px 6px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            z-index: 9999;
+            pointer-events: none;
+            line-height: 1.4;
+            text-align: left;
+            white-space: normal;
+            transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
         }
-        .sp-panel-top { grid-area: top; display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1.2rem; }
-        .sp-panel-main { grid-area: main; }
-        .sp-panel-sidebar { grid-area: sidebar; }
-        .sp-panel-bottom { grid-area: bottom; display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+        .sp-q-square .sp-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: rgba(17, 24, 39, 0.98) transparent transparent transparent;
+        }
+        .sp-q-square:hover .sp-tooltip {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
         
         .sp-panel {
             background: var(--sp-bg-surface);
@@ -1351,7 +1393,7 @@
         APP_KEY: 'SoundPulse_sammetsjattingen_v2',
         BASE_URL: 'https://keyvalue.immanuel.co/api/KeyVal',
         SYNC_INTERVAL: 2500,
-        POLL_INTERVAL: 3000,
+        POLL_INTERVAL: 8000,
         AUDIO_FILE: 'assets/soundpulse_sammetsjattingen.mp3'
     };
 
@@ -1604,39 +1646,49 @@
         await apiSet(`stu_${SP.studentId}`, nameHex);
         // Send initial heartbeat
         await apiSet(`hb_${SP.studentId}`, String(Date.now()));
-        // Register in a slot (race-condition-free: each slot holds ONE student)
-        const MAX_SLOTS = 40;
+        // Register in a slot (random order selection to minimize concurrent API collision)
+        const MAX_SLOTS = 60;
         let registered = false;
-        for (let i = 0; i < MAX_SLOTS && !registered; i++) {
-            const slotVal = await apiGet(`slot_${i}`);
+        
+        // Generate a random permutation of slot indices to try
+        const indices = Array.from({ length: MAX_SLOTS }, (_, i) => i);
+        for (let i = indices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+
+        for (let attempt = 0; attempt < indices.length && !registered; attempt++) {
+            const slotIdx = indices[attempt];
+            const slotVal = await apiGet(`slot_${slotIdx}`);
             if (!slotVal) {
                 // Empty slot — claim it
-                await apiSet(`slot_${i}`, strToHex(SP.studentId));
-                // Verify we got it
+                await apiSet(`slot_${slotIdx}`, strToHex(SP.studentId));
+                // Verify we got it (randomized delay to prevent race conditions)
                 await new Promise(r => setTimeout(r, 100 + Math.random() * 200));
-                const verify = await apiGet(`slot_${i}`);
+                const verify = await apiGet(`slot_${slotIdx}`);
                 if (verify && hexToStr(verify) === SP.studentId) {
                     registered = true;
-                    console.log('Registered in slot', i);
+                    console.log('Registered in slot', slotIdx);
                 }
-                // If someone else claimed it, continue to next slot
             } else {
                 try {
                     const existing = hexToStr(slotVal);
                     if (existing === SP.studentId) {
                         registered = true; // Already registered
+                        console.log('Already registered in slot', slotIdx);
                     }
                 } catch(e) { /* skip corrupt slot */ }
             }
         }
         if (!registered) {
-            // Fallback: overwrite last slot
-            await apiSet(`slot_${MAX_SLOTS - 1}`, strToHex(SP.studentId));
+            // Fallback: overwrite a random slot
+            const fallbackIdx = Math.floor(Math.random() * MAX_SLOTS);
+            await apiSet(`slot_${fallbackIdx}`, strToHex(SP.studentId));
         }
-        // Start heartbeat interval (every 15s)
+        // Start heartbeat interval (every 30s instead of 15s to reduce API traffic)
         setInterval(() => {
             apiSet(`hb_${SP.studentId}`, String(Date.now()));
-        }, 15000);
+        }, 30000);
     }
 
     // ═══════════════════════════════════════════
@@ -2095,8 +2147,10 @@
     const spAudioCtx = window.AudioContext ? new AudioContext() : (window.webkitAudioContext ? new webkitAudioContext() : null);
     function playBeep(isCorrect) {
         if (!spAudioCtx) return;
-        if (spAudioCtx.state === 'suspended') spAudioCtx.resume();
         try {
+            if (spAudioCtx.state === 'suspended' && typeof spAudioCtx.resume === 'function') {
+                spAudioCtx.resume().catch(() => {});
+            }
             const osc = spAudioCtx.createOscillator();
             const gain = spAudioCtx.createGain();
             osc.connect(gain);
@@ -2118,7 +2172,9 @@
                 gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
                 osc.start(now); osc.stop(now + 0.2);
             }
-        } catch(e) {}
+        } catch(e) {
+            console.warn('Beep playback failed:', e);
+        }
     }
 
     function updatePlayBtn() {
@@ -2332,12 +2388,18 @@
         if (card) releaseFocusTrap(card);
         if (wrap) wrap.classList.remove('show');
         SP.currentQ = -1;
-        // Rewind 5 seconds for context, then resume
-        audioEl.currentTime = Math.max(0, audioEl.currentTime - 5);
-        if (SP.mode !== 'teacher') {
-            audioEl.play().catch(() => {});
-            SP.isPlaying = true;
-            updatePlayBtn();
+        try {
+            // Rewind 5 seconds for context, then resume
+            if (audioEl) {
+                audioEl.currentTime = Math.max(0, audioEl.currentTime - 5);
+                if (SP.mode !== 'teacher') {
+                    audioEl.play().catch(() => {});
+                    SP.isPlaying = true;
+                    updatePlayBtn();
+                }
+            }
+        } catch(e) {
+            console.warn('Failed to resume audio playback:', e);
         }
         if (SP.mode === 'teacher') {
             broadcastTeacherState();
@@ -2647,15 +2709,16 @@
 
     // ─── FEEDBACK (star rating + comment) ───
     function renderFeedbackQuestion(q, idx) {
+        selectedStars = 0; // reset
         let html = '<div class="sp-feedback-form">';
         html += `<p style="font-size:0.85rem;color:var(--sp-text);margin-bottom:0.6rem">${q.ratingLabel || 'Betygsätt övningen'}</p>`;
         html += '<div class="sp-star-row" id="spStarRow">';
         for (let i = 1; i <= 5; i++) {
-            html += `<button class="sp-star" data-val="${i}" onclick="selectStar(${i})" aria-label="${i} stjärnor" style="font-size:1.8rem;background:none;border:none;cursor:pointer;padding:0.2rem;opacity:0.3;transition:opacity 0.2s;">★</button>`;
+            html += `<button class="sp-star" data-val="${i}" onclick="selectStar(${i})" aria-label="${i} stjärnor">☆</button>`;
         }
         html += '</div>';
         html += `<p style="font-size:0.8rem;color:var(--sp-text-muted);margin-top:0.8rem;margin-bottom:0.3rem">${q.commentLabel || 'Kommentar'}</p>`;
-        html += `<textarea class="sp-freetext-textarea" id="feedbackComment_${idx}" placeholder="${q.commentPlaceholder || 'Din kommentar...'}" rows="3" style="width:100%;"></textarea>`;
+        html += `<textarea class="sp-freetext-textarea" id="feedbackComment_${idx}" placeholder="${q.commentPlaceholder || 'Din kommentar (valfritt)...'}" rows="3" style="width:100%;"></textarea>`;
         html += '</div>';
         html += `<button class="sp-submit-btn" onclick="submitFeedback(${idx})" role="button" tabindex="0" style="margin-top:0.5rem;">Skicka feedback</button>`;
         return html;
@@ -2666,7 +2729,8 @@
         selectedStars = n;
         document.querySelectorAll('.sp-star').forEach(s => {
             const v = parseInt(s.dataset.val);
-            s.style.opacity = v <= n ? '1' : '0.3';
+            s.textContent = v <= n ? '★' : '☆';
+            s.style.opacity = v <= n ? '1' : '0.5';
             s.style.color = v <= n ? '#fde047' : 'var(--sp-text-muted)';
         });
     }
@@ -2680,14 +2744,10 @@
             if (row) { row.style.outline = '2px solid var(--sp-incorrect)'; setTimeout(() => row.style.outline = '', 600); }
             return;
         }
-        if (!comment || !comment.value.trim()) {
-            comment.style.outline = '2px solid var(--sp-incorrect)';
-            setTimeout(() => comment.style.outline = '', 600);
-            return;
-        }
-        const answer = `${selectedStars}|${comment.value.trim()}`;
+        const commentVal = comment ? comment.value.trim() : '';
+        const answer = `${selectedStars}|${commentVal}`;
         SP.answers[q.id] = answer;
-        comment.readOnly = true;
+        if (comment) comment.readOnly = true;
         document.querySelectorAll('.sp-star').forEach(s => s.disabled = true);
         showFeedback(true, q.feedbackMsg || 'Tack!');
         playBeep(true);
@@ -2724,21 +2784,6 @@
             </div>
 
             <div class="sp-teacher-layout">
-                <!-- Main Left: Question reference -->
-                <div class="sp-panel sp-panel-main">
-                    <div class="sp-panel-title">Frågor i ordning (${totalQ})</div>
-                    <div class="sp-q-list" id="spTeacherQList">
-                        ${CONFIG_DATA ? CONFIG_DATA.questions.map((q, i) => `
-                            <div class="sp-q-list-item" id="tq_${i}" style="cursor:default;">
-                                <span style="font-weight:600;color:var(--sp-accent);width:2rem;">${i + 1}.</span>
-                                <span style="flex:1;font-size:0.85rem;">${q.text.substring(0, 70)}${q.text.length > 70 ? '...' : ''}</span>
-                                <span style="font-size:0.7rem;color:var(--sp-text-muted)">${formatTime(q.triggerTime)}</span>
-                                <span style="font-size:0.7rem;background:var(--sp-bg-surface-light);padding:0.2rem 0.5rem;border-radius:4px;color:var(--sp-accent)">${q.type}</span>
-                            </div>
-                        `).join('') : ''}
-                    </div>
-                </div>
-
                 <!-- Sidebar Right: Student Dashboard -->
                 <div class="sp-panel sp-panel-sidebar">
                     <div class="sp-panel-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
@@ -2791,8 +2836,8 @@
         teacherMsgText = '';
         // Clear remote state
         apiSet('state', '0_-1_0_none_none');
-        // Clear all 40 slots
-        const MAX_SLOTS = 40;
+        // Clear all 60 slots
+        const MAX_SLOTS = 60;
         for (let i = 0; i < MAX_SLOTS; i++) {
             apiSet(`slot_${i}`, '');
         }
@@ -2827,54 +2872,63 @@
         }, SP_CONFIG.POLL_INTERVAL);
     }
 
+    let teacherPollCount = 0;
     async function discoverStudents() {
         try {
-            // Slot-based discovery: read all 40 slots in parallel
-            const MAX_SLOTS = 40;
-            const slotPromises = [];
-            for (let i = 0; i < MAX_SLOTS; i++) {
-                slotPromises.push(apiGet(`slot_${i}`).catch(() => null));
-            }
-            const slots = await Promise.all(slotPromises);
+            teacherPollCount++;
+            // Poll all 60 slots and check heartbeats only on first poll and then every 3rd poll (every 24s)
+            const shouldPollSlots = (teacherPollCount === 1 || teacherPollCount % 3 === 0);
 
-            const discoveredIds = [];
-            for (const raw of slots) {
-                if (!raw) continue;
-                try {
-                    const sid = hexToStr(raw);
-                    if (sid && sid.startsWith('sp_')) discoveredIds.push(sid);
-                } catch(e) { /* skip corrupt */ }
-            }
+            if (shouldPollSlots) {
+                const MAX_SLOTS = 60;
+                const slotPromises = [];
+                for (let i = 0; i < MAX_SLOTS; i++) {
+                    slotPromises.push(apiGet(`slot_${i}`).catch(() => null));
+                }
+                const slots = await Promise.all(slotPromises);
 
-            // Check heartbeats — 15 minute timeout, but NEVER remove students
-            const HB_TIMEOUT = 15 * 60 * 1000;
-            const now = Date.now();
-            const heartbeats = await Promise.all(
-                discoveredIds.map(sid => apiGet(`hb_${sid}`).catch(() => null))
-            );
+                const discoveredIds = [];
+                for (const raw of slots) {
+                    if (!raw) continue;
+                    try {
+                        const sid = hexToStr(raw);
+                        if (sid && sid.startsWith('sp_') && !discoveredIds.includes(sid)) {
+                            discoveredIds.push(sid);
+                        }
+                    } catch(e) { /* skip corrupt */ }
+                }
 
-            // Track active vs inactive (but keep all)
-            const studentStatus = {};
-            discoveredIds.forEach((sid, i) => {
-                const hb = heartbeats[i] ? parseInt(heartbeats[i], 10) : now;
-                studentStatus[sid] = (now - hb) < HB_TIMEOUT ? 'active' : 'inactive';
-            });
-
-            // Add new students (never remove existing ones)
-            const unknownIds = discoveredIds.filter(sid => !SP.knownStudents.has(sid));
-            if (unknownIds.length > 0) {
-                const names = await Promise.all(
-                    unknownIds.map(sid => apiGet(`stu_${sid}`).catch(() => null))
+                // Check heartbeats — 15 minute timeout, but NEVER remove students
+                const HB_TIMEOUT = 15 * 60 * 1000;
+                const now = Date.now();
+                const heartbeats = await Promise.all(
+                    discoveredIds.map(sid => apiGet(`hb_${sid}`).catch(() => null))
                 );
-                unknownIds.forEach((sid, i) => {
-                    const name = names[i] ? hexToStr(names[i]) : 'Gäst';
-                    SP.knownStudents.set(sid, name);
+
+                // Track active vs inactive (but keep all)
+                const studentStatus = {};
+                discoveredIds.forEach((sid, i) => {
+                    const hb = heartbeats[i] ? parseInt(heartbeats[i], 10) : now;
+                    studentStatus[sid] = (now - hb) < HB_TIMEOUT ? 'active' : 'inactive';
                 });
+
+                // Add new students (never remove existing ones)
+                const unknownIds = discoveredIds.filter(sid => !SP.knownStudents.has(sid));
+                if (unknownIds.length > 0) {
+                    const names = await Promise.all(
+                        unknownIds.map(sid => apiGet(`stu_${sid}`).catch(() => null))
+                    );
+                    unknownIds.forEach((sid, i) => {
+                        const name = names[i] ? hexToStr(names[i]) : 'Gäst';
+                        SP.knownStudents.set(sid, name);
+                    });
+                }
+
+                // Store status for UI dimming
+                SP.studentStatus = studentStatus;
             }
 
-            // Store status for UI dimming
-            SP.studentStatus = studentStatus;
-
+            // Always poll answers for the known students
             await pollStudentResponses();
         } catch(e) {
             console.warn('Student discovery failed:', e);
@@ -2927,8 +2981,8 @@
         html += '<div class="sp-student-name" style="color:var(--sp-text-muted);font-size:0.7rem;">ELEV</div>';
         html += '<div class="sp-q-squares">';
         CONFIG_DATA.questions.forEach((q, idx) => {
-            const qTitle = q.text ? q.text.substring(0, 80) : `Fråga ${idx+1}`;
-            html += `<div class="sp-q-square" style="background:transparent;border-color:var(--sp-border);" data-q="${idx+1}" title="F${idx+1}: ${qTitle}"></div>`;
+            const qTitle = q.text ? q.text.replace(/"/g, '&quot;') : `Fråga ${idx+1}`;
+            html += `<div class="sp-q-square" style="background:transparent;border-color:var(--sp-border);" data-q="${idx+1}"><div class="sp-tooltip"><strong>F${idx+1}:</strong> ${qTitle}</div></div>`;
         });
         html += '</div></div>';
 
@@ -2963,9 +3017,41 @@
                         cls = 'incorrect'; // red
                     }
                 }
-                const qLabel = q.text ? q.text.substring(0, 80) : `Fråga ${idx+1}`;
-                const ansLabel = rawAns ? (cls.includes('correct') ? '✓' : cls.includes('incorrect') ? '✗' : '—') : '—';
-                html += `<div class="sp-q-square ${cls}" data-q="${idx+1}" title="F${idx+1}: ${qLabel}\nSvar: ${ansLabel}"></div>`;
+                const qLabel = q.text ? q.text.replace(/"/g, '&quot;') : `Fråga ${idx+1}`;
+                let ansLabel = 'Ej besvarad';
+                let ansColor = 'var(--sp-text-muted)';
+                if (rawAns) {
+                    const wasRewound = rawAns.startsWith('R');
+                    const actualAns = wasRewound ? rawAns.substring(1) : rawAns;
+                    if (q.type === 'multiple-choice') {
+                        const opt = q.options ? q.options.find(o => o.letter === actualAns) : null;
+                        const optText = opt ? opt.text : '';
+                        ansLabel = `Svar: (${actualAns}) ${optText}`;
+                    } else if (q.type === 'feedback') {
+                        try {
+                            const [stars, ...commentParts] = actualAns.split('|');
+                            const starsVal = parseInt(stars) || 0;
+                            const starsStr = '★'.repeat(starsVal) + '☆'.repeat(5 - starsVal);
+                            const commentText = commentParts.join('|');
+                            ansLabel = `Betyg: ${starsStr}${commentText ? `<br>Kommentar: "${commentText}"` : ''}`;
+                        } catch(e) { ansLabel = `Svar: ${actualAns}`; }
+                    } else {
+                        ansLabel = `Svar: ${actualAns}`;
+                    }
+                    if (cls.includes('correct')) {
+                        ansColor = 'var(--sp-correct)';
+                        ansLabel += ' (Rätt)';
+                    } else if (cls.includes('incorrect')) {
+                        ansColor = 'var(--sp-incorrect)';
+                        ansLabel += ' (Fel)';
+                    }
+                }
+                html += `<div class="sp-q-square ${cls}" data-q="${idx+1}">
+                    <div class="sp-tooltip">
+                        <strong>F${idx+1}:</strong> ${qLabel}<br>
+                        <span style="color: ${ansColor}; font-weight: 500;">${ansLabel}</span>
+                    </div>
+                </div>`;
             });
             
             html += '</div></div>';
