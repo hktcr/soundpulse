@@ -16,57 +16,21 @@
     },
     {
       "start": 44,
-      "end": 120,
-      "image": "assets/soundpulse/seg1_hero.png",
-      "title": "Sammetsgetingen — En invasiv geting från Asien"
-    },
-    {
-      "start": 120,
-      "end": 200,
-      "image": "assets/soundpulse/seg1_hero.png",
-      "title": "Spridningen i Europa"
-    },
-    {
-      "start": 200,
-      "end": 300,
-      "image": "assets/soundpulse/seg2_hive_attack.png",
-      "title": "Hotet mot Bisamhällen"
-    },
-    {
-      "start": 300,
-      "end": 400,
-      "image": "assets/soundpulse/seg2_hive_attack.png",
-      "title": "Jakten på Byten"
-    },
-    {
-      "start": 400,
       "end": 500,
-      "image": "assets/soundpulse/seg3_invasive_map.png",
-      "title": "Invasiva Arter i Sverige"
+      "image": "assets/sammetsgeting.jpg",
+      "title": "Sammetsgetingen (Vespa velutina)"
     },
     {
       "start": 500,
-      "end": 600,
-      "image": "assets/soundpulse/seg3_invasive_map.png",
-      "title": "Ekologiska Konsekvenser"
-    },
-    {
-      "start": 600,
-      "end": 800,
-      "image": "assets/soundpulse/seg4_bee_defense.png",
-      "title": "Binas Försvar"
-    },
-    {
-      "start": 800,
       "end": 1000,
-      "image": "assets/soundpulse/seg5_ecosystem.png",
-      "title": "Kaskadeffekter"
+      "image": "assets/honungsbi.jpg",
+      "title": "Honungsbiet (Apis mellifera)"
     },
     {
       "start": 1000,
       "end": 1188,
-      "image": "assets/soundpulse/seg6_conservation.png",
-      "title": "Vad kan vi göra?"
+      "image": "assets/soundpulse/seg0_eko.png",
+      "title": "Dagens Eko — Sammanfattning"
     }
   ],
   "questions": [
@@ -101,7 +65,7 @@
     {
       "id": "q2",
       "type": "multiple-choice",
-      "triggerTime": 191.1,
+      "triggerTime": 195,
       "difficulty": "medium",
       "text": "Sammetsgetingen (Vespa velutina) är en invasiv art. Var kommer den ursprungligen ifrån?",
       "options": [
@@ -131,7 +95,7 @@
       "type": "multiple-choice",
       "triggerTime": 90,
       "difficulty": "easy",
-      "text": "Enligt programmet, var hittades sammetsgetingen först i Europa?",
+      "text": "var hittades sammetsgetingen först i Europa?",
       "options": [
         {
           "letter": "A",
@@ -157,7 +121,7 @@
     {
       "id": "q1",
       "type": "multiple-choice",
-      "triggerTime": 252.7,
+      "triggerTime": 279,
       "difficulty": "easy",
       "text": "I inledningen nämns sammetsgetingen. Ungefär hur stor är den jämfört med en vanlig geting?",
       "options": [
@@ -185,9 +149,9 @@
     {
       "id": "q5",
       "type": "multiple-choice",
-      "triggerTime": 316,
+      "triggerTime": 367,
       "difficulty": "easy",
-      "text": "I programmet nämns att sammetsgetingen angriper bisamhällen. Vad är det den främst är ute efter?",
+      "text": "Programmet nämner att sammetsgetingen angriper bisamhällen. Vad är det den främst är ute efter?",
       "options": [
         {
           "letter": "A",
@@ -246,28 +210,28 @@
       "type": "multiple-choice",
       "triggerTime": 430,
       "difficulty": "medium",
-      "text": "Vilken typ av samspel beskriver förhållandet mellan sammetsgetingen och honungsbina bäst?",
+      "text": "Sammetsgetingen jagar och dödar honungsbin. Vad kallas denna typ av ekologiskt samspel?",
       "options": [
         {
           "letter": "A",
-          "text": "Mutualism — båda har nytta"
+          "text": "Mutualism — båda arterna gynnas"
         },
         {
           "letter": "B",
-          "text": "Kommensalism — den ena gynnas, den andra påverkas inte"
+          "text": "Kommensalism — en gynnas, den andra påverkas inte"
         },
         {
           "letter": "C",
-          "text": "Predation — getingen jagar och dödar bin"
+          "text": "Predation — en art jagar och äter en annan"
         },
         {
           "letter": "D",
-          "text": "Parasitism — getingen lever i bisamhället"
+          "text": "Parasitism — en art lever på bekostnad av en annan utan att döda den"
         }
       ],
       "correct": "C",
-      "feedbackOk": "Rätt! Sammetsgetingen är en predator som aktivt jagar och dödar honungsbin. Det är inte parasitism eftersom getingen inte lever på eller i biet.",
-      "feedbackNok": "Rätt svar: <strong>C</strong>. Predation innebär att en organism (predatorn) dödar och äter en annan (bytet). Parasitism innebär att parasiten lever på värden utan att döda den direkt."
+      "feedbackOk": "Rätt! Predation innebär att en organism (predatorn) dödar och äter en annan (bytet). Sammetsgetingen är en predator som jagar bin.",
+      "feedbackNok": "Rätt svar: C. Predation innebär att en organism jagar och dödar en annan för föda. Parasitism innebär att parasiten lever på värden utan att döda den direkt."
     },
     {
       "id": "q11",
@@ -452,41 +416,32 @@
       "feedbackNok": "Inte alla rätt. Producenter (växter) fångar solenergi. Primärkonsumenter äter växter. Sekundärkonsumenter äter primärkonsumenter. Tertiärkonsumenter är toppredatorer. Nedbrytare återför näring."
     },
     {
-      "id": "q24",
-      "type": "freetext",
-      "triggerTime": 850.4,
-      "difficulty": "hard",
-      "text": "I programmet nämns flera åtgärder mot invasiva arter. Om du var ansvarig för att skydda svenska bin mot sammetsgetingen, vilka tre åtgärder skulle du prioritera och varför?",
-      "placeholder": "Skriv dina tre åtgärder här...",
-      "feedbackMsg": "Tack för ditt svar! Viktiga åtgärder inkluderar tidig upptäckt och rapportering, forskning om biologisk bekämpning, skydd av vilda pollinatörer, importkontroller och information till biodlare."
-    },
-    {
       "id": "q20",
       "type": "multiple-choice",
       "triggerTime": 908.9,
       "difficulty": "medium",
-      "text": "Klimatförändringarna gör att sammetsgetingen kan sprida sig norrut. Vad är den ekologiska förklaringen?",
+      "text": "Varför sprider sig sammetsgetingen snabbt i Europa?",
       "options": [
         {
           "letter": "A",
-          "text": "Varmare vintrar gör att fler drottningar överlever och kan grunda nya kolonier på våren"
+          "text": "Den har kommit via fraktfartyg och saknar naturliga fiender"
         },
         {
           "letter": "B",
-          "text": "Högre koldioxidhalt gör getingarna större"
+          "text": "Den planterades medvetet av forskare"
         },
         {
           "letter": "C",
-          "text": "Ökad nederbörd skapar fler boplatser"
+          "text": "Europeiska getingar drog hit den"
         },
         {
           "letter": "D",
-          "text": "UV-strålning gör getingarna mer aggressiva"
+          "text": "Den säljs i djuraffärer"
         }
       ],
       "correct": "A",
-      "feedbackOk": "Rätt! Sammetsgetingens drottningar övervintrar i marken. Mildare vintrar ökar överlevnaden, och längre säsonger ger mer tid att bygga stora kolonier.",
-      "feedbackNok": "Rätt svar: <strong>A</strong>. Temperaturen är den avgörande abiotiska faktorn. Mildare vintrar = fler överlevande drottningar = fler kolonier = snabbare spridning norrut."
+      "feedbackOk": "Rätt! Sammetsgetingen kom som fripassagerare med fraktfartyg och har inga naturliga fiender i Europa.",
+      "feedbackNok": "Rätt svar: A. Sammetsgetingen kom som fripassagerare via fraktfartyg till Frankrike och saknar naturliga fiender här."
     },
     {
       "id": "q8",
@@ -548,65 +503,67 @@
       "type": "multiple-choice",
       "triggerTime": 1091.6,
       "difficulty": "medium",
-      "text": "Om sammetsgetingen slår ut honungsbina i ett område, vad händer med växterna som är beroende av pollinering?",
+      "text": "Vad är den viktigaste ekosystemtjänsten som bin bidrar med?",
       "options": [
         {
           "letter": "A",
-          "text": "Ingenting — vinden pollinerar alla växter"
+          "text": "De producerar bivax till ljus"
         },
         {
           "letter": "B",
-          "text": "De kan fortplanta sig men producerar mindre frukt och frön"
+          "text": "De äter skadeinsekter"
         },
         {
           "letter": "C",
-          "text": "Många arter minskar kraftigt eller dör ut lokalt eftersom de inte kan sätta frö"
+          "text": "De pollinerar växter vi odlar för mat"
         },
         {
           "letter": "D",
-          "text": "Växterna anpassar sig snabbt till självpollinering"
+          "text": "De renar luften"
         }
       ],
       "correct": "C",
-      "feedbackOk": "Rätt! Utan pollinatörer kan många blommande växter inte producera frön. Kaskadeffekten sprider sig genom hela ekosystemet.",
-      "feedbackNok": "Rätt svar: C. Många växter är helt beroende av insektspollinering och sätter inte frukt eller frön utan bin."
+      "feedbackOk": "Rätt! Pollinering av grödor är den viktigaste ekosystemtjänsten bin ger oss. Utan pollinering får vi mindre mat.",
+      "feedbackNok": "Rätt svar: C. Pollineringstjänsten är binas viktigaste bidrag — ungefär en tredjedel av vår mat beror på insektspollinering."
     },
     {
       "id": "q18",
       "type": "multiple-choice",
       "triggerTime": 1138,
       "difficulty": "hard",
-      "text": "Begreppet 'kaskadeffekt' används i ekologin. Vad innebär det i sammanhanget med sammetsgetingen?",
+      "text": "Om honungsbina minskar kraftigt, vad händer med växter som är beroende av pollinering?",
       "options": [
         {
           "letter": "A",
-          "text": "Att getingen sprider sig snabbare och snabbare"
+          "text": "Inget — växterna pollineras av vinden istället"
         },
         {
           "letter": "B",
-          "text": "Att en förändring i en del av ekosystemet utlöser en kedja av följdeffekter i andra delar"
+          "text": "Många växter ger mindre frukt och frön, och arter kan försvinna"
         },
         {
           "letter": "C",
-          "text": "Att bina flyr till andra platser"
+          "text": "Växterna anpassar sig direkt och pollinerar sig själva"
         },
         {
           "letter": "D",
-          "text": "Att getingens gift sprids genom näringskedjan"
+          "text": "Andra insekter tar helt över binas roll"
         }
       ],
       "correct": "B",
-      "feedbackOk": "Rätt! En kaskadeffekt innebär att t.ex. minskade bipopulationer leder till minskad pollinering, som leder till färre frön, som leder till färre växter, som påverkar alla andra arter.",
-      "feedbackNok": "Rätt svar: B. Kaskadeffekten innebär att minskade bipopulationer ger sämre pollinering, vilket påverkar frukt och bär, och i förlängningen alla djur i näringsväven."
+      "feedbackOk": "Rätt! Många växter är helt beroende av pollinering via insekter. Utan bin minskar skördar och arter kan försvinna.",
+      "feedbackNok": "Rätt svar: B. Ungefär 80% av blommande växter behöver insektspollinering. Utan bin får de sämre frösättning."
     },
     {
-      "id": "q21",
-      "type": "freetext",
-      "triggerTime": 1180.4,
-      "difficulty": "medium",
-      "text": "Beskriv med egna ord vad en kaskadeffekt är och ge ett exempel på vad som kan hända i ett svenskt ekosystem om honungsbina minskar kraftigt.",
-      "placeholder": "Skriv ditt svar här...",
-      "feedbackMsg": "Bra svar! En kaskadeffekt innebär att en förändring i en del av ekosystemet sprider sig till andra delar. Exempel: färre bin leder till sämre pollinering av blåbär, som leder till mindre mat för björnar och fåglar."
+      "id": "q_feedback",
+      "type": "feedback",
+      "triggerTime": 1185,
+      "difficulty": "easy",
+      "text": "Övningen är klar! Betygsätt hur den fungerade.",
+      "ratingLabel": "Hur bra fungerade övningen?",
+      "commentLabel": "Skriv en kort kommentar om vad som var bra eller kunde förbättras.",
+      "commentPlaceholder": "Din kommentar...",
+      "feedbackMsg": "Tack för din feedback!"
     }
   ]
 }

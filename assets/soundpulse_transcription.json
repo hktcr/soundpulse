@@ -186,7 +186,7 @@
           "probability": 0.984
         },
         {
-          "word": "mördargetingen",
+          "word": "sammetsgetingen",
           "start": 24.88,
           "end": 26.2,
           "probability": 0.918
@@ -204,7 +204,7 @@
           "probability": 1
         },
         {
-          "word": "slut",
+          "word": "slå ut",
           "start": 27.54,
           "end": 27.84,
           "probability": 0.942
@@ -1162,7 +1162,7 @@
       "text": "Nedringda av vettskrämda kollegor varje dag nu.",
       "words": [
         {
-          "word": "Medringda",
+          "word": "Nedringda",
           "start": 113.18,
           "end": 113.78,
           "probability": 0.639
@@ -1174,7 +1174,7 @@
           "probability": 0.997
         },
         {
-          "word": "vätskrämda",
+          "word": "vettskrämda",
           "start": 113.88,
           "end": 114.8,
           "probability": 0.934
@@ -1969,7 +1969,7 @@
       "id": 28,
       "start": 177.12,
       "end": 185.42,
-      "text": "Jo, men det är en av flera arter av stora getingar, eller bollgetingar som det handlar om, som finns i Asien.",
+      "text": "Jo, men det är en av flera arter av stora getingar, eller bålgetingar som det handlar om, som finns i Asien.",
       "words": [
         {
           "word": "Jo,",
@@ -2044,7 +2044,7 @@
           "probability": 0.998
         },
         {
-          "word": "bollgetingar",
+          "word": "bålgetingar",
           "start": 181.88,
           "end": 182.62,
           "probability": 0.966
@@ -18272,7 +18272,7 @@
       "id": 246,
       "start": 1132.04,
       "end": 1137.88,
-      "text": "Att det är ju så det har gått till sen urmännens tider på jorden med livet.",
+      "text": "Att det är ju så det har gått till sen urminnes tider på jorden med livet.",
       "words": [
         {
           "word": "Att",
@@ -18335,7 +18335,7 @@
           "probability": 0.423
         },
         {
-          "word": "urmännens",
+          "word": "urminnes",
           "start": 1134.88,
           "end": 1135.5,
           "probability": 0.815
@@ -19043,7 +19043,7 @@
           "probability": 0.903
         },
         {
-          "word": "dagenseko1sverigesradio",
+          "word": "dagenseko@sverigesradio",
           "start": 1184.02,
           "end": 1186.84,
           "probability": 0.87

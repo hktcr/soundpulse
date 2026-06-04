@@ -518,8 +518,8 @@
         }
         .sp-gloss-popup {
             position: absolute;
-            bottom: calc(100% + 6px); left: 50%;
-            transform: translateX(-50%);
+            top: calc(100% + 4px); left: 0;
+            transform: none;
             background: var(--sp-bg-deep);
             border: 1px solid var(--sp-accent-warm);
             border-radius: 8px;
@@ -528,7 +528,7 @@
             color: var(--sp-text);
             line-height: 1.4;
             white-space: normal;
-            width: max-content; max-width: 250px;
+            width: max-content; max-width: 220px; min-width: 160px;
             z-index: 100;
             box-shadow: 0 8px 24px rgba(0,0,0,0.6);
             pointer-events: none;
@@ -566,7 +566,7 @@
             border-radius: var(--sp-radius-lg);
             padding: 2rem;
             max-width: 600px; width: 100%;
-            max-height: 85vh; overflow-y: auto;
+            max-height: 90vh; overflow-y: auto;
         }
         .sp-q-badge {
             font-size: 0.7rem; font-weight: 600;
@@ -1172,8 +1172,18 @@
         ::-webkit-scrollbar-thumb { background: var(--sp-border-hover); border-radius: 5px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--sp-text-muted); }
 
-        /* Light Theme Support */
-        
+        /* === RESPONSIVE: CHROMEBOOKS & SMALL SCREENS === */
+        @media (max-height: 700px) {
+            .sp-word { font-size: 1.2rem; line-height: 1.8; }
+            .sp-player { padding: 0.4rem 0.8rem; gap: 0.4rem; }
+            .sp-triptych-top { height: 30%; }
+            .sp-question-card { padding: 1rem; font-size: 0.85rem; }
+            .sp-question-card h3 { font-size: 1rem; }
+        }
+        @media (max-width: 600px) {
+            .sp-split-layout { flex-direction: column; }
+            .sp-visual-side { max-height: 30vh; }
+            .sp-word { font-size: 1.1rem; line-height: 1.6; }
         }
     </style>
 </head>
@@ -1654,7 +1664,7 @@
                     <div class="sp-header-title">${CONFIG_DATA ? CONFIG_DATA.title : t('appName')}</div>
                 </div>
                 <div style="display:flex;align-items:center;gap:0.5rem;">
-                    ${SP.mode === 'live' ? '<span class="sp-live-dot"></span><span style="font-size:0.75rem;color:var(--sp-text-secondary)">LIVE</span>' : '<span class="sp-header-badge">' + t('practiceMode') + '</span>'}
+                    ${SP.mode === 'live' ? '<span class="sp-live-dot"></span><span style="font-size:0.75rem;color:var(--sp-text-secondary)">LIVE</span>' : ''}
                 </div>
             </div>
 
@@ -1677,12 +1687,7 @@
                         <span id="spTimeDur">0:00</span>
                     </div>
                 </div>
-                <button class="sp-speed-btn" id="spSpeedBtn"
-                    onclick="cycleSpeed(event)" role="button" tabindex="0"
-                    aria-label="Hastighet"
-                    ${keyHandler('cycleSpeed(event)')}>
-                    1x
-                </button>
+
             </div>
 
             <!-- Split Layout -->
@@ -1966,12 +1971,33 @@
         'insektssaliv': 'Saliv (spott) från insekter — getingar bygger bo av tuggat trä blandat med saliv',
         'värstinggeting': 'Vardagligt uttryck för en extra farlig och aggressiv geting',
         'sammetslen': 'Mjuk som sammet — det är här sammetsgetingen fått sitt namn',
-        'bollgetingar': 'Getingar av släktet Vespa som bygger stora, runda bon',
+        'bollgetingar': 'Getingar av släktet Vespa — kallas även bålgetingar. Bygger stora, runda bon.',
         'bålgetingbo': 'Bo byggt av bålgetingar — kan bli stort som en fotboll',
         'skrymslen': 'Trånga, undangömda utrymmen',
         'vrår': 'Undangömda hörn och platser',
         'uppmärksamma': 'Lägga märke till, vara observant på',
-        'utraderad': 'Helt utplånad, borttagen'
+        'utraderad': 'Helt utplånad, borttagen',
+        'habitat': 'En organisms naturliga livsmiljö',
+        'art': 'En grupp organismer som kan föröka sig med varandra',
+        'arter': 'Olika typer av organismer (djur, växter, svampar)',
+        'drottning': 'Honan som leder ett insektssamhälle och lägger alla ägg',
+        'kupan': 'Binas bo — kan vara naturligt eller en biodlares låda',
+        'kupor': 'Binas bon — kan vara naturliga eller biodlares lådor',
+        'larver': 'Tidigt utvecklingsstadium hos insekter, innan de blir vuxna',
+        'larverna': 'Tidigt utvecklingsstadium hos insekter, innan de blir vuxna',
+        'evolution': 'Livets utveckling genom naturligt urval under lång tid',
+        'evolutionen': 'Livets utveckling genom naturligt urval under lång tid',
+        'strategi': 'En plan eller metod för att uppnå ett mål',
+        'strategier': 'Planer eller metoder för att uppnå ett mål',
+        'rovdjur': 'Djur som jagar och äter andra djur',
+        'samhälle': 'En organiserad grupp individer som lever tillsammans',
+        'spridningen': 'Hur en art utökar sitt utbredningsområde',
+        'anpassning': 'Förändring som gör att en organism klarar sig bättre i sin miljö',
+        'kontinent': 'En av jordens stora landmassor (Europa, Asien, Afrika osv.)',
+        'kontinenten': 'En av jordens stora landmassor (Europa, Asien, Afrika osv.)',
+        'protein': 'Äggviteämne — viktigt byggmaterial i alla levande organismer',
+        'rivieran': 'Kuststräcka vid Medelhavet i södra Frankrike och norra Italien',
+        'farstun': 'Litet rum vid entrén, ofta mellan ytterdörr och innerdörr'
     };
 
     function addGlossary(text) {
@@ -2225,6 +2251,9 @@
                 break;
             case 'freetext':
                 html += renderFreetextQuestion(q, idx);
+                break;
+            case 'feedback':
+                html += renderFeedbackQuestion(q, idx);
                 break;
             default:
                 html += `<p style="color:var(--sp-text-muted)">Okänd frågetyp: ${q.type}</p>`;
@@ -2568,6 +2597,56 @@
         if (SP.mode === 'live') submitAnswer(q.id, strToHex(textarea.value.trim().substring(0, 100)));
     }
 
+    // ─── FEEDBACK (star rating + comment) ───
+    function renderFeedbackQuestion(q, idx) {
+        let html = '<div class="sp-feedback-form">';
+        html += `<p style="font-size:0.85rem;color:var(--sp-text);margin-bottom:0.6rem">${q.ratingLabel || 'Betygsätt övningen'}</p>`;
+        html += '<div class="sp-star-row" id="spStarRow">';
+        for (let i = 1; i <= 5; i++) {
+            html += `<button class="sp-star" data-val="${i}" onclick="selectStar(${i})" aria-label="${i} stjärnor" style="font-size:1.8rem;background:none;border:none;cursor:pointer;padding:0.2rem;opacity:0.3;transition:opacity 0.2s;">★</button>`;
+        }
+        html += '</div>';
+        html += `<p style="font-size:0.8rem;color:var(--sp-text-muted);margin-top:0.8rem;margin-bottom:0.3rem">${q.commentLabel || 'Kommentar'}</p>`;
+        html += `<textarea class="sp-freetext-textarea" id="feedbackComment_${idx}" placeholder="${q.commentPlaceholder || 'Din kommentar...'}" rows="3" style="width:100%;"></textarea>`;
+        html += '</div>';
+        html += `<button class="sp-submit-btn" onclick="submitFeedback(${idx})" role="button" tabindex="0" style="margin-top:0.5rem;">Skicka feedback</button>`;
+        return html;
+    }
+
+    let selectedStars = 0;
+    function selectStar(n) {
+        selectedStars = n;
+        document.querySelectorAll('.sp-star').forEach(s => {
+            const v = parseInt(s.dataset.val);
+            s.style.opacity = v <= n ? '1' : '0.3';
+            s.style.color = v <= n ? '#fde047' : 'var(--sp-text-muted)';
+        });
+    }
+    window.selectStar = selectStar;
+
+    function submitFeedback(qIdx) {
+        const q = CONFIG_DATA.questions[qIdx];
+        const comment = document.getElementById(`feedbackComment_${qIdx}`);
+        if (selectedStars === 0) {
+            const row = document.getElementById('spStarRow');
+            if (row) { row.style.outline = '2px solid var(--sp-incorrect)'; setTimeout(() => row.style.outline = '', 600); }
+            return;
+        }
+        if (!comment || !comment.value.trim()) {
+            comment.style.outline = '2px solid var(--sp-incorrect)';
+            setTimeout(() => comment.style.outline = '', 600);
+            return;
+        }
+        const answer = `${selectedStars}|${comment.value.trim()}`;
+        SP.answers[q.id] = answer;
+        comment.readOnly = true;
+        document.querySelectorAll('.sp-star').forEach(s => s.disabled = true);
+        showFeedback(true, q.feedbackMsg || 'Tack!');
+        playBeep(true);
+        if (SP.mode === 'live') submitAnswer(q.id, strToHex(answer.substring(0, 200)));
+    }
+    window.submitFeedback = submitFeedback;
+
     // ─── FEEDBACK ───
     function showFeedback(correct, message) {
         const fb = document.getElementById('spFeedback');
@@ -2781,7 +2860,7 @@
                 ids.map(sid => apiGet(`hb_${sid}`).catch(() => null))
             );
             const activeIds = ids.filter((sid, i) => {
-                const hb = heartbeats[i] ? parseInt(heartbeats[i], 10) : 0;
+                const hb = heartbeats[i] ? parseInt(heartbeats[i], 10) : now; // assume just joined
                 return (now - hb) < HB_TIMEOUT;
             });
 
@@ -2867,7 +2946,7 @@
                     const wasRewound = rawAns.startsWith('R');
                     const actualAns = wasRewound ? rawAns.substring(1) : rawAns;
                     let isCorrect = false;
-                    if (q.type === 'freetext') {
+                    if (q.type === 'freetext' || q.type === 'feedback') {
                         isCorrect = true;
                     } else if (q.type === 'multiple-choice') {
                         isCorrect = actualAns === q.correct;
@@ -2889,6 +2968,37 @@
         });
 
         dashboard.innerHTML = html;
+
+        // Feedback summary section
+        const fbQ = CONFIG_DATA.questions.find(q => q.type === 'feedback');
+        if (fbQ) {
+            let fbHtml = '<div style="margin-top:1.2rem;padding:0.8rem;background:rgba(255,255,255,0.03);border-radius:0.6rem;border:1px solid var(--sp-border);">';
+            fbHtml += '<div style="font-size:0.8rem;font-weight:600;color:var(--sp-accent);margin-bottom:0.5rem;">📊 Elevfeedback</div>';
+            const feedbacks = [];
+            SP.knownStudents.forEach((name, sid) => {
+                const ansMap = SP.studentAnswers.get(sid) || {};
+                const raw = ansMap[fbQ.id];
+                if (raw) {
+                    try {
+                        const decoded = hexToStr(raw);
+                        const [stars, ...commentParts] = decoded.split('|');
+                        feedbacks.push({ name, stars: parseInt(stars) || 0, comment: commentParts.join('|') });
+                    } catch(e) { /* skip */ }
+                }
+            });
+            if (feedbacks.length > 0) {
+                const avg = (feedbacks.reduce((s,f) => s + f.stars, 0) / feedbacks.length).toFixed(1);
+                fbHtml += `<div style="font-size:1.1rem;margin-bottom:0.4rem;">Snitt: ${'★'.repeat(Math.round(avg))}${'☆'.repeat(5 - Math.round(avg))} (${avg}/5, ${feedbacks.length} svar)</div>`;
+                feedbacks.forEach(f => {
+                    fbHtml += `<div style="font-size:0.75rem;padding:0.3rem 0;border-top:1px solid var(--sp-border);">`;
+                    fbHtml += `<strong>${f.name}</strong> ${'★'.repeat(f.stars)}${'☆'.repeat(5-f.stars)}: ${f.comment}</div>`;
+                });
+            } else {
+                fbHtml += '<div style="font-size:0.75rem;color:var(--sp-text-muted);">Ingen feedback ännu</div>';
+            }
+            fbHtml += '</div>';
+            dashboard.innerHTML += fbHtml;
+        }
     }
 
     // ═══════════════════════════════════════════
