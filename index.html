@@ -3078,7 +3078,7 @@
         questions.forEach((q, idx) => {
             const ans = SP.answers[q.id];
             let isCorrect = false;
-            if (q.type === 'freetext') {
+            if (q.type === 'freetext' || q.type === 'feedback') {
                 isCorrect = !!ans;
             } else if (q.type === 'multiple-choice') {
                 isCorrect = ans === q.correct;
@@ -3101,7 +3101,7 @@
         if (!wrap || !card) return;
 
         // V7: Smart results — show summary + only wrong answers with feedback
-        const wrongRows = rows.filter(r => !r.isCorrect && r.q.type !== 'freetext');
+        const wrongRows = rows.filter(r => !r.isCorrect && r.q.type !== 'freetext' && r.q.type !== 'feedback');
         const freetextRows = rows.filter(r => r.q.type === 'freetext');
 
         let html = `
@@ -3114,15 +3114,13 @@
         if (wrongRows.length === 0) {
             html += `<p style="text-align:center;color:var(--sp-correct);font-weight:500;margin:1rem 0">✨ Alla rätt — fantastiskt jobbat!</p>`;
         } else {
-            html += `<p style="font-size:0.85rem;color:var(--sp-text-muted);margin:1rem 0 0.5rem">ℹ️ Dessa frågor kan du repetera:</p>`;
+            html += `<p style="font-size:0.85rem;color:var(--sp-text-muted);margin:1rem 0 0.5rem">ℹ️ Klicka på en fråga för att läsa mer:</p>`;
             wrongRows.forEach(r => {
                 const feedback = r.q.feedbackNok || r.q.feedbackOk || '';
-                html += `<div class="sp-result-row nok" style="flex-direction:column;align-items:flex-start;gap:0.3rem">
-                    <div style="display:flex;align-items:center;gap:0.5rem">
-                        <span class="sp-result-icon">✗</span>
-                        <span style="font-weight:500">F${r.idx + 1}: ${r.q.text.substring(0, 60)}${r.q.text.length > 60 ? '...' : ''}</span>
-                    </div>
-                    <p style="font-size:0.8rem;color:var(--sp-text-secondary);margin:0.2rem 0 0 1.6rem;line-height:1.4">${feedback}</p>
+                const shortText = r.q.text.substring(0, 55) + (r.q.text.length > 55 ? '...' : '');
+                html += `<div class="sp-result-row nok" style="cursor:pointer;" onclick="showResultPopup(this)" data-full-q="${r.q.text.replace(/"/g, '&quot;')}" data-feedback="${feedback.replace(/"/g, '&quot;')}">
+                    <span class="sp-result-icon">✗</span>
+                    <span style="font-weight:500;font-size:0.8rem;">F${r.idx + 1}: ${shortText}</span>
                 </div>`;
             });
         }
@@ -3137,6 +3135,26 @@
         // Activate focus trap for results overlay (Bug 1)
         requestAnimationFrame(() => trapFocus(card));
     }
+    // ─── RESULT POPUP ───
+    function showResultPopup(el) {
+        const q = el.dataset.fullQ;
+        const fb = el.dataset.feedback;
+        let popup = document.getElementById('spResultPopup');
+        if (!popup) {
+            popup = document.createElement('div');
+            popup.id = 'spResultPopup';
+            popup.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+            document.body.appendChild(popup);
+        }
+        popup.innerHTML = `
+            <div style="background:var(--sp-card-bg, #1a1f2e);border-radius:1rem;padding:1.5rem;max-width:400px;width:100%;max-height:80vh;overflow-y:auto;position:relative;border:1px solid var(--sp-border, #333);">
+                <button onclick="document.getElementById('spResultPopup').remove()" style="position:absolute;top:0.6rem;right:0.8rem;background:none;border:none;color:var(--sp-text, #ccc);font-size:1.3rem;cursor:pointer;">✕</button>
+                <p style="font-weight:600;color:var(--sp-text, #eee);margin-bottom:0.8rem;padding-right:1.5rem;line-height:1.4;">${q}</p>
+                <p style="font-size:0.85rem;color:var(--sp-text-secondary, #aaa);line-height:1.5;">${fb}</p>
+            </div>`;
+        popup.addEventListener('click', (e) => { if (e.target === popup) popup.remove(); });
+    }
+    window.showResultPopup = showResultPopup;
 
 
     // ═══════════════════════════════════════════
