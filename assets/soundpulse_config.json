@@ -10,27 +10,9 @@
   "visualSegments": [
     {
       "start": 0,
-      "end": 44,
-      "image": "assets/soundpulse/seg0_eko.png",
-      "title": "Dagens Eko — Sammetsgetingen i Sverige"
-    },
-    {
-      "start": 44,
-      "end": 500,
-      "image": "assets/sammetsgeting.jpg",
-      "title": "Sammetsgetingen (Vespa velutina)"
-    },
-    {
-      "start": 500,
-      "end": 1000,
-      "image": "assets/honungsbi.jpg",
-      "title": "Honungsbiet (Apis mellifera)"
-    },
-    {
-      "start": 1000,
       "end": 1188,
       "image": "assets/soundpulse/seg0_eko.png",
-      "title": "Dagens Eko — Sammanfattning"
+      "title": "Dagens Eko — Sammetsgetingen i Sverige"
     }
   ],
   "questions": [
