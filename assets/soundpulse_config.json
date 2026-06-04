@@ -67,28 +67,28 @@
       "type": "multiple-choice",
       "triggerTime": 90,
       "difficulty": "easy",
-      "text": "Var hittades sammetsgetingen först i Europa?",
+      "text": "Sammetsgetingen hittades först i ett land i Europa dit den antagligen kommit med fraktfartyg. Vilket land?",
       "options": [
         {
           "letter": "A",
-          "text": "Bordeaux, Frankrike"
+          "text": "Frankrike"
         },
         {
           "letter": "B",
-          "text": "Rom, Italien"
+          "text": "Italien"
         },
         {
           "letter": "C",
-          "text": "Madrid, Spanien"
+          "text": "Spanien"
         },
         {
           "letter": "D",
-          "text": "Berlin, Tyskland"
+          "text": "Tyskland"
         }
       ],
       "correct": "A",
-      "feedbackOk": "Rätt! Den hittades först i en sändning keramik till Bordeaux, Frankrike.",
-      "feedbackNok": "Rätt svar: A. Enligt programmet upptäcktes den först i en sändning keramik till Bordeaux i Frankrike."
+      "feedbackOk": "Rätt! Den hittades först i Frankrike. (Senare i podden får du höra att det var i en sändning keramik till hamnstaden Bordeaux).",
+      "feedbackNok": "Rätt svar: A. Enligt programmet upptäcktes den först i Frankrike. (Senare nämns att den kom med keramik till Bordeaux)."
     },
     {
       "id": "q2",
@@ -207,7 +207,7 @@
       "type": "multiple-choice",
       "triggerTime": 490.3,
       "difficulty": "medium",
-      "text": "Japanska honungsbin har utvecklat ett unikt försvar mot jättegetingar. Vad gör de?",
+      "text": "Japanska forskare har sett hur honungsbin försvarar sig mot sammetsgetingen. Vad gör bina?",
       "options": [
         {
           "letter": "A",
@@ -227,8 +227,8 @@
         }
       ],
       "correct": "B",
-      "feedbackOk": "Rätt! Detta 'dödsbiboll'-beteende är dock främst ett försvar mot japanska jättegetingar, inte sammetsgetingar.",
-      "feedbackNok": "Rätt svar: B. Japanska honungsbin bildar en 'värmeboll' (ca 47 °C) runt den japanska jättegetingen."
+      "feedbackOk": "Rätt! De bildar en 'värmeboll' runt getingen. (Forskningen har visat att den klassiska 47 °C-bollen främst sker mot jättegetingen, men bina använder samma försvar mot sammetsgetingen, om än aningen svalare).",
+      "feedbackNok": "Rätt svar: B. Japanska honungsbin bildar en vibrerande 'värmeboll' runt getingen för att övervärma den."
     },
     {
       "id": "q6",
@@ -266,7 +266,7 @@
       "type": "multiple-choice",
       "triggerTime": 550.2,
       "difficulty": "hard",
-      "text": "Europeiska honungsbin (Apis mellifera) har inte samma försvarsstrategi som de japanska. Varför?",
+      "text": "Europeiska honungsbin (Apis mellifera) har inte samma värmebolls-försvar mot dessa asiatiska rovdjursgetingar. Varför?",
       "options": [
         {
           "letter": "A",
@@ -274,7 +274,7 @@
         },
         {
           "letter": "B",
-          "text": "De har aldrig levt tillsammans med jättegetingar och har därför inte utvecklat försvaret"
+          "text": "De har aldrig samevolverat med arter som sammetsgetingen och har därför inte utvecklat försvaret"
         },
         {
           "letter": "C",
@@ -286,8 +286,8 @@
         }
       ],
       "correct": "B",
-      "feedbackOk": "Rätt! Evolution kräver tid. Europeiska bin har inte haft jättegetingar som selektionstryck och har därför aldrig utvecklat värmebollsförsvaret.",
-      "feedbackNok": "Rätt svar: <strong>B</strong>. Japanska honungsbin (*Apis cerana japonica*) har samexisterat med den japanska jättegetingen (*Vespa mandarinia*) i miljontals år. Europeiska bin har aldrig utsatts för det trycket, ett tydligt exempel på naturligt urval."
+      "feedbackOk": "Rätt! Evolution kräver tid. Europeiska bin har inte haft dessa asiatiska getingar som selektionstryck under årtusendena och har därför aldrig utvecklat värmebollsförsvaret.",
+      "feedbackNok": "Rätt svar: B. Japanska honungsbin har samexisterat med asiatiska rovdjursgetingar i årtusenden. Europeiska bin har aldrig utsatts för det trycket, ett tydligt exempel på samevolution (eller brist på)."
     },
     {
       "id": "q3",
@@ -322,7 +322,7 @@
       "type": "multiple-choice",
       "triggerTime": 670.4,
       "difficulty": "medium",
-      "text": "I programmet nämns att sammetsgetingen är en invasiv art. Vilken av dessa arter är OCKSÅ invasiv i Sverige?",
+      "text": "I programmet nämns att sammetsgetingen är en invasiv art. Vilken av dessa arter är OCKSÅ invasiv i Sverige? (utanför avsnittet)",
       "options": [
         {
           "letter": "A",

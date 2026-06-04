@@ -973,11 +973,7 @@
         .sp-copy-btn:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
         .sp-copy-btn.copied { border-color: var(--sp-correct); color: var(--sp-correct); }
 
-        /* GDPR text */
-        .sp-gdpr {
-            font-size: 0.7rem; color: var(--sp-text-muted);
-            margin-top: 1.5rem; line-height: 1.4;
-        }
+
 
         /* Live status */
         .sp-live-dot {
@@ -1527,12 +1523,16 @@
         SP.offlineCount++;
         if (SP.offlineCount >= 2) {
             offlineBanner.style.display = 'block';
+            const liveDot = document.getElementById('spLiveDot');
+            if (liveDot) liveDot.style.background = 'var(--sp-incorrect)';
         }
     }
 
     function handleOnline() {
         SP.offlineCount = 0;
         offlineBanner.style.display = 'none';
+        const liveDot = document.getElementById('spLiveDot');
+        if (liveDot) liveDot.style.background = 'var(--sp-correct)';
     }
 
     // ═══════════════════════════════════════════
@@ -1549,6 +1549,8 @@
         } catch(e) {
             console.warn('API set failed:', e);
             handleOffline();
+            // Fallback for current session to prevent crashes
+            try { localStorage.setItem('sp_fallback_' + key, value); } catch(err) {}
         }
     }
 
@@ -1564,7 +1566,7 @@
             return text.replace(/"/g, '').trim();
         } catch(e) {
             handleOffline();
-            return null;
+            try { return localStorage.getItem('sp_fallback_' + key); } catch(err) { return null; }
         }
     }
 
@@ -1725,7 +1727,6 @@
                         style="margin-top: 0.5rem; padding: 1rem 1.5rem; font-size: 1.1rem;">
                         Starta övningen
                     </button>
-                    <p class="sp-gdpr" style="margin-top:2rem; font-size: 0.75rem; color: var(--sp-text-muted);">${t('gdprText')}</p>
                 </div>
             </div>
         </div>`;
@@ -2967,7 +2968,8 @@
 
         // Build grid dashboard
         const pl = totalStudents !== 1 ? 'er' : '';
-        let html = `<div class="sp-dash-header"><span class="sp-live-dot"></span> ${t('studentsConnected').replace('{n}', totalStudents).replace('{pl}', pl)}</div>`;
+        const dotColor = SP.offlineCount >= 2 ? 'var(--sp-incorrect)' : 'var(--sp-correct)';
+        let html = `<div class="sp-dash-header"><span id="spLiveDot" class="sp-live-dot" style="background:${dotColor}" title="${SP.offlineCount >= 2 ? 'Tjänsten är trasig/nere' : 'Systemet online'}"></span> ${t('studentsConnected').replace('{n}', totalStudents).replace('{pl}', pl)}</div>`;
         html += '<div style="display:flex;gap:0.8rem;flex-wrap:wrap;margin:0.4rem 0 0.6rem;font-size:0.65rem;color:var(--sp-text-muted);">';
         html += '<span style="display:flex;align-items:center;gap:0.25rem;"><span style="width:10px;height:10px;border-radius:2px;background:#10b981;"></span> Rätt</span>';
         html += '<span style="display:flex;align-items:center;gap:0.25rem;"><span style="width:10px;height:10px;border-radius:2px;background:#eab308;"></span> Rätt (spol)</span>';
@@ -3151,7 +3153,9 @@
             rows.push({ q, idx, ans, isCorrect });
         });
 
-        const pct = Math.round((correctCount / questions.length) * 100);
+        const validQuestions = questions.filter(q => q.type !== 'feedback');
+        const validCount = validQuestions.length || 1;
+        const pct = Math.round((correctCount / validCount) * 100);
         let resultIcon, message;
         if (pct === 100) { resultIcon = '★'; message = t('fullScore'); }
         else if (pct >= 70) { resultIcon = '★'; message = t('goodScore'); }
@@ -3170,7 +3174,7 @@
             <div class="sp-results">
                 <div class="sp-results-emoji">${resultIcon}</div>
                 <h2>${message}</h2>
-                <p class="sp-score-line">${correctCount} av ${questions.length} rätt (${pct}%)</p>
+                <p class="sp-score-line">${correctCount} av ${validCount} rätt (${pct}%)</p>
             </div>`;
 
         if (wrongRows.length === 0) {
