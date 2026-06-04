@@ -131,7 +131,7 @@
     {
       "id": "q5",
       "type": "multiple-choice",
-      "triggerTime": 367,
+      "triggerTime": 373.5,
       "difficulty": "easy",
       "text": "Programmet nämner att sammetsgetingen angriper bisamhällen. Vad är det den främst är ute efter?",
       "options": [
@@ -159,7 +159,7 @@
     {
       "id": "q6",
       "type": "match",
-      "triggerTime": 373.1,
+      "triggerTime": 507.5,
       "difficulty": "medium",
       "text": "Para ihop varje ekologiskt begrepp med rätt definition.",
       "pairs": [
@@ -369,7 +369,7 @@
     {
       "id": "q13",
       "type": "match",
-      "triggerTime": 791.9,
+      "triggerTime": 800.2,
       "difficulty": "hard",
       "text": "Para ihop varje organism med dess roll i näringsväven.",
       "pairs": [
@@ -400,7 +400,7 @@
     {
       "id": "q20",
       "type": "multiple-choice",
-      "triggerTime": 908.9,
+      "triggerTime": 928,
       "difficulty": "medium",
       "text": "Varför sprider sig sammetsgetingen snabbt i Europa?",
       "options": [
@@ -511,7 +511,7 @@
     {
       "id": "q18",
       "type": "multiple-choice",
-      "triggerTime": 1138,
+      "triggerTime": 1149,
       "difficulty": "hard",
       "text": "Om honungsbina minskar kraftigt, vad händer med växter som är beroende av pollinering?",
       "options": [
@@ -539,7 +539,7 @@
     {
       "id": "q_feedback",
       "type": "feedback",
-      "triggerTime": 1185,
+      "triggerTime": 1188,
       "difficulty": "easy",
       "text": "Övningen är klar! Betygsätt hur den fungerade.",
       "ratingLabel": "Hur bra fungerade övningen?",
