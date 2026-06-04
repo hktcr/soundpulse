@@ -1782,10 +1782,7 @@
 
         const isTeacher = !!document.getElementById('spTeacherDashboard');
         
-        if (SP.mode === 'live' && !isTeacher && audioEl.paused && !SP.teacherIsPlaying) {
-            showFeedback(false, "Väntar på att läraren ska starta uppspelningen. (Vill du lyssna själv? Välj 'Lyssna Solo')");
-            return;
-        }
+        // Students now work independently — no teacher sync needed
 
         if (audioEl.paused) {
             // Student manually playing — clear pause flag
