@@ -1552,6 +1552,8 @@
     async function registerStudent() {
         const nameHex = strToHex(SP.studentName || 'Gäst');
         await apiSet(`stu_${SP.studentId}`, nameHex);
+        // Send initial heartbeat
+        await apiSet(`hb_${SP.studentId}`, String(Date.now()));
         // Register in student list with retry to mitigate race conditions
         for (let attempt = 0; attempt < 2; attempt++) {
             const list = await apiGet('student_list') || '';
@@ -1566,6 +1568,10 @@
             // If failed, retry after short delay
             await new Promise(r => setTimeout(r, 200 + Math.random() * 300));
         }
+        // Start heartbeat interval (every 15s)
+        setInterval(() => {
+            apiSet(`hb_${SP.studentId}`, String(Date.now()));
+        }, 15000);
     }
 
     // ═══════════════════════════════════════════
@@ -2767,8 +2773,28 @@
                 return;
             }
             const ids = decoded.split(',').filter(id => id.trim() && id !== 'RESET');
-            // Parallel fetch for all unknown students
-            const unknownIds = ids.filter(sid => !SP.knownStudents.has(sid));
+
+            // Filter by heartbeat — only show students active in last 2 minutes
+            const HB_TIMEOUT = 2 * 60 * 1000; // 2 minutes
+            const now = Date.now();
+            const heartbeats = await Promise.all(
+                ids.map(sid => apiGet(`hb_${sid}`).catch(() => null))
+            );
+            const activeIds = ids.filter((sid, i) => {
+                const hb = heartbeats[i] ? parseInt(heartbeats[i], 10) : 0;
+                return (now - hb) < HB_TIMEOUT;
+            });
+
+            // Remove inactive students from knownStudents
+            for (const [sid] of SP.knownStudents) {
+                if (!activeIds.includes(sid)) {
+                    SP.knownStudents.delete(sid);
+                    SP.studentAnswers.delete(sid);
+                }
+            }
+
+            // Parallel fetch for all unknown active students
+            const unknownIds = activeIds.filter(sid => !SP.knownStudents.has(sid));
             if (unknownIds.length > 0) {
                 const names = await Promise.all(
                     unknownIds.map(sid => apiGet(`stu_${sid}`).catch(() => null))
