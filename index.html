@@ -1612,11 +1612,11 @@
                         aria-label="Ditt namn"
                         autocomplete="name"
                         required
-                        onkeydown="if(event.key==='Enter'){event.preventDefault();joinSession('practice');}"
+                        onkeydown="if(event.key==='Enter'){event.preventDefault();joinSession('live');}"
                     >
                     <button class="sp-btn-primary" id="spJoinBtn"
-                        onclick="joinSession('practice')"
-                        ${keyHandler("joinSession('practice')")}
+                        onclick="joinSession('live')"
+                        ${keyHandler("joinSession('live')")}
                         role="button" tabindex="0"
                         aria-label="Starta övningen"
                         style="margin-top: 0.5rem; padding: 1rem 1.5rem; font-size: 1.1rem;">
@@ -1643,13 +1643,10 @@
             return;
         }
         SP.studentId = generateStudentId();
-        SP.mode = mode === 'practice' ? 'practice' : 'live';
+        SP.mode = 'live';
         renderStudentView();
         // Always register so teacher dashboard can see all students
         registerStudent();
-        if (SP.mode === 'live') {
-            startLiveSync();
-        }
     }
 
 
@@ -1764,9 +1761,7 @@
             updatePlayBtn();
             // Show results after a short delay, then offer bee game
             setTimeout(() => {
-                if (SP.mode === 'practice') {
-                    showResults();
-                }
+                showResults();
             }, 1500);
         };
         audioEl.addEventListener('loadedmetadata', audioEl._spLoadedMeta);
@@ -2099,8 +2094,8 @@
         updateTranscriptHighlight(t);
         updateVisualSegment();
 
-        // Check auto-trigger questions (practice mode only)
-        if (SP.mode === 'practice') checkAutoQuestions(t);
+        // Check auto-trigger questions
+        checkAutoQuestions(t);
     }
 
     // ═══════════════════════════════════════════
@@ -2286,7 +2281,7 @@
         SP.currentQ = -1;
         // Rewind 5 seconds for context, then resume
         audioEl.currentTime = Math.max(0, audioEl.currentTime - 5);
-        if (SP.mode === 'practice' || SP.mode === 'live') {
+        if (SP.mode !== 'teacher') {
             audioEl.play().catch(() => {});
             SP.isPlaying = true;
             updatePlayBtn();
@@ -2333,7 +2328,7 @@
         showFeedback(correct, correct ? q.feedbackOk : q.feedbackNok);
         if (correct && navigator.vibrate) navigator.vibrate(50);
         playBeep(correct);
-        if (SP.mode === 'live') submitAnswer(q.id, letter);
+        submitAnswer(q.id, letter);
     }
 
     // ─── CATEGORIZE ───
@@ -2421,7 +2416,7 @@
         showFeedback(allCorrect, allCorrect ? q.feedbackOk : q.feedbackNok);
         if (allCorrect && navigator.vibrate) navigator.vibrate(50);
         playBeep(allCorrect);
-        if (SP.mode === 'live') submitAnswer(q.id, SP.answers[q.id]);
+        submitAnswer(q.id, SP.answers[q.id]);
     }
 
     // ─── MATCH ───
@@ -2515,7 +2510,7 @@
         showFeedback(allCorrect, allCorrect ? q.feedbackOk : q.feedbackNok);
         if (allCorrect && navigator.vibrate) navigator.vibrate(50);
         playBeep(allCorrect);
-        if (SP.mode === 'live') submitAnswer(q.id, SP.answers[q.id]);
+        submitAnswer(q.id, SP.answers[q.id]);
     }
 
     // ─── LUCKTEXT ───
@@ -2568,7 +2563,7 @@
         showFeedback(allCorrect, allCorrect ? q.feedbackOk : q.feedbackNok);
         if (allCorrect && navigator.vibrate) navigator.vibrate(50);
         playBeep(allCorrect);
-        if (SP.mode === 'live') submitAnswer(q.id, SP.answers[q.id]);
+        submitAnswer(q.id, SP.answers[q.id]);
     }
 
     // ─── FREETEXT ───
@@ -2594,7 +2589,7 @@
         SP.answers[q.id] = textarea.value.trim();
         showFeedback(true, q.feedbackMsg || 'Tack för ditt svar!');
         playBeep(true);
-        if (SP.mode === 'live') submitAnswer(q.id, strToHex(textarea.value.trim().substring(0, 100)));
+        submitAnswer(q.id, strToHex(textarea.value.trim().substring(0, 100)));
     }
 
     // ─── FEEDBACK (star rating + comment) ───
@@ -2643,7 +2638,7 @@
         document.querySelectorAll('.sp-star').forEach(s => s.disabled = true);
         showFeedback(true, q.feedbackMsg || 'Tack!');
         playBeep(true);
-        if (SP.mode === 'live') submitAnswer(q.id, strToHex(answer.substring(0, 200)));
+        submitAnswer(q.id, strToHex(answer.substring(0, 200)));
     }
     window.submitFeedback = submitFeedback;
 
