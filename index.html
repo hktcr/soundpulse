@@ -791,6 +791,13 @@
         .sp-feedback.show { display: block; animation: spFadeSlideUp 0.3s ease-out; }
         .sp-feedback.ok { background: var(--sp-correct-bg); border: 1px solid rgba(16,185,129,0.3); color: #a7f3d0; }
         .sp-feedback.nok { background: var(--sp-incorrect-bg); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+        .sp-feedback.pending { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); color: #fde68a; }
+        .sp-feedback.local-saved { background: rgba(245,158,11,0.18); border: 1px solid rgba(245,158,11,0.4); color: #fde68a; }
+        .sp-sync-badge { display:inline-block; font-size:0.75rem; padding:0.15rem 0.5rem; border-radius:999px; margin-left:0.5rem; vertical-align:middle; }
+        .sp-sync-badge.synced { background:rgba(16,185,129,0.2); color:#6ee7b7; }
+        .sp-sync-badge.saving { background:rgba(245,158,11,0.2); color:#fde68a; animation: spPulse 1.5s infinite; }
+        .sp-sync-badge.local { background:rgba(239,68,68,0.15); color:#fca5a5; }
+        @keyframes spPulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
 
         .sp-continue-btn {
             display: none; width: 100%;
@@ -1087,8 +1094,20 @@
         @media (max-width: 420px) {
             .sp-main { padding: 0.3rem; height: 100vh; }
             .sp-header-title { font-size: 0.9rem; }
-            .sp-player-btn { width: 36px; height: 36px; font-size: 0.9rem; }
+            .sp-player-btn { width: 44px; height: 44px; font-size: 1rem; }
+            .sp-speed-btn { min-width: 44px; min-height: 44px; }
             .sp-transcript { max-height: 120px; font-size: 0.85rem; }
+            /* V10: Ensure 44×44px touch targets on mobile (P2-F5) */
+            .sp-btn-sm, .sp-copy-btn, .sp-continue-btn,
+            .sp-rewind-btn, .sp-star, button[onclick] {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            .sp-mc-option { min-height: 44px; padding: 0.7rem 1rem; }
+            .sp-chip { min-height: 40px; padding: 0.5rem 0.8rem; }
+            .sp-match-item { min-height: 44px; padding: 0.6rem; }
+            .sp-feedback { font-size: 0.85rem; }
+            .sp-q-badge { font-size: 0.7rem; }
         }
 
         /* === BEE DEFENSE GAME === */
@@ -1389,7 +1408,7 @@
         APP_KEY: 'SoundPulse_sammetsjattingen_v2',
         BASE_URL: 'https://keyvalue.immanuel.co/api/KeyVal',
         SYNC_INTERVAL: 2500,
-        POLL_INTERVAL: 8000,
+        POLL_INTERVAL: 10000,
         AUDIO_FILE: 'assets/soundpulse_sammetsjattingen.mp3'
     };
 
@@ -1414,8 +1433,28 @@
         offlineCount: 0,
         maxListenedTime: 0,
         registeredOnServer: false,
-        heartbeatInterval: null
+        heartbeatInterval: null,
+        _forcedFeedback: false  // V10: prevent re-trigger of force-feedback
     };
+
+    // V10: Multi-tab coordination via BroadcastChannel (P2)
+    let _spChannel = null;
+    try {
+        _spChannel = new BroadcastChannel('soundpulse_sync');
+        _spChannel.onmessage = (e) => {
+            if (e.data.type === 'flushed' && e.data.studentId === SP.studentId) {
+                // Another tab flushed our answers — clear our local queue to avoid duplicate writes
+                _answerQueue = [];
+                _persistAnswerQueue();
+                console.log('BroadcastChannel: another tab flushed answers, clearing local queue');
+            }
+            if (e.data.type === 'session_active' && e.data.studentId === SP.studentId && e.data.tabId !== _spTabId) {
+                // Another tab with same student is active — show warning
+                console.warn('BroadcastChannel: duplicate tab detected');
+            }
+        };
+    } catch(e) { /* BroadcastChannel not available — graceful degradation */ }
+    const _spTabId = Date.now() + '_' + Math.random().toString(36).slice(2);
 
     let CONFIG_DATA = null;
     let TRANSCRIPTION = { segments: [] };
@@ -1616,22 +1655,43 @@
     // API HELPERS
     // ═══════════════════════════════════════════
 
-    async function apiSet(key, value) {
+    async function apiSet(key, value, { verify = false, maxRetries = 2 } = {}) {
         // Always store locally first as a fallback/cache
         try { localStorage.setItem('sp_fallback_' + key, value); } catch(err) {}
 
-        try {
-            await fetchWithTimeout(
-                `${SP_CONFIG.BASE_URL}/UpdateValue/${SP_CONFIG.APP_KEY}/${key}/${value}`,
-                { method: 'POST', mode: 'cors' }
-            );
-            handleOnline();
-            removeFromPendingSync(key);
-        } catch(e) {
-            console.warn('API set failed:', e);
-            handleOffline();
-            addToPendingSync(key, value);
+        let attempt = 0;
+        while (attempt <= maxRetries) {
+            try {
+                await fetchWithTimeout(
+                    `${SP_CONFIG.BASE_URL}/UpdateValue/${SP_CONFIG.APP_KEY}/${key}/${value}`,
+                    { method: 'POST', mode: 'cors' }
+                );
+                // V10: Write-verify — read back and confirm (P1-F2)
+                if (verify) {
+                    const readBack = await apiGet(key);
+                    if (readBack !== value) {
+                        console.warn(`Write-verify mismatch for ${key} (attempt ${attempt + 1})`);
+                        attempt++;
+                        if (attempt > maxRetries) throw new Error('Write-verify failed after retries');
+                        await new Promise(r => setTimeout(r, 500));
+                        continue;
+                    }
+                }
+                handleOnline();
+                removeFromPendingSync(key);
+                return true; // V10: indicate success
+            } catch(e) {
+                console.warn('API set failed:', e);
+                if (attempt >= maxRetries) {
+                    handleOffline();
+                    addToPendingSync(key, value);
+                    return false; // V10: indicate failure (saved offline)
+                }
+                attempt++;
+                await new Promise(r => setTimeout(r, 500));
+            }
         }
+        return false;
     }
 
     async function apiGet(key) {
@@ -1677,23 +1737,77 @@
     }
 
     // Answer queue to prevent concurrent read-modify-write
+    // V9: Persistent queue — survives page close via localStorage
     let _answerQueue = [];
     let _answerWriting = false;
+
+    // V10: Handle page closure (P1-F1)
+    window.addEventListener('pagehide', () => {
+        _persistAnswerQueue();
+    });
+
+    function _persistAnswerQueue() {
+        try {
+            if (_answerQueue.length > 0 && SP.studentId) {
+                localStorage.setItem('sp_answer_queue_' + SP.studentId, JSON.stringify(_answerQueue));
+            } else if (SP.studentId) {
+                localStorage.removeItem('sp_answer_queue_' + SP.studentId);
+            }
+        } catch(e) { /* localStorage full or unavailable */ }
+    }
+
+    function _restoreAnswerQueue() {
+        if (!SP.studentId) return;
+        try {
+            const saved = localStorage.getItem('sp_answer_queue_' + SP.studentId);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    console.log(`Restoring ${parsed.length} unsaved answers from previous session`);
+                    _answerQueue.unshift(...parsed);
+                    localStorage.removeItem('sp_answer_queue_' + SP.studentId);
+                }
+            }
+        } catch(e) { /* skip corrupt data */ }
+    }
 
     async function submitAnswer(questionId, answer) {
         // Prefix with R if this question was rewound
         const qIdx = CONFIG_DATA ? CONFIG_DATA.questions.findIndex(q => q.id === questionId) : -1;
         const prefix = SP.rewoundQuestions.has(qIdx) ? 'R' : '';
         _answerQueue.push({ questionId, answer: prefix + answer });
-        if (!_answerWriting) _flushAnswers();
+        _persistAnswerQueue(); // Save immediately to localStorage as safety net
+        if (!_answerWriting) {
+            const success = await _flushAnswers();
+            // V10: Update sync status indicator (P1-F1)
+            _updateSyncBadge(success ? 'synced' : 'local');
+        }
         saveSession();
+    }
+
+    // V10: Sync status indicator (P1-F1 — honest UI)
+    function _updateSyncBadge(state) {
+        let badge = document.getElementById('spSyncBadge');
+        if (!badge) {
+            const header = document.querySelector('.sp-header-badge');
+            if (!header) return;
+            badge = document.createElement('span');
+            badge.id = 'spSyncBadge';
+            header.parentElement.appendChild(badge);
+        }
+        badge.className = `sp-sync-badge ${state}`;
+        const labels = { synced: '✓ Sparat', saving: '⏳ Sparar…', local: '⚠️ Sparas lokalt' };
+        badge.textContent = labels[state] || '';
+        if (state === 'synced') setTimeout(() => { if (badge) badge.textContent = ''; badge.className = ''; }, 3000);
     }
 
     async function _flushAnswers() {
         _answerWriting = true;
+        let success = true;
         while (_answerQueue.length > 0) {
             const batch = [..._answerQueue];
             _answerQueue = [];
+            _persistAnswerQueue(); // Clear persisted queue optimistically
             try {
                 const key = `ans_${SP.studentId}`;
                 const existing = await apiGet(key) || '';
@@ -1711,17 +1825,35 @@
                     ansMap[questionId] = answer.replace(/,/g, '\\c');
                 });
                 const updated = Object.entries(ansMap).map(([k, v]) => k + ':' + v).join(',');
-                await apiSet(key, strToHex(updated));
+                // V10: Write-verify (P1-F2)
+                const ok = await apiSet(key, strToHex(updated), { verify: true });
+                if (!ok) throw new Error('Write failed');
                 // Small delay between flushes to avoid hammering the API
                 await new Promise(r => setTimeout(r, 300));
             } catch(e) {
                 console.warn('Answer flush failed:', e);
-                // Re-queue failed batch
+                // Re-queue failed batch AND persist to localStorage
                 _answerQueue.unshift(...batch);
+                _persistAnswerQueue(); // Critical: save failed items so they survive page close
+                // Also add the merged answer string to offline sync queue as fallback
+                try {
+                    const mergedMap = {};
+                    batch.forEach(({ questionId, answer }) => {
+                        mergedMap[questionId] = answer.replace(/,/g, '\\c');
+                    });
+                    const mergedStr = Object.entries(mergedMap).map(([k,v]) => k+':'+v).join(',');
+                    addToPendingSync(`ans_${SP.studentId}`, strToHex(mergedStr));
+                } catch(syncErr) { /* best effort */ }
                 await new Promise(r => setTimeout(r, 1000));
+                success = false;
             }
         }
         _answerWriting = false;
+        // V10: Notify other tabs that we flushed (P2 BroadcastChannel)
+        if (success && _spChannel) {
+            try { _spChannel.postMessage({ type: 'flushed', studentId: SP.studentId, tabId: _spTabId }); } catch(e) {}
+        }
+        return success;
     }
 
     async function registerStudent() {
@@ -1732,6 +1864,19 @@
         // Register in a slot (random order selection to minimize concurrent API collision)
         const MAX_SLOTS = 60;
         let registered = false;
+
+        // V10: Smart slot reuse — check if we already have a slot from this session (P2-F4)
+        try {
+            const cachedSlot = sessionStorage.getItem('sp_my_slot_' + SP.studentId);
+            if (cachedSlot !== null) {
+                const slotIdx = parseInt(cachedSlot, 10);
+                const slotVal = await apiGet(`slot_${slotIdx}`);
+                if (slotVal && hexToStr(slotVal) === SP.studentId) {
+                    registered = true;
+                    console.log('Reused cached slot', slotIdx);
+                }
+            }
+        } catch(e) { /* sessionStorage unavailable — fall through to normal registration */ }
         
         // Generate a random permutation of slot indices to try
         const indices = Array.from({ length: MAX_SLOTS }, (_, i) => i);
@@ -1751,6 +1896,7 @@
                 const verify = await apiGet(`slot_${slotIdx}`);
                 if (verify && hexToStr(verify) === SP.studentId) {
                     registered = true;
+                    try { sessionStorage.setItem('sp_my_slot_' + SP.studentId, String(slotIdx)); } catch(e) {}
                     console.log('Registered in slot', slotIdx);
                 }
             } else {
@@ -1758,6 +1904,7 @@
                     const existing = hexToStr(slotVal);
                     if (existing === SP.studentId) {
                         registered = true; // Already registered
+                        try { sessionStorage.setItem('sp_my_slot_' + SP.studentId, String(slotIdx)); } catch(e) {}
                         console.log('Already registered in slot', slotIdx);
                     }
                 } catch(e) { /* skip corrupt slot */ }
@@ -1767,6 +1914,7 @@
             // Fallback: overwrite a random slot
             const fallbackIdx = Math.floor(Math.random() * MAX_SLOTS);
             await apiSet(`slot_${fallbackIdx}`, strToHex(SP.studentId));
+            try { sessionStorage.setItem('sp_my_slot_' + SP.studentId, String(fallbackIdx)); } catch(e) {}
             registered = true;
         }
 
@@ -1779,8 +1927,22 @@
 
         // Start heartbeat interval (every 30s instead of 15s to reduce API traffic)
         if (!SP.heartbeatInterval) {
-            SP.heartbeatInterval = setInterval(() => {
+            SP.heartbeatInterval = setInterval(async () => {
                 apiSet(`hb_${SP.studentId}`, String(Date.now()));
+                // V10: Check if teacher has triggered force-feedback (P1-F3)
+                try {
+                    const state = await getTeacherState();
+                    if (state.msgColor === 'feedback' && !SP._forcedFeedback) {
+                        SP._forcedFeedback = true;
+                        // Find the feedback question (always last)
+                        const fbIdx = CONFIG_DATA.questions.findIndex(q => q.type === 'feedback');
+                        if (fbIdx >= 0) {
+                            // Pause audio and show feedback
+                            if (audioEl) { audioEl.pause(); SP.isPlaying = false; updatePlayBtn(); }
+                            showQuestion(fbIdx);
+                        }
+                    }
+                } catch(e) { /* ignore — heartbeat failure shouldn't break force-feedback */ }
             }, 30000);
         }
     }
@@ -2677,11 +2839,31 @@
         html += '</div>';
         html += '</div>';
 
-        html += `<button class="sp-submit-btn" id="spMatchSubmit" onclick="checkMatch(${idx})"
+        html += `<div style="display:flex;gap:0.5rem;justify-content:center;margin-top:0.5rem;">
+            <button class="sp-submit-btn" id="spMatchSubmit" onclick="checkMatch(${idx})"
             ${keyHandler(`checkMatch(${idx})`)} role="button" tabindex="0">
-            ${t('checkBtn')}</button>`;
+            ${t('checkBtn')}</button>
+            <button class="sp-submit-btn" onclick="resetMatch(${idx})" style="background:var(--sp-bg); border: 1px solid var(--sp-border); color: var(--sp-text);" role="button" tabindex="0">
+            Börja om</button>
+        </div>`;
         return html;
     }
+
+    function resetMatch(qIdx) {
+        matchSelectedLeft = null;
+        matchPairs = [];
+        document.querySelectorAll(`[id^="ml_${qIdx}_"]`).forEach(el => {
+            el.classList.remove('selected', 'paired', 'correct-opt', 'wrong-match');
+            el.textContent = el.textContent.replace(/^\d+\.\s*/, '');
+        });
+        document.querySelectorAll(`[id^="mr_${qIdx}_"]`).forEach(el => {
+            el.classList.remove('paired', 'correct-opt', 'wrong-match');
+            el.textContent = el.textContent.replace(/^\d+\.\s*/, '');
+        });
+        const btn = document.getElementById('spMatchSubmit');
+        if (btn) btn.disabled = false;
+    }
+    window.resetMatch = resetMatch;
 
     function selectMatchLeft(qIdx, leftIdx) {
         // Clear previous selection
@@ -2847,7 +3029,7 @@
     }
     window.selectStar = selectStar;
 
-    function submitFeedback(qIdx) {
+    async function submitFeedback(qIdx) {
         const q = CONFIG_DATA.questions[qIdx];
         const comment = document.getElementById(`feedbackComment_${qIdx}`);
         if (selectedStars === 0) {
@@ -2860,21 +3042,31 @@
         SP.answers[q.id] = answer;
         if (comment) comment.readOnly = true;
         document.querySelectorAll('.sp-star').forEach(s => s.disabled = true);
-        showFeedback(true, q.feedbackMsg || 'Tack!');
+        // V10: Show pending state FIRST, then confirm after server (P1-F1)
+        showFeedback(true, '⏳ Skickar…', 'pending');
         playBeep(true);
-        submitAnswer(q.id, answer.substring(0, 200));
+        await submitAnswer(q.id, answer.substring(0, 200));
+        // V10: Now check if it actually saved
+        if (_answerQueue.length === 0 && !_answerWriting) {
+            showFeedback(true, q.feedbackMsg || '✓ Tack! Din feedback är sparad.', 'ok');
+        } else {
+            showFeedback(true, '⚠️ Sparad lokalt — synkas automatiskt', 'local-saved');
+        }
     }
     window.submitFeedback = submitFeedback;
 
     // ─── FEEDBACK ───
-    function showFeedback(correct, message) {
+    function showFeedback(correct, message, state) {
         const fb = document.getElementById('spFeedback');
         const cont = document.getElementById('spContinueBtn');
         if (fb) {
-            fb.className = `sp-feedback show ${correct ? 'ok' : 'nok'}`;
-            fb.innerHTML = `<span class="sp-result-icon">${correct ? '✓' : '✗'}</span> ${message}`;
+            // V10: Support explicit state (pending, ok, nok, local-saved)
+            const cls = state || (correct ? 'ok' : 'nok');
+            const icon = cls === 'pending' ? '⏳' : cls === 'local-saved' ? '⚠️' : (correct ? '✓' : '✗');
+            fb.className = `sp-feedback show ${cls}`;
+            fb.innerHTML = `<span class="sp-result-icon">${icon}</span> ${message}`;
         }
-        if (cont) cont.classList.add('show');
+        if (cont && state !== 'pending') cont.classList.add('show');
     }
 
     // ═══════════════════════════════════════════
@@ -2910,6 +3102,7 @@
                 <div class="sp-panel sp-panel-bottom">
                     <div style="font-size:0.8rem;color:var(--sp-text-muted);flex:1;min-width:200px;">Eleverna lyssnar i egen takt — deras svar dyker upp här automatiskt.</div>
                     <div style="display:flex; gap: 0.5rem; flex-wrap:wrap; justify-content:flex-end;">
+                        <button class="sp-btn-sm" id="spEndLessonBtn" onclick="forceEndLesson()" role="button" tabindex="0" style="background:rgba(16,185,129,0.15);color:#6ee7b7;border:1px solid rgba(16,185,129,0.3);" ${keyHandler('forceEndLesson()')}>📝 Avsluta → Feedback</button>
                         <button class="sp-copy-btn" id="spCopyBtn" onclick="copyStudentLink()" role="button" tabindex="0" style="margin-bottom:0;" ${keyHandler('copyStudentLink()')}>${t('copyLink')}</button>
                         <button class="sp-btn-sm" onclick="resetSession()" role="button" tabindex="0" style="color:var(--sp-incorrect);" ${keyHandler('resetSession()')}>${t('resetBtn')}</button>
                     </div>
@@ -2959,6 +3152,23 @@
         document.querySelectorAll('[id^="tq_"]').forEach(el => el.classList.remove('active', 'pushed'));
     }
 
+    // V10: Force all students to feedback screen (P1-F3)
+    async function forceEndLesson() {
+        if (!confirm('Avsluta lektionen och visa feedback-frågan för alla elever?')) return;
+        // Use teacher message system to broadcast force-feedback signal
+        teacherMsgColor = 'feedback';
+        teacherMsgText = 'Lektionen avslutas — ge din feedback!';
+        broadcastTeacherState();
+        // Update button to show it's active
+        const btn = document.getElementById('spEndLessonBtn');
+        if (btn) {
+            btn.textContent = '✅ Feedback-läge aktivt';
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+        }
+    }
+    window.forceEndLesson = forceEndLesson;
+
     // ═══════════════════════════════════════════
     // TEACHER BROADCAST & POLLING (K1)
     // ═══════════════════════════════════════════
@@ -2992,11 +3202,16 @@
 
             if (shouldPollSlots) {
                 const MAX_SLOTS = 60;
-                const slotPromises = [];
-                for (let i = 0; i < MAX_SLOTS; i++) {
-                    slotPromises.push(apiGet(`slot_${i}`).catch(() => null));
+                // V9: Chunk slot discovery in batches of 10 to prevent connection exhaustion
+                const slots = [];
+                for (let i = 0; i < MAX_SLOTS; i += 10) {
+                    const chunkPromises = [];
+                    for (let j = i; j < Math.min(i + 10, MAX_SLOTS); j++) {
+                        chunkPromises.push(apiGet(`slot_${j}`).catch(() => null));
+                    }
+                    const chunkResults = await Promise.all(chunkPromises);
+                    slots.push(...chunkResults);
                 }
-                const slots = await Promise.all(slotPromises);
 
                 const discoveredIds = [];
                 for (const raw of slots) {
@@ -3056,11 +3271,14 @@
             return;
         }
 
-        // Parallel fetch all student answers
+        // Parallel fetch all student answers in chunks of 5 to prevent browser connection limits (ERR_INSUFFICIENT_RESOURCES/timeouts)
         const sids = [...SP.knownStudents.keys()];
-        const results = await Promise.all(
-            sids.map(sid => apiGet(`ans_${sid}`).catch(() => null))
-        );
+        const results = [];
+        for (let i = 0; i < sids.length; i += 5) {
+            const chunk = sids.slice(i, i + 5);
+            const chunkResults = await Promise.all(chunk.map(sid => apiGet(`ans_${sid}`).catch(() => null)));
+            results.push(...chunkResults);
+        }
         results.forEach((raw, i) => {
             if (!raw) return;
             try {
@@ -3150,12 +3368,16 @@
                     } else {
                         ansLabel = `Svar: ${actualAns}`;
                     }
-                    if (cls.includes('correct')) {
+                    if (cls === 'correct' || cls === 'rewound-correct') {
                         ansColor = 'var(--sp-correct)';
-                        ansLabel += ' (Rätt)';
-                    } else if (cls.includes('incorrect')) {
+                        if (q.type !== 'freetext' && q.type !== 'feedback') {
+                            ansLabel += ' (Rätt)';
+                        }
+                    } else if (cls === 'incorrect' || cls === 'rewound-incorrect') {
                         ansColor = 'var(--sp-incorrect)';
-                        ansLabel += ' (Fel)';
+                        if (q.type !== 'freetext' && q.type !== 'feedback') {
+                            ansLabel += ' (Fel)';
+                        }
                     }
                 }
                 html += `<div class="sp-q-square ${cls}" data-q="${idx+1}">
@@ -3387,7 +3609,7 @@
     async function init() {
         // Load config
         try {
-            const resp = await fetch('assets/soundpulse_config.json');
+            const resp = await fetch('assets/soundpulse_config.json?v=' + Date.now());
             CONFIG_DATA = await resp.json();
             SP_CONFIG.APP_KEY = CONFIG_DATA.appKey || SP_CONFIG.APP_KEY;
             SP_CONFIG.AUDIO_FILE = CONFIG_DATA.audioFile || SP_CONFIG.AUDIO_FILE;
@@ -3470,6 +3692,26 @@
         syncOfflineData();
     });
     window.addEventListener('offline', () => { SP.offlineCount = 2; handleOffline(); });
+
+    // V9: Save answer queue on page unload so nothing is lost
+    window.addEventListener('beforeunload', () => {
+        _persistAnswerQueue();
+        saveSession();
+    });
+
+    // V9: Also try visibilitychange (works better on mobile)
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+            _persistAnswerQueue();
+            saveSession();
+        }
+    });
+
+    // V10: pagehide — most reliable on Safari iOS (P1 from DA)
+    window.addEventListener('pagehide', () => {
+        _persistAnswerQueue();
+        saveSession();
+    });
 
     // Periodic sync check (15s)
     setInterval(syncOfflineData, 15000);
